@@ -1,0 +1,33 @@
+documents:
+  - name: "Service User Guide" # https://confluence.lmera.ericsson.se/display/ACD/Marketplace+Document+Handling
+    filepath: build/doc-marketplace/user-guide.zip
+    default: true # default flag to indicate the default document to show in the marketplace.
+  - name: "Application Developers Guide"
+    filepath: build/doc-marketplace/DistributedCoordinatorED_Developers_Guide.zip
+  - name: "Product Revision Information (PRI)"
+    filepath: build/doc-marketplace/pri.zip
+  - name: Inner Source README
+    filepath: build/doc-marketplace/ReadMe.zip
+  - name: Contributing Guideline
+    filepath: build/doc-marketplace/Contributing.zip
+  - name: "Test Report"
+    filepath: build/doc-marketplace/test-report.zip
+  - name: "Test Specification"
+    filepath: build/doc-marketplace/test-specification.zip
+  - name: "Export Control Report"
+    external-link:
+      Title: "Export Control Report - Distributed Coordinator ED"
+      Document_id: "2400-APR20159"
+      Rev: "A"
+  - name: "Software Vendor List (SVL)"
+    filepath: build/doc-svl-replacement/svl.zip
+  - name: "Vulnerability Analysis Report"
+    external-link: "https://erilink.ericsson.se/eridoc/erl/objectId/09004cffd388aa1d?docno=1/1597-APR20159/4-13Uen&action=approved&format=zip"
+    restricted: true
+  - name: "Risk Assessment & Privacy Impact Assessment"
+    external-link: "https://erilink.ericsson.se/eridoc/erl/objectId/09004cffd388c93c?docno=1/00664-APR20159/4-1Uen&action=approved&format=msw12me"
+    restricted: true
+  - name: "Distributed Coordinator ED Characteristics Report"
+    filepath: build/doc-marketplace/characteristics-report.zip
+  - name: "PM-Metrics"
+    filepath: build/doc-marketplace/pm-metrics/eric-data-distributed-coordinator-ed_pm_metrics.json

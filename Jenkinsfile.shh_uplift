@@ -1,0 +1,26 @@
+pipeline {
+    agent {
+        node {
+            label params.SLAVE
+        }
+    }
+    stages{
+        stage('Update SHH Version') {
+            steps{
+                    checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'eadphub-psw', url: 'ssh://gerrit-gamma.gic.ericsson.se:29418/AIA/microservices/etcd']]])
+                    sh """find . -name "2pp_dependencies.yaml" | xargs sed -i '/Smart Helm Hook Image/{n;s/\\(version:[[:space:]]\\).*/\\1${params.SHH_VERSION}/g;}'"""
+                    sh """find . -name "product_structure.yaml" | xargs sed -i '/CXA 301 123/{n;s/\\(version:[[:space:]]\\).*/\\1${params.SHH_VERSION}/g;}'"""
+                    sh """find . -name "product_structure.yaml" | xargs sed -i '/CXU 101 1909/{n;s/\\(version:[[:space:]]\\).*/\\1${params.SHH_VERSION}/g;}'"""
+                    sh """find . -name "common-properties.yaml" | xargs sed -i 's/\\(SHH-semver:[[:space:]]\\).*/\\1"${params.SHH_VERSION}"/g'"""
+                    sh """find . -name "common-properties.yaml" | xargs sed -i 's/\\(SHH-version:[[:space:]]\\).*/\\1"${params.SHH_BUILD_VERSION}"/g'"""
+                    sh """find . -name "eric-product-info.yaml" | xargs sed -i '/hooklauncher/{n;s/\\(tag:[[:space:]]\\).*/\\1${params.SHH_BUILD_VERSION}/g;}'"""
+                    sh 'git status'
+                    sh 'git stage -A'
+                    sh """git commit -m '[${params.JIRA}] DCED: SHH upversion to ${params.SHH_VERSION}' -m 'JIRA Link: https://eteamproject.internal.ericsson.com/browse/${params.JIRA}'"""
+                    sh 'gitdir=$(git rev-parse --git-dir); scp -p -P 29418 lciadm100@gerrit-gamma.gic.ericsson.se:hooks/commit-msg ${gitdir}/hooks/'
+                    sh 'git commit --amend --no-edit'
+                    sh 'git push origin HEAD:refs/for/master'
+            }
+        }
+    }
+}

@@ -1,0 +1,7 @@
+{{- if eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true" }}
+  {{- if eq (default "" ((((.Values).global).logShipper).deployment).model) "static" }}
+    {{- include "eric-data-distributed-coordinator-ed.logshipper-tls-cert-lt-client" . }}
+  {{- else }}
+    {{- include "eric-log-shipper-sidecar.logshipper-tls-cert-lt-client" . }}
+  {{- end }}
+{{- end }}

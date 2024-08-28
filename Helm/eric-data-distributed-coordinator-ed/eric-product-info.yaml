@@ -1,0 +1,38 @@
+productName: "Distributed Coordinator ED"
+productNumber: "CXC 201 2039"
+images:
+  dced:
+    productName: "Distributed Coordinator ED"
+    productNumber: "CXC 201 2038"
+    registry: "armdocker.rnd.ericsson.se"
+    repoPath: "REPO_PATH"
+    name: eric-data-distributed-coordinator-ed
+    tag: "VERSION"
+  brAgent:
+    productName: "Distributed Coordinator ED BrAgent"
+    productNumber: "CXC 174 2753"
+    registry: "armdocker.rnd.ericsson.se"
+    repoPath: "REPO_PATH"
+    name: eric-data-distributed-coordinator-ed-bragent
+    tag: "VERSION"
+  metricsexporter:
+    productName: "Distributed Coordinator ED Metrics-Exporter"
+    productNumber: "CXU 101 0988"
+    registry: "armdocker.rnd.ericsson.se"
+    repoPath: "REPO_PATH"
+    name: eric-data-distributed-coordinator-ed-metrics-exporter
+    tag: "VERSION"
+  hooklauncher:
+    productName: Smart Helm Hook Image
+    productNumber: CXU 101 1909
+    registry: armdocker.rnd.ericsson.se
+    repoPath: proj-adp-shh-released
+    name: eric-lcm-smart-helm-hooks-hooklauncher
+    tag: 2.21.0-8
+  logshipper:
+    productName: "ADP Log Shipper Sidecar Image"
+    productNumber: "CXU 101 1191"
+    registry: "armdocker.rnd.ericsson.se"
+    repoPath: "proj-adp-log-released"
+    name: "eric-log-shipper-sidecar"
+    tag: 19.4.0-14

@@ -1,0 +1,16 @@
+[submodule "bob"]
+	path = bob
+	url = ../../../adp-cicd/bob
+	ignore = all
+[submodule "testframework"]
+	path = testframework
+	url = ../testframework
+	ignore = all
+[submodule "httpprobe"]
+	path = httpprobe
+	url = ../../../adp-common-src/httpprobe
+	ignore = all
+[submodule "adp-common"]
+	path = Helm/eric-data-distributed-coordinator-ed/templates/adp-common
+	url = ../../../adp-common-src/helm-templates
+	ignore = all

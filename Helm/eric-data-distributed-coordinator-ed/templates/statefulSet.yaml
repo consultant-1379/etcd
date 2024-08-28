@@ -1,0 +1,599 @@
+{{- $globals   := fromJson (include "eric-data-distributed-coordinator-ed.globalMap" .) -}}
+{{- $siptlsCaName := $globals.security.tls.trustedInternalRootCa.secret -}}
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.name" . }}
+  labels:
+    {{- include "eric-data-distributed-coordinator-ed.labels" . | nindent 4 }}
+  annotations:
+    {{- include "eric-data-distributed-coordinator-ed.annotations" . | nindent 4 }}
+spec:
+  serviceName: {{ template "eric-data-distributed-coordinator-ed.name" . }}-peer
+  replicas: {{ include "eric-data-distributed-coordinator-ed.pods.replicas" . }}
+  selector:
+    matchLabels:
+{{- include "eric-data-distributed-coordinator-ed.selectorLabels" . | indent 4 }}
+  updateStrategy:
+    type: {{ .Values.updateStrategy.type | quote }}
+  template:
+    metadata:
+      labels:
+        {{- include "eric-data-distributed-coordinator-ed.labels" . | nindent 8 }}
+        {{- if and (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") (eq (include "eric-data-distributed-coordinator-ed.networkPolicy" .) "true") }}
+        {{ .Values.logShipper.output.logTransformer.host }}-access: "true"
+        {{- end }}
+        {{- if eq (include "eric-data-distributed-coordinator-ed.networkPolicy" .) "true" }}
+        {{ template "eric-data-distributed-coordinator-ed.pmServer.name" . }}-access: "true"
+        {{- end }}
+      annotations:
+        {{- $podTempAnn := dict -}}
+        {{- if and (.Values.metricsexporter.enabled) (.Values.service.endpoints.dced.metrics.enabled) }}
+          {{- if not .Values.enableNewScrapePattern }}
+            {{- $_ := set $podTempAnn "prometheus.io/scrape" "true" -}}
+            {{- $_ := set $podTempAnn "prometheus.io/port" (.Values.metricsexporter.port | toString) -}}
+            {{- if and ( eq .Values.service.endpoints.pm.tls.enforced "required" ) ( eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" ) }}
+              {{- $_ := set $podTempAnn "prometheus.io/scheme" "https" -}}
+            {{- else }}
+              {{- $_ := set $podTempAnn "prometheus.io/scheme" "http" -}}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+
+        {{- if .Values.deploymentTimestamp }}
+          {{- $_ := set $podTempAnn "timestamp" (.Values.deploymentTimestamp | toString) -}}
+        {{ end }}
+        {{- $commonAnn := include "eric-data-distributed-coordinator-ed.annotations" . | fromYaml -}}
+        {{- $bandwidth_annotations := include "eric-data-distributed-coordinator-ed.bandwidth-annotations" . | fromYaml -}}
+        {{- $dcedAppArmorAnn := include "eric-data-distributed-coordinator-ed.dced.appArmorAnnotations" . | fromYaml -}}
+        {{- $metricsExporterAppArmorAnn := include "eric-data-distributed-coordinator-ed.metricsexporter.appArmorAnnotations" . | fromYaml -}}
+        {{- $initAppArmorAnn := include "eric-data-distributed-coordinator-ed.init.appArmorAnnotations" . | fromYaml -}}
+        {{- $apparmorAnn := dict -}}
+        {{- $apparmorAnn = merge $apparmorAnn $dcedAppArmorAnn }}
+        {{- $apparmorAnn = merge $apparmorAnn $initAppArmorAnn }}
+        {{- if and (.Values.metricsexporter.enabled) (.Values.service.endpoints.dced.metrics.enabled) }}
+        {{- $apparmorAnn = merge $apparmorAnn $metricsExporterAppArmorAnn }}
+        {{- end }}
+        {{- if (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") }}
+          {{- if eq (default "" ((((.Values).global).logShipper).deployment).model) "static" }}
+            {{- include "eric-data-distributed-coordinator-ed.LsAppArmorProfileAnnotation" . | indent 8  }}
+          {{- else }}
+            {{- $logShipperAppArmorAnn := include "eric-data-distributed-coordinator-ed.logshipper.appArmorAnnotations" . | fromYaml -}}
+            {{- $apparmorAnn = merge $apparmorAnn $logShipperAppArmorAnn }}
+          {{- end }}
+        {{- end }}
+        {{- include "eric-data-distributed-coordinator-ed.mergeAnnotations" (dict "location" .Template.Name "sources" (list $podTempAnn $commonAnn $apparmorAnn $bandwidth_annotations)) | trim | nindent 8 }}
+    spec:
+      {{- include "eric-data-distributed-coordinator-ed.podPriority" . }}
+      serviceAccountName: {{ template "eric-data-distributed-coordinator-ed.service-account.name" . }}
+      {{ template "eric-data-distributed-coordinator-ed.serviceAccount" . }}
+      {{- if eq .Values.affinity.podAntiAffinity "hard" }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                      - {{ template "eric-data-distributed-coordinator-ed.name" . }}
+              topologyKey: {{ .Values.affinity.topologyKey }}
+        {{- else if eq .Values.affinity.podAntiAffinity  "soft" }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - {{ template "eric-data-distributed-coordinator-ed.name" . }}
+                topologyKey: {{ .Values.affinity.topologyKey }}
+        {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds.dced }}
+      securityContext:
+        fsGroup: {{ include "eric-data-distributed-coordinator-ed.fsGroup.coordinated" . }}
+        supplementalGroups: {{ include "eric-data-distributed-coordinator-ed.supplementalGroups" . }}
+{{- if .Values.seccompProfile }}
+{{- if .Values.seccompProfile.type }}
+{{- $profiledefault := .Values.seccompProfile }}
+{{- include "eric-data-distributed-coordinator-ed.getSeccompSecurityContext" (dict "profile" $profiledefault) | indent 8 }}
+{{- end }}
+{{- end }}
+      initContainers:
+        - name: init
+          resources:
+            requests:
+              memory: {{ .Values.resources.init.requests.memory | quote }}
+              cpu: {{ .Values.resources.init.requests.cpu | quote }}
+              {{- if index .Values.resources.init.requests "ephemeral-storage" }}
+              ephemeral-storage: {{ index .Values.resources.init.requests "ephemeral-storage" | quote }}
+              {{- end }}
+            limits:
+              memory: {{ .Values.resources.init.limits.memory | quote }}
+              cpu: {{ .Values.resources.init.limits.cpu | quote }}
+              {{- if index .Values.resources.init.limits "ephemeral-storage" }}
+              ephemeral-storage: {{ index .Values.resources.init.limits "ephemeral-storage" | quote }}
+              {{- end }}
+          image: {{ template "eric-data-distributed-coordinator-ed.imagePath" (merge (dict "imageName" "dced") .) }}
+          imagePullPolicy: {{ template "eric-data-distributed-coordinator-ed.dced.imagePullPolicy" . }}
+          {{- if (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") }}
+          command: ["/bin/bash"]
+            {{- if eq (include "eric-data-distributed-coordinator-ed.log-streamingMethod" .) "dual" }}
+          args: ["-c", "/opt/redirect/stdout-redirect -config=/etc/stdout-redirect-config.yaml -format=json -redirect=all -logfile={{ include "eric-data-distributed-coordinator-ed.logshipper.storage.path" . }}/initContainer.log -container=init -service-id={{ include "eric-data-distributed-coordinator-ed.name" . }} -run=\"/usr/local/bin/scripts/addMember.sh\""]
+            {{- else }}
+          args: ["-c", "/opt/redirect/stdout-redirect -config=/etc/stdout-redirect-config.yaml -format=json -redirect=file -logfile={{ include "eric-data-distributed-coordinator-ed.logshipper.storage.path" . }}/initContainer.log -container=init -service-id={{ include "eric-data-distributed-coordinator-ed.name" . }} -run=\"/usr/local/bin/scripts/addMember.sh\""]
+            {{- end }}
+          {{- else }}
+          command: ["/bin/bash"]
+          args: ["-c", "/opt/redirect/stdout-redirect -config=/etc/stdout-redirect-config.yaml -format=json -redirect=stdout  -container=init -service-id={{ include "eric-data-distributed-coordinator-ed.name" . }} -run=\"/usr/local/bin/scripts/addMember.sh\""]
+          {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            procMount: "Default"
+{{- if .Values.seccompProfile }}
+{{- if .Values.seccompProfile.init }}
+{{- include "eric-data-distributed-coordinator-ed.init.seccompProfile" . | indent 12 }}
+{{- end }}
+{{- end }}
+            capabilities:
+              drop:
+                - ALL
+          env:
+{{ include "eric-data-distributed-coordinator-ed.etcdctlParameters" . | indent 12 }}
+            - name: ENTRYPOINT_PIPE_TIMEOUT
+              value: {{ include "eric-data-distributed-coordinator-ed.livenessProbe.entrypointPipeTimeout" . | quote }}
+            - name: POD_NAME
+              valueFrom:
+               fieldRef:
+                 fieldPath: metadata.name
+            - name: CONTAINER_NAME
+              value: "init"
+            - name: NAMESPACE
+              valueFrom:
+               fieldRef:
+                 fieldPath: metadata.namespace
+            - name: FIFO_DIR
+              value: /fifo
+            - name: TZ
+              value: {{ include "eric-data-distributed-coordinator-ed.timezone" . }}
+            - name: DCED_PORT
+              value: {{ include "eric-data-distributed-coordinator-ed.ports.client" . | quote }}
+            - name: TLS_ENABLED
+              value: {{ include "eric-data-distributed-coordinator-ed.tls.enabled" . | quote }}
+            - name: TRUSTED_CA
+              value: {{ include "eric-data-distributed-coordinator-ed.trustedCA" . }}
+            - name: SIP_TLS_CA_SECRET
+              value: {{ $siptlsCaName }}
+            - name: ETCD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+              value: {{ template "eric-data-distributed-coordinator-ed.initialAdvertisePeerUrl" . }}
+            - name: ETCD_DATA_DIR
+              value: {{ template "eric-data-distributed-coordinator-ed.mountPath" . }}
+{{- if eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "false" }}
+            - name: ACL_ROOT_PASSWORD
+              valueFrom:
+{{- include "eric-data-distributed-coordinator-ed.tls.acls" . | indent 12 }}
+{{ end }}
+          volumeMounts:
+          - name: fifo
+            mountPath: /fifo
+          - name: data
+            mountPath: {{ template "eric-data-distributed-coordinator-ed.mountPath" . }}
+        {{- if (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") }}
+          {{- if eq (default "" ((((.Values).global).logShipper).deployment).model) "static" }}
+            {{- include "eric-data-distributed-coordinator-ed.log-shipper-sidecar-mounts" . | indent 10 }}
+          {{- else }}
+            {{- include "eric-log-shipper-sidecar.log-shipper-sidecar-mounts" . | indent 10 }}
+          {{- end }}
+        {{- end }}
+{{ include "eric-data-distributed-coordinator-ed.secretsMountPath" . | indent 10 }}
+      containers:
+{{- if and (.Values.metricsexporter.enabled) (.Values.service.endpoints.dced.metrics.enabled) }}
+        - name: metricsexporter
+          image: {{ template "eric-data-distributed-coordinator-ed.imagePath" (merge (dict "imageName" "metricsexporter") .) }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.metricsexporter.requests.memory | quote }}
+              cpu: {{ .Values.resources.metricsexporter.requests.cpu | quote }}
+              {{- if index .Values.resources.metricsexporter.requests "ephemeral-storage" }}
+              ephemeral-storage: {{ index .Values.resources.metricsexporter.requests "ephemeral-storage" | quote }}
+              {{- end }}
+            limits:
+              memory: {{ .Values.resources.metricsexporter.limits.memory | quote }}
+              cpu: {{ .Values.resources.metricsexporter.limits.cpu | quote }}
+              {{- if index .Values.resources.metricsexporter.limits "ephemeral-storage" }}
+              ephemeral-storage: {{ index .Values.resources.metricsexporter.limits "ephemeral-storage" | quote }}
+              {{- end }}
+          args:
+            {{- if (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") }}
+              {{- if eq (include "eric-data-distributed-coordinator-ed.log-streamingMethod" .) "dual" }}
+            - /usr/bin/stdout-redirect
+              -config=/etc/stdout-redirect-config.yaml -format=json
+              -service-id=eric-data-distributed-coordinator-ed
+              -container=metricsexporter
+              -redirect=all
+              -logfile={{ include "eric-data-distributed-coordinator-ed.logshipper.storage.path" . }}/metricsexporter.log
+              -run="/metrics-exporter
+                    -service-id=eric-data-distributed-coordinator-ed
+                    -container-name=metricsexporter"
+              {{- else }}
+            - /usr/bin/stdout-redirect
+              -config=/etc/stdout-redirect-config.yaml -format=json
+              -service-id=eric-eric-data-distributed-coordinator-ed
+              -container=metricsexporter
+              -redirect=file
+              -logfile={{ include "eric-data-distributed-coordinator-ed.logshipper.storage.path" . }}/metricsexporter.log
+              -run="/metrics-exporter
+                    -service-id=eric-data-distributed-coordinator-ed
+                    -container-name=metricsexporter"
+              {{- end }}
+            {{- else }}
+            - /usr/bin/stdout-redirect
+              -config=/etc/stdout-redirect-config.yaml -format=json
+              -service-id=eric-data-distributed-coordinator-ed
+              -container=metricsexporter
+              -redirect=stdout
+              -run="/metrics-exporter
+                    -service-id=eric-data-distributed-coordinator-ed
+                    -container-name=metricsexporter"
+            {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            procMount: "Default"
+{{- if .Values.seccompProfile }}
+{{- if .Values.seccompProfile.metricsexporter }}
+{{- include "eric-data-distributed-coordinator-ed.metricsexporter.seccompProfile" . | indent 12 }}
+{{- end }}
+{{- end }}
+            capabilities:
+              drop:
+                - ALL
+          env:
+    {{- if (eq (include "eric-data-distributed-coordinator-ed.tls.enabled" .) "true") }}
+          - name: ENABLE_TLS_METRIC
+            value: "true"
+          - name: SERVER_CERT_DIR
+            value: "/data/certificates"
+          - name: SERVER_CERT_NAME
+            value: "tls-srv.crt"
+          - name: SERVER_CERT_KEY
+            value: "tls-srv.key"
+          - name: SCRAPE_CA_CERT_DIR
+            value: "/run/secrets/eric-pm-server-ca/"
+          - name: SCRAPE_CA_CERT_NAME
+            value: "ca.crt"
+    {{- else }}
+          - name: ENABLE_TLS_METRIC
+            value: "false"
+    {{- end }}
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: CONTAINER_NAME
+            value: "metricsexporter"
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: TZ
+            value: {{ template "eric-data-distributed-coordinator-ed.timezone" . }}
+          - name: DATADIR
+            value: "/data"
+          - name: METRIC_PREFIX
+            value: "dced"
+          - name: METRIC_PORT
+            value: {{.Values.metricsexporter.port | quote }}
+          - name: HEALTH_PORT
+            value: "9086"
+          - name: LOG_LEVEL
+            value: "info"
+          - name: PVCNAME
+          {{- if .Values.persistence.persistentVolumeClaim.enabled }}
+            value: data-{{ template "eric-data-distributed-coordinator-ed.name" . }}
+          {{- else }}
+            value: "none"
+          {{- end }}
+          ports:
+            - containerPort: {{.Values.metricsexporter.port }}
+  {{- if not .Values.enableNewScrapePattern }}
+    {{- if and ( eq .Values.service.endpoints.pm.tls.enforced "required" ) ( eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" ) }}
+              name: metric-port-tls
+    {{- else }}
+              name: metric-port
+    {{- end }}
+  {{- else }}
+      {{- if and ( eq .Values.service.endpoints.pm.tls.enforced "required" ) ( eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" ) }}
+              name: https-metrics2
+      {{- else }}
+              name: http-metrics2
+      {{- end }}
+  {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9086
+              scheme: HTTP
+            {{ include "eric-data-distributed-coordinator-ed.livenessProbeConfig" (merge (dict "imageName" "metricsexporter") .) | indent 12 }}
+          volumeMounts:
+          - name: data
+            mountPath: {{ template "eric-data-distributed-coordinator-ed.mountPath" . }}
+    {{- if (eq (include "eric-data-distributed-coordinator-ed.tls.enabled" .) "true") }}
+          - name: pmca
+            mountPath: {{ include "eric-data-distributed-coordinator-ed.pmca.path" . }}
+          - name: server-cert
+            mountPath: {{ include "eric-data-distributed-coordinator-ed.serverCert.path" . }}
+    {{- end }}
+        {{- if (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") }}
+          {{- if eq (default "" ((((.Values).global).logShipper).deployment).model) "static" }}
+            {{- include "eric-data-distributed-coordinator-ed.log-shipper-sidecar-mounts" . | indent 10 }}
+          {{- else }}
+            {{- include "eric-log-shipper-sidecar.log-shipper-sidecar-mounts" . | indent 10 }}
+          {{- end }}
+        {{- end }}
+{{- end }}
+{{- if (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") }}
+  {{- if eq (default "" ((((.Values).global).logShipper).deployment).model) "static" }}
+    {{- include "eric-data-distributed-coordinator-ed.log-shipper-sidecar-container" . | indent 8 }}
+  {{- else }}
+    {{- $logshipperImageDict := dict "logshipperSidecarImage" ((((.Values).global).logShipper).config).image -}}
+    {{- include "eric-log-shipper-sidecar.log-shipper-sidecar-container" (mergeOverwrite . $logshipperImageDict ) | indent 8 }}
+  {{- end }}
+{{- end }}
+        - name: dced
+          image: {{ template "eric-data-distributed-coordinator-ed.imagePath" (merge (dict "imageName" "dced") .) }}
+          imagePullPolicy: {{ template "eric-data-distributed-coordinator-ed.dced.imagePullPolicy" . }}
+          {{- if (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") }}
+          command: ["/usr/bin/catatonit"]
+            {{- if eq (include "eric-data-distributed-coordinator-ed.log-streamingMethod" .) "dual" }}
+          args: ["--","/bin/bash","-c", "/opt/redirect/stdout-redirect -config=/etc/stdout-redirect-config.yaml -format=json -redirect=all -logfile={{ include "eric-data-distributed-coordinator-ed.logshipper.storage.path" . }}/etcd.log -container=dced -service-id={{ include "eric-data-distributed-coordinator-ed.name" . }} -run=\"/usr/local/bin/scripts/entrypoint.sh\""]
+            {{- else }}
+          args: ["--","/bin/bash","-c", "/opt/redirect/stdout-redirect -config=/etc/stdout-redirect-config.yaml -format=json -redirect=file -logfile={{ include "eric-data-distributed-coordinator-ed.logshipper.storage.path" . }}/etcd.log -container=dced -service-id={{ include "eric-data-distributed-coordinator-ed.name" . }} -run=\"/usr/local/bin/scripts/entrypoint.sh\""]
+            {{- end }}
+          {{- else }}
+          command: ["/usr/bin/catatonit"]
+          args: ["--","/bin/bash","-c", "/opt/redirect/stdout-redirect -config=/etc/stdout-redirect-config.yaml -format=json -redirect=stdout  -container=dced -service-id={{ include "eric-data-distributed-coordinator-ed.name" . }} -run=\"/usr/local/bin/scripts/entrypoint.sh\""]
+          {{- end }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            procMount: "Default"
+{{- if .Values.seccompProfile }}
+{{- if .Values.seccompProfile.dced }}
+{{- include "eric-data-distributed-coordinator-ed.dced.seccompProfile" . | indent 12 }}
+{{- end }}
+{{- end }}
+            capabilities:
+              drop:
+                - ALL
+          env:
+{{ include "eric-data-distributed-coordinator-ed.etcdctlParameters" . | indent 12 }}
+            - name: POD_NAME
+              valueFrom:
+               fieldRef:
+                 fieldPath: metadata.name
+            - name: CONTAINER_NAME
+              value: "dced"
+            - name: NAMESPACE
+              valueFrom:
+               fieldRef:
+                 fieldPath: metadata.namespace
+            - name: FIFO_DIR
+              value: /fifo
+            - name: HTTP_PROBE_CMD_DIR
+              value: /usr/local/bin/health
+            - name: HTTP_PROBE_SERVICE_NAME
+              value: {{ template "eric-data-distributed-coordinator-ed.name" . }}
+            - name: HTTP_PROBE_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: HTTP_PROBE_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: HTTP_PROBE_CONTAINER_NAME
+              value: "dced"
+            - name: STRICT_LIVENESS_PROBE
+              value: {{ .Values.probes.dced.livenessProbe.StrictLivenessProbe | quote }}
+            - name: HTTP_PROBE_STARTUP_CMD_TIMEOUT_SEC
+              value: {{ .Values.probes.dced.startupProbe.timeoutSeconds | quote }}
+            - name: HTTP_PROBE_READINESS_CMD_TIMEOUT_SEC
+              value: {{ .Values.probes.dced.readinessProbe.timeoutSeconds | quote }}
+            - name: HTTP_PROBE_LIVENESS_CMD_TIMEOUT_SEC
+              value: {{ .Values.probes.dced.livenessProbe.timeoutSeconds | quote }}
+{{- if or (eq (include "eric-data-distributed-coordinator-ed.internalIPFamily" .) "IPv6") (eq (include "eric-data-distributed-coordinator-ed.internalIPFamily" .) "") }}
+            - name: HTTP_PROBE_USE_IPV6
+              value: "1"
+{{- end }}
+            - name: DCED_PORT
+              value: {{ include "eric-data-distributed-coordinator-ed.ports.client" . | quote }}
+            - name: TZ
+              value: {{ include "eric-data-distributed-coordinator-ed.timezone" . }}
+            - name: TLS_ENABLED
+              value: {{ include "eric-data-distributed-coordinator-ed.tls.enabled" . | quote }}
+            - name: ENTRYPOINT_CHECKSNUMBER
+              value: {{ include "eric-data-distributed-coordinator-ed.livenessProbe.entrypointChecksNumber" . | quote }}
+            - name: ENTRYPOINT_RESTART_ETCD
+              value: {{ include "eric-data-distributed-coordinator-ed.livenessProbe.entrypointRestartEtcd" . | quote }}
+            - name: ENTRYPOINT_PIPE_TIMEOUT
+              value: {{ include "eric-data-distributed-coordinator-ed.livenessProbe.entrypointPipeTimeout" . | quote }}
+            - name: ENTRYPOINT_DCED_PROCESS_INTERVAL
+              value: {{ include "eric-data-distributed-coordinator-ed.livenessProbe.entrypointDcedProcessInterval" . | quote }}
+            - name: PEER_CLIENT_KEY_FILE
+              value: {{ include "eric-data-distributed-coordinator-ed.peerClientKeyFile" . }}
+            - name: PEER_AUTO_TLS_ENABLED
+              value: {{ include "eric-data-distributed-coordinator-ed.tls.peerAutoTls.enabled" . | quote }}
+            - name: TRUSTED_CA
+              value: {{ include "eric-data-distributed-coordinator-ed.trustedCA" . }}
+            - name: SIP_TLS_CA_SECRET
+              value: {{ $siptlsCaName }}
+            - name: PEER_CERT_AUTH_ENABLED
+              value: {{ include "eric-data-distributed-coordinator-ed.tls.peerCertAuth.enabled" . | quote }}
+            - name: ETCD_TLS_MIN_VERSION
+              value: {{ .Values.env.dced.ETCD_TLS_MIN | quote }}
+            - name: ETCD_TLS_MAX_VERSION
+              value: {{ .Values.env.dced.ETCD_TLS_MAX | quote }}
+            - name: ETCD_INITIAL_CLUSTER_TOKEN
+              value: {{ template "eric-data-distributed-coordinator-ed.name" . }}
+            - name: ETCD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ETCD_DATA_DIR
+              value: {{ template "eric-data-distributed-coordinator-ed.mountPath" . }}
+            - name: LISTEN_PEER_URLS
+              value: {{ template "eric-data-distributed-coordinator-ed.peerUrl" . }}
+            - name: ETCD_LISTEN_CLIENT_URLS
+              value: {{ template "eric-data-distributed-coordinator-ed.clientUrl" . }}
+            - name: ETCD_ADVERTISE_CLIENT_URLS
+              value: {{ template "eric-data-distributed-coordinator-ed.advertiseClientUrl" . }}
+            - name: ETCD_INITIAL_ADVERTISE_PEER_URLS
+              value: {{ template "eric-data-distributed-coordinator-ed.initialAdvertisePeerUrl" . }}
+              {{- $invalidParameters := include "eric-data-distributed-coordinator-ed.validateParametersHelper" . }}
+{{- if or ( eq ( include "eric-data-distributed-coordinator-ed.tls.peerAutoTls.enabled" . ) "true" ) ( eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "false" ) }}
+            - name: ETCD_PEER_AUTO_TLS
+              value: "true"
+            - name: ETCD_LISTEN_PEER_URLS
+              value: {{ template "eric-data-distributed-coordinator-ed.peerUrl" . }}
+{{- end }}
+{{- if eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" }}
+            - name: ETCD_CLIENT_CERT_AUTH
+              value: {{ include "eric-data-distributed-coordinator-ed.tls.clientEnabled" . | quote }}
+            - name: CLIENT_PORTS
+              value: {{ include "eric-data-distributed-coordinator-ed.ports.client" . | quote }}
+            - name: PEER_CLIENTS_CERTS
+              value: {{ template "eric-data-distributed-coordinator-ed.peerClientCert" . }}
+            - name: ETCD_TRUSTED_CA_FILE
+              value: {{ template "eric-data-distributed-coordinator-ed.trustedCA" . }}
+            - name: ETCD_CERT_FILE
+              value: {{ template "eric-data-distributed-coordinator-ed.certs.servercert" . }}
+            - name: ETCD_KEY_FILE
+              value: {{ template "eric-data-distributed-coordinator-ed.certs.serverkey" . }}
+{{- else}}
+            - name: ACL_ROOT_PASSWORD
+              valueFrom:
+{{ include "eric-data-distributed-coordinator-ed.tls.acls" . | nindent 12 }}
+{{ end }}
+            - name: VALID_PARAMETERS
+              value: {{- include "eric-data-distributed-coordinator-ed.validateParameters" .  | required (printf "Do not specify %s in .Values.settings" $invalidParameters) -}}
+{{- include "eric-data-distributed-coordinator-ed.env.dced" . }}
+          ports:
+            - name: peer
+              containerPort: {{ include "eric-data-distributed-coordinator-ed.ports.peer" . }}
+            - containerPort: {{ include "eric-data-distributed-coordinator-ed.ports.client" . -}}
+            {{- if not .Values.enableNewScrapePattern }}
+              {{- if and ( eq .Values.service.endpoints.pm.tls.enforced "required" ) ( eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" ) }}
+              name: client-port-tls
+              {{- else }}
+              name: client-port
+              {{- end }}
+            {{- else -}}
+              {{- if and ( eq .Values.service.endpoints.pm.tls.enforced "required" ) ( eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" ) }}
+              name: https-metrics1
+              {{- else }}
+              name: http-metrics1
+              {{- end }}
+            {{- end -}}
+{{- include "eric-data-distributed-coordinator-ed.probes.statefulSet.dced" . }}
+          resources:
+            requests:
+              memory: {{ .Values.resources.dced.requests.memory | quote }}
+              cpu: {{ .Values.resources.dced.requests.cpu | quote }}
+              {{- if index .Values.resources.dced.requests "ephemeral-storage" }}
+              ephemeral-storage: {{ index .Values.resources.dced.requests "ephemeral-storage" | quote }}
+              {{- end }}
+            limits:
+              memory: {{ .Values.resources.dced.limits.memory | quote }}
+              cpu: {{ .Values.resources.dced.limits.cpu | quote }}
+              {{- if index .Values.resources.dced.limits "ephemeral-storage" }}
+              ephemeral-storage: {{ index .Values.resources.dced.limits "ephemeral-storage" | quote }}
+              {{- end }}
+          volumeMounts:
+          - name: fifo
+            mountPath: /fifo
+          - name: data
+            mountPath: {{ template "eric-data-distributed-coordinator-ed.mountPath" . }}
+{{ include "eric-data-distributed-coordinator-ed.secretsMountPath" . | indent 10 }}
+        {{- if (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") }}
+          {{- if eq (default "" ((((.Values).global).logShipper).deployment).model) "static" }}
+            {{- include "eric-data-distributed-coordinator-ed.log-shipper-sidecar-mounts" . | indent 10 }}
+          {{- else }}
+            {{- include "eric-log-shipper-sidecar.log-shipper-sidecar-mounts" . | indent 10 }}
+          {{- end }}
+        {{- end }}
+      {{- if include "eric-data-distributed-coordinator-ed.pullSecret" . }}
+      imagePullSecrets:
+        - name: {{ template "eric-data-distributed-coordinator-ed.pullSecret" . }}
+      {{- end }}
+      volumes:
+      - name: fifo
+        emptyDir:
+          medium: Memory
+          sizeLimit: 1Mi
+{{- if (eq (include "eric-data-distributed-coordinator-ed.logshipper-enabled" .) "true") }}
+  {{- if eq (default "" ((((.Values).global).logShipper).deployment).model) "static" }}
+    {{- include "eric-data-distributed-coordinator-ed.log-shipper-sidecar-volumes" . | indent 6 }}
+  {{- else }}
+    {{- include "eric-log-shipper-sidecar.log-shipper-sidecar-volumes" . | indent 6 }}
+  {{- end }}
+{{- end }}
+{{ include "eric-data-distributed-coordinator-ed.secretsVolumes" . | indent 6 }}
+{{- if ( not .Values.persistence.persistentVolumeClaim.enabled ) }}
+      - name: data
+        emptyDir:
+        {{- if index .Values.resources.dced.limits "ephemeral-storage" }}
+          sizeLimit: {{ index .Values.resources.dced.limits "ephemeral-storage" }}
+          {{- end }}
+{{- end }}
+{{- include "eric-data-distributed-coordinator-ed.dcedNodeSelector" . | nindent 6 }}
+    {{- if .Values.topologySpreadConstraints.dced }}
+      topologySpreadConstraints:
+       {{- range $constraint := .Values.topologySpreadConstraints.dced }}
+      - maxSkew: {{ $constraint.maxSkew }}
+        topologyKey: {{ $constraint.topologyKey }}
+        whenUnsatisfiable: {{ $constraint.whenUnsatisfiable }}
+        labelSelector:
+          matchLabels:
+            {{- include "eric-data-distributed-coordinator-ed.selectorLabels" $ | indent 12}}
+       {{- end }}
+    {{- end }}
+    {{- if or (.Values.tolerations.dced) ((.Values.global).tolerations) }}
+      tolerations:
+        {{ include "eric-data-distributed-coordinator-ed.merge-tolerations" (dict "root" . "podbasename" "dced") | nindent 8}}
+    {{- end }}
+{{- if .Values.persistence.persistentVolumeClaim.enabled }}
+  volumeClaimTemplates:
+  - metadata:
+      {{- $vctName := include "eric-data-distributed-coordinator-ed.persistence.volumeMount.name" . -}}
+      {{- $name := include "eric-data-distributed-coordinator-ed.name" . }}
+      {{- $copiedVCTLabels := include "eric-data-distributed-coordinator-ed.copyVCTLabels" (dict "vctName" $vctName "release" .Release "name" $name) }}
+      {{- if $copiedVCTLabels }}
+      labels:
+        {{- $copiedVCTLabels | nindent 8 }}
+      {{- end }}
+      name: {{ template "eric-data-distributed-coordinator-ed.persistence.volumeMount.name" . }}
+    spec:
+      accessModes: [ {{- include "eric-data-distributed-coordinator-ed.persistentVolumeClaim.accessMode" . | quote -}} ]
+      resources:
+        requests:
+          storage: {{ .Values.persistence.persistentVolumeClaim.size | quote }}
+          {{- if .Values.persistence.persistentVolumeClaim.storageClassName }}
+      storageClassName: "{{ .Values.persistence.persistentVolumeClaim.storageClassName }}"
+          {{- end }}
+{{- end }}

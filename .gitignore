@@ -1,0 +1,75 @@
+# Compiled source #
+*.class
+*/bin/*
+*bin/*
+bin
+build
+
+#Bob
+.bob/*
+artifact.properties
+
+# Eclipse files
+.project
+.classpath
+.settings
+.pydevproject
+.metadata
+
+#Intellij Files
+*.iml
+.idea
+
+# Packages
+*.jar
+*.gz
+*.zip
+
+# Maven build files
+target
+reports
+
+# ARQ tests
+arq-perf
+
+# PMD
+.pmd
+
+# Merge files
+*.orig
+*.versionsBackup
+
+# jboss files
+transaction.log
+
+# python
+.pydevproject
+__pycache__
+*.py[cod]
+*$py.class
+
+# Unit test / coverage reports
+htmlcov/
+.coverage
+.coverage.*
+nosetests.xml
+coverage.xml
+*,cover
+
+# Helm check DR
+design-rule-check-report*
+
+# linux
+*.*~
+*~
+*.swp
+helm-target
+output.html
+
+# ARM docker config file
+armdocker-config.json
+
+#httpprobe
+.httpprobe/*
+
+.gitignore (END)

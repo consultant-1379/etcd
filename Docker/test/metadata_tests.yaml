@@ -1,0 +1,16 @@
+schemaVersion: "2.0.0"
+
+# Verifies that the container has the correct:
+# - exposed ports
+# - entrypoint
+# - environment variables
+
+metadataTest:
+  entrypoint: ["/usr/local/bin/etcd"]
+  env:
+    # Verifies we are running the required ETCD version
+    - key: COMPONENT_VERSION
+      value: "v3.5.12"
+    - key: FLAVOUR
+      value: "etcd-v3.5.12-linux-amd64"
+

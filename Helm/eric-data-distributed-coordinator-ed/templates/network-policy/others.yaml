@@ -1,0 +1,23 @@
+{{- if eq (include "eric-data-distributed-coordinator-ed.networkPolicy" .) "true" -}}
+# This resource covers the potential DCED clients (Eg. KMS,Sip-Tls)
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.name" . }}-default-access
+  labels: {{- include "eric-data-distributed-coordinator-ed.labels" . | nindent 4}}
+  annotations: {{- include "eric-data-distributed-coordinator-ed.annotations" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "eric-data-distributed-coordinator-ed.name" . }}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          {{ template "eric-data-distributed-coordinator-ed.name" . }}-access: "true"
+    ports:
+    - port: {{- include "eric-data-distributed-coordinator-ed.ports.client" . | nindent 8 }}
+      protocol: TCP
+{{- end }}

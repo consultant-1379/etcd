@@ -1,0 +1,215 @@
+modelVersion: "2.0"
+flavor: "ADP 2.0"
+service:
+
+  # name of the service:
+  name: "Distributed Coordinator ED"
+
+  # Design Country (set on the source products)
+  design_countries:
+   - IN                 # India
+
+  # Compilation Country (Set on the derivative products)
+  sw_compilation_country: SE
+
+  # Release responsible
+  release_responsible: BCSDRAFF
+
+  #  Design responsible
+  design_responsible: BCSDRAFF
+
+  #  Encryption status
+  encryption_status: "Completed"
+
+  # Bookmarks
+  bookmark: PRIM
+
+  # The documents is optional if all eridoc document revisions are set
+  documents:
+    # Read documents revisions from this file
+    # Use munin-adp generate-pri-input and pri.py to generate the file
+    # Relative file path to product_structure.yaml
+    import: ../build/documents.yaml                                                # Part of Documentation side
+
+
+  # Details of the APR product structure:
+  top_product:
+    alias: ["eric-data-distributed-coordinator-ed"]
+
+    # APR Product Number
+    number: APR 201 59
+
+    # Description
+    description: "Distributed Coordinator ED is a distributed reliable key-value store for the most critical data of a distributed system, with a focus on being: Simple, Secure, Fast & Reliable."
+
+    # Includes
+    includes:
+        # Documents will be added here
+
+       # PRI document
+      - eridoc: 109 21-APR 201 59/10
+        step_strategy: generate
+       # Service User Guide
+      - eridoc: 1/1553-APR 201 59/2
+        step_strategy: highest revision letter
+       # Application Developer's Guide
+      - eridoc: 1/198 17-APR 201 59/2
+        step_strategy: highest revision letter
+       # Risk Assessment Document
+      - eridoc: 1/006 64-APR 201 59/4
+        step_strategy: highest revision letter
+       # Vulnerability Analysis Report
+      - eridoc: 1/1597-APR 201 59/4
+        step_strategy: highest revision letter
+       # Test Specification
+      - eridoc: 1/152 41-APR 201 59/2
+        step_strategy: highest revision letter
+       # Test Report
+      - eridoc: 152 83-APR 201 59/2
+        step_strategy: highest ordinal number
+      # Characteristics report
+      - eridoc: 2/152 83-APR 201 59/2
+        step_strategy: highest ordinal number
+       # Secure Coding Report
+      - eridoc: 1/0360-APR 201 59/4
+        step_strategy: highest revision letter
+       # Trusted Source List Document
+      - eridoc: 240 51-APR 201 59/2
+        step_strategy: highest ordinal number
+      # Scan Report for CISCAT.
+      - eridoc: 3/152 83-APR 201 59/1
+        step_strategy: highest ordinal number
+      # Scan Report for Defensics.
+      - eridoc: 4/152 83-APR 201 59/1
+        step_strategy: highest ordinal number
+
+        # SUSE Licenses
+      - prim: 1/FAL 115 3215
+        rstate: R1A
+      - prim: 3/FAL 115 3215
+        rstate: R1A
+      - prim: 5/FAL 115 3215
+        rstate: R1A
+      - prim: 7/FAL 115 3215
+        rstate: R1A
+
+      # Smart Helm Hooks Template Library
+      - munin: CXA 301 123
+        version: 2.21.0
+        secondPartyProduct: "True"
+      # Smart Helm Hooks Image
+      - munin: CXU 101 1909
+        version: 2.21.0
+        secondPartyProduct: "True"
+      # logshipper sidecar image
+      - munin: CXU 101 1191
+        version: 19.4.0
+        secondPartyProduct: "True"
+
+  # Details of the Source product structure
+  src_products:
+  # Source Code Product
+    - label: Source
+      number: CAV 101 067
+
+  # Details of zero or more derivative product structures, use [] for zero
+  derivative_products:
+  # Label describing the product, must be unique per list item
+
+    - label: "HELM"
+      number: "CXC 201 2039"
+      alias: ["Distributed Coordinator ED - HELM"]
+      derivedFrom:
+        munin: CAV 101 067
+
+    - label: "IMAGE"
+      number: "CXC 201 2038"
+      description: "Distributed Coordinator ED - IMAGE"
+      includes:
+
+        # Common Base OS SLES Micro Image
+        - munin: CXU 101 1463
+          version: 6.17.0
+          secondPartyProduct: "True"
+
+        # Common Base OS Repo
+        - munin: CXC 201 2031
+          version: 6.17.0
+          secondPartyProduct: "True"
+
+        # STDOUT-REDIRECT SW Library
+        - munin: CXA 301 76
+          version: 1.38.0
+
+      uses_foss:
+        - dependencies_file: etcd-dependencies.yaml            #  Dependencies YAML
+        - foss_usage: foss.usage.yaml                                  #  FOSS Usage YAML
+      uses_encryption:
+        - import: encryptions.yaml                                       #  ENCRYPTIONS
+
+      derivedFrom:
+        munin: CAV 101 067
+
+    - label: "BackupRestoreAgent"
+      number: "CXC 174 2753"
+      description: "Distributed Coordinator ED - BRA"
+      includes:
+
+        # Common Base OS SLES Micro Image
+        - munin: CXU 101 1463
+          version: 6.17.0
+          secondPartyProduct: "True"
+
+        # Common Base OS Repo
+        - munin: CXC 201 2031
+          version: 6.17.0
+          secondPartyProduct: "True"
+
+        # BRO Agent API
+        - munin: CXA 301 09
+          version: 5.8.0
+
+        # STDOUT-REDIRECT SW Library
+        - munin: CXA 301 76
+          version: 1.38.0
+
+      uses_foss:
+        - dependencies_file: bragent-dependencies.yaml            #  Dependencies YAML
+        - foss_usage: foss.usage.yaml                                  #  FOSS Usage YAML
+      uses_encryption:
+        - import: encryptions.yaml                                       #  ENCRYPTIONS YAML
+
+      derivedFrom:
+        munin: CAV 101 067
+
+    - label: "MetricsExporter"
+      number: "CXU 101 0988"
+      description: "Distributed Coordinator ED - MetricsExporter"
+      includes:
+
+        # Common Base OS SLES Micro Image
+        - munin: CXU 101 1463
+          version: 6.17.0
+          secondPartyProduct: "True"
+
+        ## Common Base OS Repo
+        - munin: CXC 201 2031
+          version: 6.17.0
+          secondPartyProduct: "True"
+
+        # Metrics Exporter
+        - munin: CXA 301 003
+          version: 1.55.0
+
+        # STDOUT-REDIRECT SW Library
+        - munin: CXA 301 76
+          version: 1.38.0
+
+      uses_foss:
+        #- dependencies_file: metricsexporter-dependencies.yaml            #  Dependencies YAML
+        - foss_usage: foss.usage.yaml                                  #  FOSS Usage YAML
+      uses_encryption:
+        - import: encryptions.yaml                                       #  ENCRYPTIONS YAML
+
+      derivedFrom:
+        munin: CAV 101 067

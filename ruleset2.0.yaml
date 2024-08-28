@@ -1,0 +1,1412 @@
+modelVersion: 2.0
+
+docker-images:
+  - adp-helm-dr-check: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/common-library-adp-helm-dr-check:latest
+  - k8-test: armdocker.rnd.ericsson.se/proj-dgbase-cicd-drop/bob-py3kubehelmbuilder:2.0.1-latest
+  - adp-release-auto: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-release-auto:latest
+  - asciidoc-builder: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bob-asciidocbuilder:latest
+  - raml-builder: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bob-ramlbuilder:latest
+  - doc-builder: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bob-docbuilder:2.6.1-0
+  - image-dr-check: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-image-dr-check:latest
+  - java11-mvn-builder: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-java11mvnbuilder.adp-base-os:1.15.0
+  - dced-image: ${image-internal-full-name}:${var.version}
+  - dced-bragent-image: ${bragent-internal-full-name}:${var.version}
+  - dced-metricsexporter-image: ${metrics-exporter-internal-full-name}:${var.version}
+  - athena: armdocker.rnd.ericsson.se/proj-adp-rob-and-char/athena:0.6.8-0
+  - py3-kube-helm: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bob-py3kubehelmbuilder:1.2.0-99r
+  - pm-metrics-dr-check: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-checkers:latest
+  - admission-control: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-security-admission-control:latest
+
+import:
+  common: common-properties.yaml
+  httpprobe: httpprobe/ruleset2.0.yaml
+
+properties:
+  # Properties for Docker images
+  - image-repo-path-drop: proj-adp-eric-data-distributed-coordinator-ed-drop
+  - image-repo-path-internal: proj-adp-eric-data-distributed-coordinator-ed-internal
+  - image-repo-path-internal-dev: proj-adp-eric-data-distri-coordinator-ed-int-dev
+  - log-shipper-bssf-repo-path: proj-adp-log-released
+  - image-full-name: ${common.image-registry}/${image-repo-path-drop}/${common.image-name}
+  - image-internal-full-name: ${common.image-registry}/${image-repo-path-internal}/${common.image-name}
+  - image-internal-full-name-dev: ${common.image-registry}/${image-repo-path-internal-dev}/${common.image-name}
+  - bragent-internal-full-name: ${common.image-registry}/${image-repo-path-internal}/${common.bragent-image-name}
+  - bragent-internal-full-name-dev: ${common.image-registry}/${image-repo-path-internal-dev}/${common.bragent-image-name}
+  - bragent-full-name: ${common.image-registry}/${image-repo-path-drop}/${common.bragent-image-name}
+  - metrics-exporter-internal-full-name: ${common.image-registry}/${image-repo-path-internal}/${common.metrics-exporter-image-name}
+  - metrics-exporter-internal-full-dev: ${common.image-registry}/${image-repo-path-internal-dev}/${common.metrics-exporter-image-name}
+  - metrics-exporter-full-name: ${common.image-registry}/${image-repo-path-drop}/${common.metrics-exporter-image-name}
+
+    # Properties for Helm charts
+  - helm-chart-repo-name-drop: proj-adp-eric-data-dc-ed-drop-helm
+  - helm-chart-repo-name-internal: proj-adp-eric-data-dc-ed-internal-helm
+  - helm-chart-repo-fullpath-drop: ${common.helm-chart-repo-server}/${helm-chart-repo-name-drop}/${common.helm-chart-name}
+  - helm-chart-repo-gs-all: ${common.helm-chart-repo-server}/proj-adp-gs-all-helm
+  - helm-chart-internal-repo: ${common.helm-chart-repo-server}/${helm-chart-repo-name-internal}
+  - helm-chart-internal-repo-dev: ${common.helm-chart-repo-server}/${helm-chart-repo-name-internal}-dev-generic-local
+  - arm-doc-dev: ${common.helm-chart-repo-server}/proj-adp-eric-data-dc-ed-docs-dev-generic-local/
+  - arm-doc-dev-license: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-cpi-input-released-generic-local/eric-data-distributed-coordinator-ed
+  - SHH-version: ${common.SHH-version}
+
+  # Other properties
+  - docker-params: "--workdir ${env.PWD}/src"
+  - dpraf-report-json: 'doc/dpraf_report.json'
+  - dpraf-flow-prefix: 'DISTRIBUTED_COORDINATOR_ED_FLOW_'
+  - pri-documents-file: 'build/documents.yaml'
+  - pri-input-file: 'build/pri_input.json'
+  - apr-product-number: 'APR20159'
+  - git-clone-url: "https://eadphub@gerrit-gamma.gic.ericsson.se/a/AIA/microservices/etcd"
+  - source-product-number: "CAV101067"
+  - helm-product-number: "CXC2012039"
+  - image-product-number: "CXC 201 1465/1"
+  - image-file-product-number: "CXC2012038"
+  - bragent-image-product-number: "CXC 174 2673/1"
+  - bragent-image-file-product-number: "CXC1742753"
+  - metrics-exporter-product-number: "CXU 101 0877/1"
+  - metrics-exporter-file-product-number: "CXU1010988"
+  - drop-version: 2.11.0-11
+  - pra-released-version: 2.11.0+11
+  # FOSSA properties
+  - fossa-server-endpoint: https://scasfossa.internal.ericsson.com
+  - fossa-project-name: etcd-3.5.12
+  - fossa-report-name: ./doc/fossa-report.json
+  - fossa-revision: "v2.0.0"
+  - bragent-fossa-project-name: brAgent-etcd-3.5.12
+  - bragent-fossa-report-name: ./doc/bragent-fossa-report.json
+  - bragent-fossa-revision: v2.0.0
+  - project-url: https://gerrit-gamma.gic.ericsson.se/a/AIA/microservices/etcd.git
+  - fossa-team-name: PDL-Koopa-Troopas
+  - etcd-dependency-file-name: ./doc/etcd-dependencies.yaml
+  - bragent-dependency-file-name: ./doc/bragent-dependencies.yaml
+  - dependency-file-name: ./doc/dependencies.yaml
+  - license-agreement-file-name: license.agreement.json
+  - license-agreement-file-path: ./doc/${license-agreement-file-name}
+  - output-doc-file-name: ./doc/license-agreement-doc.md
+  - stdout-redirect-tar-url: https://arm.seli.gic.ericsson.se/artifactory/proj-adp-log-release/com/ericsson/bss/adp/log/stdout-redirect/${common.stdout-redirect-version}/eric-log-libstdout-redirect-golang-cxa30176-${common.stdout-redirect-version}.x86_64.tar
+  # Specific FOSS Property
+  - structured-data-file: ${env.PWD}/${common.structured-output-dir}/${common.helm-chart-name}-structured-data.json
+  - structured-data-file-location: ${arm-doc-dev}/${common.helm-chart-name}-structured-data.json
+  - pm-metrics-file: eric-data-distributed-coordinator-ed_pm_metrics.json
+  - service-ports-file-path: ./doc/${common.helm-chart-name}_service_ports.json
+  - service-ports-file-arm-location: ${arm-doc-dev}
+  - generated-ug-fragments-dir: ${env.PWD}/doc/user-guide/fragments/.generated
+
+  # Values used for monitoring tasks
+  - performance-namespace: dced-characteristics-report
+  - monitoring-namespace: monitor
+  - cluster-name: hoff102
+  - monitoring-pm-service-name: eric-pm-server-0
+  - tests-output: "${env.PWD}/pod_logs/testdeploy.log"
+  - report-generator: "test/gen_charRepo.py"
+  - template-input: "doc/characteristic-report/char-example.json"
+  - template-output: "updated_adp_char_report.json"
+  - dev-arm-perf-repo: ${arm-doc-dev}/perf-snapshots
+  - interface-file: ${common.helm-chart-name}_interfaces.zip
+
+  # Common Base OS (CBO) related properties
+  - cbo_version: ${common.CBO_VERSION}
+  - cbo-repo: https://arm.sero.gic.ericsson.se/artifactory/proj-ldc-repo-rpm-local/common_base_os
+  - cbo-sles-repo: ${cbo-repo}/sles
+  - cbo-devenv-repo: https://arm.sero.gic.ericsson.se/artifactory/proj-ldc-repo-rpm-local/adp-dev/adp-build-env/
+  - cbo-image: armdocker.rnd.ericsson.se/proj-ldc/common_base_os_release/sles
+  - microcbo-image: armdocker.rnd.ericsson.se/proj-ldc/common_base_os_micro_release/sles
+
+env:
+  - PWD
+  - DOCKER_PWD (default=Docker)
+  - RELEASE (default=false)
+  - KUBECONFIG
+  - CI_USER (default=eadphub)
+  - KAAS_HOSTNAME (default=todd060.rnd.gic.ericsson.se)
+  - GERRIT_PATCHSET_REVISION (default=HEAD)
+  - GERRIT_USERNAME (default=eadphub)
+  - GERRIT_PASSWORD
+  - JIRA_TOKEN
+  - ERIDOC_UPLOAD
+  - PYTHONPATH (default="")
+  - DPRAF_USERNAME
+  - DPRAF_API_TOKEN (default=69e1e234-a335-450b-a2a5-b748706ca1d1)
+  - EVMS_USERNAME (default=eadphub)
+  - EVMS_PASSWORD
+  - FOSSA_API_KEY
+  - ERIDOC_USERNAME (default=eadpusers)
+  - ERIDOC_PASSWORD
+  - DOCKER_USERNAME
+  - DOCKER_PASSWORD
+  - API_TOKEN
+  - MARKETPLACE_TOKEN
+  - LOG_SHIPPER_VERSION (default=10.1.0-13)
+  - SELI_API_TOKEN
+  - SONAR_AUTH_TOKEN
+  - SONARQUBE_SCANNER_PARAMS
+  - SONAR_HOST_URL
+  - BAZAAR_USERNAME (default=eadphub)
+  - BAZAAR_TOKEN
+  - BAZAAR_SVL (default=1547)
+  - DEBUG (default=false)
+  - MUNIN_TOKEN
+  - BRANCH
+  - HTTPPROBE_HOME (default=httpprobe)
+  - FOCALPOINT_USERNAME (default=eadphub)
+  - FOCALPOINT_PASSWORD
+var:
+  - version
+  - semver
+  - commithash
+  - gitroot
+  - submodparam
+  - pri_params
+  - date
+  - sha256-Helm_Chart
+  - sha256-Docker_Image_Distributed_Coordinator_ED
+  - sha256-Backup_Restore_Agent_IMAGE
+  - IMAGE_CREATED
+  - IMAGE_INTERNAL_NAME
+  - IMAGE_REPOPATH_INTERNAL
+  - BRAGENT_IMAGE_INTERNAL_NAME
+  - LOG_SHIPPER_IMAGE_INTERNAL_NAME
+  - LOG_SHIPPER_IMAGE_BSSF_NAME
+  - LOG_SHIPPER_BSSF_REPO
+  - CHART_INTERNAL_REPO
+  - METRICS_EXPORTER_IMAGE_INTERNAL_NAME
+  - helm-chart-sha256
+  - docker-image-etcd-sha256
+  - docker-image-bragent-sha256
+  - docker-image-metricsexporter-sha256
+  - committhash
+  - build-date
+
+rules:
+  # Make sure repo is clean
+  clean:
+    - task: rm
+      cmd:
+        - rm -rf .bob/
+        - rm -rf build/
+        - docker image prune -a -f --filter "until=12h"
+    - task: mvn-clean
+      cmd:
+        - mvn clean "-Dnexus-url=https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus" "-Dsonar-url=https://sonarqube.lmera.ericsson.se" -f bragent/pom.xml
+  # Hackish way to make the docker mount the git root of the submodule
+  # Bob requires non-empty variables, so we have to keep some harmless
+  # dummy value for var.submodule
+  dockerflags-if-submodule:
+    - task: gitroot
+      cmd:
+        - git rev-parse --show-superproject-working-tree >  .bob/var.gitroot
+        - test ! -s .bob/var.gitroot && echo 'not-a-submodule' > .bob/var.gitroot || true
+    - task: volumeflags
+      cmd:
+        - echo '-l empty.submodparam' > .bob/var.submodparam
+        - /bin/sh -c \
+          'if [ -d "${var.gitroot}" ];then echo "--volume ${var.gitroot}:${var.gitroot}" > .bob/var.submodparam; fi'
+  # Generate version, save commit hash
+  common-init:
+    - rule: dockerflags-if-submodule
+    - task: set-dummy-artifact-checksums
+      cmd:
+       - mkdir -p .bob
+       - echo '3c4f9bc0dc632d261c5728a40423f4d2b12fd8b52a517ea01c8121eda4cf2a1b' > .bob/var.sha256-Helm_Chart
+       - echo 'a491b7caef8ba2ef80ab672937dfb23157528fc4d7b1a005802c041174e781bd' > .bob/var.sha256-Docker_Image_Distributed_Coordinator_ED
+       - echo '1b5375671b3c489c09f011b4d1be45fccd92dbff046bae332a9683bcaee284e8' > .bob/var.sha256-Backup_Restore_Agent_IMAGE
+       - echo '8ea21b0022027b52e5fe6c74170224fb3c4a8e09cf9f729b2d9700e777eb5288' > .bob/var.sha256-Metrics_Exporter_IMAGE
+    - task: version
+      docker-image: adp-release-auto
+      docker-flags:
+        - "${var.submodparam}"
+      cmd:
+        - generate-version --is-release ${env.RELEASE} --output version
+        - sed -e 's@-.*$@@' .bob/var.version > .bob/var.semver
+    - task: commit
+      docker-image: adp-release-auto
+      docker-flags:
+        - "${var.submodparam}"
+      cmd: git rev-parse --short HEAD > .bob/var.commithash
+    - task: build-date
+      cmd: date -u +%FT%TZ > .bob/var.build-date
+  init:
+    - rule: common-init
+    - task: user-guide-date
+      cmd: date > .bob/var.date
+    - task: timestamp
+      cmd: date -u +'%Y-%m-%dT%H:%M:%SZ'  > .bob/var.IMAGE_CREATED
+    - rule: update-logshipper-stdout-redirect
+  doc-init:
+    - task: generate
+      cmd: echo "--debug" > .bob/var.pri_params
+    - task: upload
+      cmd: echo "--debug --upload" > .bob/var.pri_params
+  # Run lint to check Dockerfile, Helm charts and readme files
+  # Replace echo command with actual linting when/if available
+  lint:
+    - task: image-lint
+      docker-image: adp-release-auto
+      cmd: echo "Lint Dockerfile"
+    - task: markdownlint
+      docker-image: doc-builder
+      cmd: markdownlint --config doc/markdownlint.yaml $(git ls-files -- \*\.md | grep -v vendor | cat | xargs)
+    - task: vale
+      docker-image: doc-builder
+      cmd: vale --output line --config /etc/vale/adp.ini --no-wrap $(git ls-files -- \*\.md | grep -v vendor | cat | xargs)
+  lint-helm3:
+    - task: helm-chart-lint
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name}
+    - task: helm-chart-lint-podAntiAffinity
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set affinity.podAntiAffinity=hard
+    - task: helm-chart-lint-nodeSelector
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set nodeSelector.dced.datatype=db,global.nodeSelector.region=west
+    - task: helm-chart-lint-brAgent
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set brAgent.enabled=true
+    - task: helm-chart-lint-brAgent-nodeSelector
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set brAgent.enabled=true,nodeSelector.dced.datatype=db,global.nodeSelector.datatype=db
+    - task: helm-chart-lint-noCerts
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set security.etcd.certificates.enabled=false
+    - task: helm-chart-lint-agent-noCerts
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set security.etcd.certificates.enabled=false --set brAgent.enabled=true
+    - task: helm-chart-lint-userannotations
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set annotations.key1=value1,annotations.key2=value2
+    - task: helm-chart-lint-metricsexporter
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set metricsexporter.enabled=true
+    - task: helm-chart-lint-podPriority
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set podPriority.eric-data-distributed-coordinator-ed.priorityClassName="system-cluster-critical"
+    - task: helm-chart-lint-podPriority
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set brAgent.enabled=true --set podPriority.eric-data-distributed-coordinator-ed-agent.priorityClassName="system-cluster-critical"
+    - task: helm-chart-lint-podPriority
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set brAgent.enabled=true --set podPriority.eric-data-distributed-coordinator-ed.priorityClassName="" --set podPriority.eric-data-distributed-coordinator-ed-agent.priorityClassName=""
+    - task: helm-chart-lint-podPriority
+      docker-image: adp-release-auto
+      cmd: helm lint Helm/${common.helm-chart-name} --set brAgent.enabled=true --set podPriority.eric-data-distributed-coordinator-ed.priorityClassName="system-cluster-critical" --set podPriority.eric-data-distributed-coordinator-ed-agent.priorityClassName="system-cluster-critical"
+#    - task: helm-validate
+#      docker-image: k8-test
+#      docker-flags:
+#        - "--env KUBECONFIG=/tmp/kube.admin.conf"
+#        - "--volume ${env.KUBECONFIG}:/tmp/kube.admin.conf:ro"
+#        - "--volume ${env.PWD}:${env.PWD}"
+#      cmd: /bin/bash -c "/usr/share/helm/3.x/helm template Helm/${common.helm-chart-name} --set brAgent.enabled=true | kubectl apply --dry-run -f -"
+  sonar:
+    - task: agent
+      docker-image: java11-mvn-builder
+      docker-flags:
+        - -v /home/lciadm100/.m2/repository/:/tmp/.m2/repository/
+        - -v /home/lciadm100/.m2/settings.xml:/tmp/.m2/settings.xml
+        - --env SONAR_AUTH_TOKEN=${env.SONAR_AUTH_TOKEN}
+        - --env SONARQUBE_SCANNER_PARAMS=$(echo '${env.SONARQUBE_SCANNER_PARAMS}' | tr -d ' ')
+        - --env SONAR_HOST_URL=${env.SONAR_HOST_URL}
+      cmd:
+        - mvn -f bragent/pom.xml sonar:sonar -Dsonar.analysis.mode=publish "-Dnexus-url=https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus" "-Dsonar-url=https://sonarqube.lmera.ericsson.se" -gs /tmp/.m2/settings.xml -Dmaven.repo.local=/tmp/.m2/repository/
+  setup-repo-paths:
+    - task: is-master
+      cmd:
+        - echo '${image-internal-full-name}' > .bob/var.IMAGE_INTERNAL_NAME
+        - echo '${image-repo-path-internal}' > .bob/var.IMAGE_REPOPATH_INTERNAL
+        - echo '${bragent-internal-full-name}' > .bob/var.BRAGENT_IMAGE_INTERNAL_NAME
+        - echo '${log-shipper-internal-full-name}' > .bob/var.LOG_SHIPPER_IMAGE_INTERNAL_NAME
+        - echo '${log-shipper-bssf-full-name}' > .bob/var.LOG_SHIPPER_IMAGE_BSSF_NAME
+        - echo '${log-shipper-bssf-repo-path}' > .bob/var.LOG_SHIPPER_BSSF_REPO
+        - echo '${helm-chart-internal-repo}' > .bob/var.CHART_INTERNAL_REPO
+        - echo '${metrics-exporter-internal-full-name}' > .bob/var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME
+    - task: is-dev
+      cmd:
+        - echo '${image-internal-full-name-dev}/${env.BRANCH}' > .bob/var.IMAGE_INTERNAL_NAME
+        - echo '${image-repo-path-internal-dev}' > .bob/var.IMAGE_REPOPATH_INTERNAL
+        - echo '${bragent-internal-full-name-dev}/${env.BRANCH}' > .bob/var.BRAGENT_IMAGE_INTERNAL_NAME
+        - echo '${log-shipper-internal-full-name-dev}/${env.BRANCH}' > .bob/var.LOG_SHIPPER_IMAGE_INTERNAL_NAME
+        - echo '${log-shipper-bssf-full-name}' > .bob/var.LOG_SHIPPER_IMAGE_BSSF_NAME
+        - echo '${log-shipper-bssf-repo-path}' > .bob/var.LOG_SHIPPER_BSSF_REPO
+        - echo '${helm-chart-internal-repo-dev}/${env.BRANCH}' > .bob/var.CHART_INTERNAL_REPO
+        - echo '${metrics-exporter-internal-full-dev}/${env.BRANCH}' > .bob/var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME
+        - echo ${var.version}-${env.BRANCH} > .bob/var.version
+  # Generate documents: cpi sdifs
+  generate-docs:
+    - task: markdown-to-pdf
+      docker-image: adp-release-auto
+      cmd: 'doc-handler generate --config doc/handler-pdf-config.yaml
+                                 --output ./build/doc
+                                 --format pdf
+                                 --stylesheet doc/stylesheet/user_guide.css'
+    - task: asciidoc-to-sdif
+      docker-image: asciidoc-builder
+      cmd: /adp_build_doc.sh --project-dir=${env.PWD} --asciidoc-subdir doc/ASCIIDOC --build-dir=${env.PWD}/build
+    - task: generate-html-zip-docs
+      docker-image: adp-release-auto
+      cmd: 'doc-handler generate --config doc/handler-html-config.yaml
+                                 --output ./build/doc-archive
+                                 --format html
+                                 --zip'
+  generate-doc-zip-package:
+    - task: generate-svl-replacement-md
+      docker-image: adp-release-auto
+      cmd: 'doc-handler generate-svl-replacement --product-number ${apr-product-number}
+                                                       --product-version ${var.version}
+                                                       --output ./build/doc-svl-replacement
+                                                       --format html
+                                                       --zip'
+    - task: generate-doc-zip
+      docker-image: adp-release-auto
+      cmd: 'doc-handler generate --config doc/marketplace_config.yaml
+                                 --output ./build/doc-marketplace
+                                 --format html
+                                 --zip'
+  # Upload zip package documents to ARM
+  marketplace-upload:
+    - task: upload-doc-to-arm
+      docker-image: adp-release-auto
+      cmd: 'marketplace upload --arm-api-token ${env.API_TOKEN}
+            --arm-url ${arm-doc-dev}
+            --config doc/marketplace_upload_config.yaml
+            --dev'
+    - task: refresh-adp-portal-marketplace
+      docker-image: adp-release-auto
+      cmd: marketplace refresh --portal-token ${env.MARKETPLACE_TOKEN}
+
+  fossa-init:
+    - task: fossa-init
+      docker-flags:
+        - '--env FOSSA_API_KEY=${env.FOSSA_API_KEY}'
+        - '--env GERRIT_PASSWORD=${env.GERRIT_PASSWORD}'
+        - '--env GERRIT_USERNAME=${env.GERRIT_USERNAME}'
+      docker-image: adp-release-auto
+      cmd:
+         bash -c "echo -e 'machine gerrit-gamma.gic.ericsson.se\nlogin ${env.GERRIT_USERNAME}\npassword ${env.GERRIT_PASSWORD}' > /tmp/.netrc;
+         fossa init --endpoint ${fossa-server-endpoint} --project ${fossa-project-name}"
+  fossa-analyze:
+    - task: fossa-analyze
+      docker-image: adp-release-auto
+      docker-flags:
+        - '--env FOSSA_API_KEY=${env.FOSSA_API_KEY}'
+        - '--env GERRIT_PASSWORD=${env.GERRIT_PASSWORD}'
+        - '--env GERRIT_USERNAME=${env.GERRIT_USERNAME}'
+      cmd:
+        bash -c "echo -e 'machine gerrit-gamma.gic.ericsson.se\nlogin ${env.GERRIT_USERNAME}\npassword ${env.GERRIT_PASSWORD}' > /tmp/.netrc;
+        fossa analyze --revision ${fossa-revision} --branch HEAD --team ${fossa-team-name} --project ${fossa-project-name} -o"
+    - task: fossa-analyze-bragent
+      docker-image: adp-release-auto
+      docker-flags:
+        - '--env FOSSA_API_KEY=${env.FOSSA_API_KEY}'
+        - '--env GERRIT_PASSWORD=${env.GERRIT_PASSWORD}'
+        - '--env GERRIT_USERNAME=${env.GERRIT_USERNAME}'
+      cmd:
+        bash -c "echo -e 'machine gerrit-gamma.gic.ericsson.se\nlogin ${env.GERRIT_USERNAME}\npassword ${env.GERRIT_PASSWORD}' > /tmp/.netrc;
+        fossa analyze --revision ${bragent-fossa-revision} --branch TestChanges --team ${fossa-team-name} --project ${bragent-fossa-project-name} -o"
+  fossa-scan-status-check:
+    - task: wait-for-fossa
+      docker-flags:
+        - "--env FOSSA_API_KEY=${env.FOSSA_API_KEY}"
+      docker-image: adp-release-auto
+      cmd: fossa_scan_status_check
+            -s ${fossa-server-endpoint}
+            -f custom
+            --project ${fossa-project-name}
+            --revision ${fossa-revision}
+            --token ${env.FOSSA_API_KEY} -dl 15
+    - task: wait-for-bragent-fossa
+      docker-flags:
+        - "--env FOSSA_API_KEY=${env.FOSSA_API_KEY}"
+      docker-image: adp-release-auto
+      cmd: fossa_scan_status_check
+            -s ${fossa-server-endpoint}
+            -f custom
+            --project ${bragent-fossa-project-name}
+            --revision ${bragent-fossa-revision}
+            --token ${env.FOSSA_API_KEY} -dl 15
+  fossa-report-attribution:
+    - task: get-fossa-report
+      docker-flags:
+        - "--env FOSSA_API_KEY=${env.FOSSA_API_KEY}"
+      docker-image: adp-release-auto
+      cmd: fossa report attribution
+            --endpoint ${fossa-server-endpoint}
+            --project ${fossa-project-name}
+            --branch master
+            --revision ${fossa-revision}
+            --json > ${fossa-report-name}
+    - task: get-bragent-fossa-report
+      docker-flags:
+        - "--env FOSSA_API_KEY=${env.FOSSA_API_KEY}"
+      docker-image: adp-release-auto
+      cmd: fossa report attribution
+            --endpoint ${fossa-server-endpoint}
+            --project ${bragent-fossa-project-name}
+            --branch master
+            --revision ${bragent-fossa-revision}
+            --json > ${bragent-fossa-report-name}
+  manage-fossa-report-licenses:
+    - task: manage_licenses
+      cmd: python automation_scripts/license_helper_fossa_report.py ${fossa-report-name}
+    - task: manage_licenses
+      cmd: python automation_scripts/license_helper_fossa_report.py ${bragent-fossa-report-name}
+  # The script will check in Bazaar for 3PP that are registered and listed in ${dependency-file-name}
+  # and update the bazaar section accordingly
+  dependency-update:
+    - task: dependency-update
+      docker-image: adp-release-auto
+      cmd: dependencies update
+            --fossa-report ${fossa-report-name}
+            --dependencies ${etcd-dependency-file-name}
+    - task: bragent-dependency-update
+      docker-image: adp-release-auto
+      cmd: dependencies update
+            --fossa-report ${bragent-fossa-report-name}
+            --dependencies ${bragent-dependency-file-name}
+  select-licenses:
+    - task: select_licenses
+      docker-image: adp-release-auto
+      cmd: python automation_scripts/license_selector.py ${etcd-dependency-file-name}
+    - task: bragent-select_licenses
+      docker-image: adp-release-auto
+      cmd: python automation_scripts/license_selector.py ${bragent-dependency-file-name}
+  # Generate CBO license agreement files and merge files generated for different images
+  rpm-license-agreement-generate:
+    - task: generate-dced-license-agreement
+      docker-image: adp-release-auto
+      docker-envs:
+        - DOCKER_USERNAME=${env.GERRIT_USERNAME}
+        - DOCKER_PASSWORD=${env.GERRIT_PASSWORD}
+      docker-in-docker: socket
+      cmd: rpm-license-generator
+          -i ${var.IMAGE_INTERNAL_NAME}:${var.version}
+          --debug
+          --suse-only
+          -o build/dced_license.agreement.json
+    - task: generate-dced-bragent-license-agreement
+      docker-image: adp-release-auto
+      docker-envs:
+        - DOCKER_USERNAME=${env.GERRIT_USERNAME}
+        - DOCKER_PASSWORD=${env.GERRIT_PASSWORD}
+      docker-in-docker: socket
+      cmd: rpm-license-generator
+          -i ${var.BRAGENT_IMAGE_INTERNAL_NAME}:${var.version}
+          --debug
+          --suse-only
+          -o build/bragent_license.agreement.json
+    - task: generate-dced-metricsexporter-license-agreement
+      docker-image: adp-release-auto
+      docker-envs:
+        - DOCKER_USERNAME=${env.GERRIT_USERNAME}
+        - DOCKER_PASSWORD=${env.GERRIT_PASSWORD}
+      docker-in-docker: socket
+      cmd: rpm-license-generator
+          -i ${var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME}:${var.version}
+          --debug
+          --suse-only
+          -o build/metricsexporter_license.agreement.json
+    # Generate license agreement of Smart-helm-hooks
+    - task: SHH-license-agreement
+      docker-image: adp-release-auto
+      cmd:
+       - mkdir -p build
+       - curl -4 -H "X-JFrog-Art-Api:${env.API_TOKEN}" "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-cpi-input-released-generic-local/eric-lcm-smart-helm-hooks/${common.SHH-semver}/license.agreement.json" > build/SHH_license.agreement.json
+    # Generate license agreement of logshipper
+    - task: LS-license-agreement
+      docker-image: adp-release-auto
+      cmd:
+       - mkdir -p build
+       - curl -4 -H "X-JFrog-Art-Api:${env.API_TOKEN}" "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-cpi-input-released-generic-local/${common.log-shipper-bssf-name}/${common.logshipper-version}/license.agreement.json" > build/log-shipper_license.agreement.json
+      # Merge all the license files
+    - task: merge-la-fragments
+      docker-image: adp-release-auto
+      cmd: license-agreement merge
+        --license-agreement build/dced_license.agreement.json
+        --license-agreement build/bragent_license.agreement.json
+        --license-agreement build/metricsexporter_license.agreement.json
+        --license-agreement build/SHH_license.agreement.json
+        --license-agreement build/log-shipper_license.agreement.json
+        --license-agreement ${license-agreement-file-path}
+        --output build/license.agreement.json
+  merge-dependencies:
+    - task: generate-license
+      docker-image: adp-release-auto
+      cmd: dependencies merge
+            --dependencies ${etcd-dependency-file-name}
+            --dependencies ${bragent-dependency-file-name}
+            --output-path ${dependency-file-name}
+  generate-license-agreement:
+    - task: generate-license
+      docker-image: adp-release-auto
+      cmd: license-agreement generate
+            --fossa-report ${fossa-report-name}
+            --fossa-report ${bragent-fossa-report-name}
+            --dependencies ${dependency-file-name}
+            --output ${license-agreement-file-path}
+  license-agreement-validate:
+    - task: license-agreement-validate
+      docker-image: adp-release-auto
+      cmd: license-agreement validate
+            --license-agreement ${license-agreement-file-path}
+  license-agreement-doc-generate:
+    - task: license-agreement-doc-generate
+      docker-image: adp-release-auto
+      cmd: license-agreement doc-generate
+             --license-agreement ${license-agreement-file-path}
+             --output ${output-doc-file-name}
+
+  scan-bazaar:
+    - task: scan-bazaar
+      docker-image: adp-release-auto
+      cmd: dependencies update
+        --dependencies ${etcd-dependency-file-name}
+        --scan-bazaar
+        --bazaar-user ${env.GERRIT_USERNAME}
+        --bazaar-token ${env.BAZAAR_TOKEN}
+
+  # build bragent surefire test report
+  surefire-report:
+    - task: mvn-surefire-report
+      docker-image: java11-mvn-builder
+      docker-flags:
+        - -v /home/lciadm100/.m2/repository/:/tmp/.m2/repository/
+        - -v /home/lciadm100/.m2/settings.xml:/tmp/.m2/settings.xml
+      cmd:  mvn surefire-report:report "-Dnexus-url=https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus" "-Dsonar-url=https://sonarqube.lmera.ericsson.se" -f bragent/pom.xml -gs /tmp/.m2/settings.xml -Dmaven.repo.local=/tmp/.m2/repository/ > .bob/surefire-report.log
+
+  # Build and deploy agent jar file
+  bragent-install:
+    - task: mvn-install
+      docker-image: java11-mvn-builder
+      docker-flags:
+        - -v /home/lciadm100/.m2/repository/:/tmp/.m2/repository/
+        - -v /home/lciadm100/.m2/settings.xml:/tmp/.m2/settings.xml
+        - -v /var/run/docker.sock:/var/run/docker.sock
+        - -v /usr/bin/docker:/bin/docker
+        - -v /usr/lib64/libltdl.so.7:/usr/lib64/libltdl.so.7
+        - --privileged
+      cmd:
+        - mvn clean install -DskipTests "-Dnexus-url=https://arm1s11-eiffel004.eiffel.gic.ericsson.se:8443/nexus" "-Dsonar-url=https://sonarqube.lmera.ericsson.se" -f bragent/pom.xml -gs /tmp/.m2/settings.xml -Dmaven.repo.local=/tmp/.m2/repository/ > .bob/bragent-deploy.log
+  # Build docker image
+  image-build:
+    - task: login
+      cmd: docker login -u ${env.DOCKER_USERNAME} -p ${env.DOCKER_PASSWORD} armdocker.rnd.ericsson.se
+    - task: set-permission
+      cmd: chmod 755 ./${env.DOCKER_PWD}/build.sh
+        && chmod 755 ./bragent/${env.DOCKER_PWD}/build.sh
+        && chmod 755 ./${env.DOCKER_PWD}/metricsexporter/build.sh
+    - task: docker-build
+      cmd: docker run --rm --privileged --workdir ${env.PWD}
+        --volume ${env.PWD}:${env.PWD}
+        --volume $HOME/.docker/armdocker-config.json:/armdocker-config.json
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        --env CBO_REPO=${cbo-sles-repo}
+        --env CBO_VERSION=${cbo_version}
+        --env CBO_DEVENV_REPO=${cbo-devenv-repo}
+        --env MICROCBO_IMAGE=${microcbo-image}:${cbo_version}
+        --env DCED_REGISTRY=${image-internal-full-name}
+        --env IMAGE_VERSION=${var.version}
+        --env IMAGE_CREATED="${var.IMAGE_CREATED}"
+        --env IMAGE_REVISION="${var.commithash}"
+        --env REPOSITORY=${common.gerrit-url}
+        --env COMMIT=${var.commithash}
+        --env APP_VERSION=${var.version}
+        ${cbo-image}:${cbo_version}
+        ./Docker/build.sh
+    - task: docker-build-bra
+      cmd: docker run --rm --privileged --workdir ${env.PWD}
+        --volume ${env.PWD}:${env.PWD}
+        --volume $HOME/.docker/armdocker-config.json:/armdocker-config.json
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        --env CBO_REPO=${cbo-sles-repo}
+        --env CBO_VERSION=${cbo_version}
+        --env CBO_DEVENV_REPO=${cbo-devenv-repo}
+        --env MICROCBO_IMAGE=${microcbo-image}:${cbo_version}
+        --env DCED_BRA_REGISTRY=${bragent-internal-full-name}
+        --env IMAGE_VERSION="${var.version}"
+        --env IMAGE_CREATED="${var.IMAGE_CREATED}"
+        --env IMAGE_REVISION="${var.commithash}"
+        ${cbo-image}:${cbo_version}
+        ./bragent/Docker/build.sh
+    - task: docker-build-metricsexporter
+      cmd: docker run --rm --privileged --workdir ${env.PWD}
+        --volume ${env.PWD}:${env.PWD}
+        --volume $HOME/.docker/armdocker-config.json:/armdocker-config.json
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        --env CBO_REPO=${cbo-sles-repo}
+        --env CBO_VERSION=${cbo_version}
+        --env CBO_DEVENV_REPO=${cbo-devenv-repo}
+        --env MICROCBO_IMAGE=${microcbo-image}:${cbo_version}
+        --env DCED_ME_REGISTRY=${metrics-exporter-internal-full-name}
+        --env IMAGE_VERSION="${var.version}"
+        --env IMAGE_CREATED="${var.IMAGE_CREATED}"
+        --env IMAGE_REVISION="${var.commithash}"
+        ${cbo-image}:${cbo_version}
+        ./Docker/metricsexporter/build.sh
+
+  # Container structure tests
+  image-test:
+    - task: set-permission
+      cmd: chmod 755 ./${env.DOCKER_PWD}/test/setup.sh
+        && chmod 755 ./${env.DOCKER_PWD}/test/runtests.sh
+    - task: setup-structure-test
+      cmd: ./${env.DOCKER_PWD}/test/setup.sh
+    - task: run-structure-test
+      cmd: ./${env.DOCKER_PWD}/test/runtests.sh ${var.IMAGE_INTERNAL_NAME}:${var.version}
+  # Push image to internal repo
+  image-push-internal:
+    - task: image-push-internal
+      cmd: docker push ${var.IMAGE_INTERNAL_NAME}:${var.version}
+    - task: bragent-image-push-internal
+      cmd: docker push ${var.BRAGENT_IMAGE_INTERNAL_NAME}:${var.version}
+    - task: metricsexporter-image-push-internal
+      cmd: docker push ${var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME}:${var.version}
+  # Check docker image design rules for compliance
+  image-dr-check:
+    - task: check-image-dr
+      docker-image: image-dr-check
+      docker-flags:
+      - "-v /var/run/docker.sock:/var/run/docker.sock"
+      - "-u $(id -u):$(id -g) $(for x in $(id -G); do printf \" --group-add %s\" \"$x\"; done)"
+      cmd: image-dr-check -i ${var.IMAGE_INTERNAL_NAME}:${var.version} -o .bob/
+    - task: bragent-check-image-dr
+      docker-image: image-dr-check
+      docker-flags:
+      - "-v /var/run/docker.sock:/var/run/docker.sock"
+      - "-u $(id -u):$(id -g) $(for x in $(id -G); do printf \" --group-add %s\" \"$x\"; done)"
+      cmd: image-dr-check -i ${var.BRAGENT_IMAGE_INTERNAL_NAME}:${var.version} -o .bob/
+    - task: metrics-exporter-check-image-dr
+      docker-image: image-dr-check
+      docker-flags:
+      - "-v /var/run/docker.sock:/var/run/docker.sock"
+      - "-u $(id -u):$(id -g) $(for x in $(id -G); do printf \" --group-add %s\" \"$x\"; done)"
+      cmd: image-dr-check -i ${var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME}:${var.version} -o .bob/
+
+  # Check helm chart design rules for compliance
+  helm-chart-check:
+    - task: helm-chart-check-dr
+      docker-image: adp-helm-dr-check
+      cmd: java -jar /helm-dr-check.jar --helm-chart .bob/${common.helm-chart-name}-internal/${common.helm-chart-name}-${var.version}.tgz --output .bob/ > .bob/design-rule-check-report.log
+  # Create internal version of helm chart
+  helm-package-internal:
+    - task: helm-package-internal
+      docker-image: adp-release-auto
+      cmd: helm-package
+        -f Helm/${common.helm-chart-name}
+        -w .bob
+        -o .bob/${common.helm-chart-name}-internal
+        -v ${var.version}
+        -r VERSION=${var.version}
+        -r REPO_PATH=${var.IMAGE_REPOPATH_INTERNAL}
+        --replace eric-product-info.yaml:REPO_PATH=${var.IMAGE_REPOPATH_INTERNAL}
+        --replace eric-product-info.yaml:VERSION=${var.version}
+        -r LOG_SHIPPER_BSSF_REPO=${var.LOG_SHIPPER_BSSF_REPO}
+        -r LOG_SHIPPER_BSSF_NAME=${common.log-shipper-bssf-name}
+        -r LOG_SHIPPER_BSSF_VERSION=${env.LOG_SHIPPER_VERSION}
+        --replace templates/adp-common/common/_tolerations-merge.tpl:REPLACE_WITH_SERVICE_NAME=${common.helm-chart-name}
+
+  # Push image to ci-internal repo, create internal version of helm chart and pushes it to internal repo
+  helm-upload-internal:
+    - task: helm-upload-internal
+      docker-image: adp-release-auto
+      cmd: upload_file.sh
+        --filename=.bob/${common.helm-chart-name}-internal/${common.helm-chart-name}-${var.version}.tgz
+        --repository=${var.CHART_INTERNAL_REPO}/${common.helm-chart-name}
+        --api-token=${env.API_TOKEN}
+        --properties="product_metadata=${structured-data-file-location}"
+        --add-local=true
+  # Run test suite on a kubernetes cluster
+  # KAAS_HOSTNAME parameter must be set
+  run-tests-certoff:
+    - task: copy-chart
+      cmd: cp ".bob/${common.helm-chart-name}-internal/${common.helm-chart-name}-${var.version}.tgz" "/tmp"
+    - task: run-tests
+      docker-image: k8-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: 'python testframework/bootstrap.py
+                      --kubernetes-admin-conf="${env.KUBECONFIG}"
+                      --chart-archive="/tmp/${common.helm-chart-name}-${var.version}.tgz"
+                      --helm-repo="${var.CHART_INTERNAL_REPO}"
+                      --baseline_chart_version="${var.version}"
+                      --baseline_chart_name="${common.helm-chart-name}"
+                      --conf-file test/config.py
+                      --armuser="${env.CI_USER}"
+                      --armpswd="${env.API_TOKEN}"
+                      --conf-class-name TestCertOff'
+
+  run-tests-certon:
+    - task: copy-chart
+      cmd: cp ".bob/${common.helm-chart-name}-internal/${common.helm-chart-name}-${var.version}.tgz" "/tmp"
+    - task: run-tests
+      docker-image: k8-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: 'python testframework/bootstrap.py
+                      --kubernetes-admin-conf="${env.KUBECONFIG}"
+                      --chart-archive="/tmp/${common.helm-chart-name}-${var.version}.tgz"
+                      --helm-repo="${var.CHART_INTERNAL_REPO}"
+                      --baseline_chart_version="${var.version}"
+                      --baseline_chart_name="${common.helm-chart-name}"
+                      --conf-file test/config.py
+                      --armuser="${env.CI_USER}"
+                      --armpswd="${env.API_TOKEN}"
+                      --conf-class-name TestCertOn'
+
+  run-tests-certoff-versions:
+    - task: copy-chart
+      cmd: cp ".bob/${common.helm-chart-name}-internal/${common.helm-chart-name}-${var.version}.tgz" "/tmp"
+    - task: run-tests
+      docker-image: k8-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: 'python testframework/bootstrap.py
+                      --kubernetes-admin-conf="${env.KUBECONFIG}"
+                      --chart-archive="/tmp/${common.helm-chart-name}-${var.version}.tgz"
+                      --helm-repo="${var.CHART_INTERNAL_REPO}"
+                      --baseline_chart_version="${var.version}"
+                      --baseline_chart_name="${common.helm-chart-name}"
+                      --conf-file test/config.py
+                      --armuser="${env.CI_USER}"
+                      --armpswd="${env.API_TOKEN}"
+                      --conf-class-name TestCertOffVersions'
+
+  run-tests-certon-versions:
+    - task: copy-chart
+      cmd: cp ".bob/${common.helm-chart-name}-internal/${common.helm-chart-name}-${var.version}.tgz" "/tmp"
+    - task: run-tests
+      docker-image: k8-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: 'python testframework/bootstrap.py
+                      --kubernetes-admin-conf="${env.KUBECONFIG}"
+                      --chart-archive="/tmp/${common.helm-chart-name}-${var.version}.tgz"
+                      --helm-repo="${var.CHART_INTERNAL_REPO}"
+                      --baseline_chart_version="${var.version}"
+                      --baseline_chart_name="${common.helm-chart-name}"
+                      --armuser="${env.CI_USER}"
+                      --armpswd="${env.API_TOKEN}"
+                      --conf-file test/config.py
+                      --conf-class-name TestCertOnVersions'
+
+  run-characteristics-tests:
+    - task: copy-chart
+      cmd: cp ".bob/${common.helm-chart-name}-internal/${common.helm-chart-name}-${var.version}.tgz" "/tmp"
+    - task: run-characteristics-tests
+      docker-image: k8-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: 'python testframework/bootstrap.py
+                      --kubernetes-admin-conf="${env.KUBECONFIG}"
+                      --kubernetes-namespace="${performance-namespace}"
+                      --chart-archive="/tmp/${common.helm-chart-name}-${var.version}.tgz"
+                      --helm-repo="${var.CHART_INTERNAL_REPO}"
+                      --baseline_chart_version="${var.version}"
+                      --baseline_chart_name="${common.helm-chart-name}"
+                      --armuser="${env.CI_USER}"
+                      --armpswd="${env.API_TOKEN}"
+                      --conf-file test/config.py
+                      --conf-class-name TestCharacteristics'
+
+  # Upload documents to eridoc
+  # Call eridoc:upload when merging to master
+  eridoc:
+    # Check if eridoc_config.yaml is OK
+    - task: dryrun
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env ERIDOC_USERNAME=${env.ERIDOC_USERNAME}
+        - --env ERIDOC_PASSWORD=${env.ERIDOC_PASSWORD}
+      cmd: eridoc upload --config ./doc/eridoc.config.yaml --debug --no-validate-certificates --set semver=${var.semver} --dry-run >> .bob/eridoc-upload-report.log 2>&1
+    # Upload documents to eridoc
+    - task: upload
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env ERIDOC_USERNAME=${env.ERIDOC_USERNAME}
+        - --env ERIDOC_PASSWORD=${env.ERIDOC_PASSWORD}
+      cmd: eridoc upload --config ./doc/eridoc.config.yaml --debug --no-validate-certificates --set semver=${var.semver} >> .bob/eridoc-upload-report.log 2>&1
+    # Approve documents to eridoc
+    - task: approve
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env ERIDOC_USERNAME=${env.ERIDOC_USERNAME}
+        - --env ERIDOC_PASSWORD=${env.ERIDOC_PASSWORD}
+      cmd: eridoc approve --config ./doc/eridoc.config.yaml --debug --no-validate-certificates >> .bob/eridoc-approve-report.log 2>&1
+  # The rule generates DP-RAF configuration files to upload on https://dp-raf.internal.ericsson.com/
+  generate-dpraf-configurations:
+    - task: generate-config-files
+      docker-image: adp-release-auto
+      cmd: dpraf config-generate
+           --debug
+           -c ${common.dpraf-config-file}
+           -o ${common.dpraf-output-dir}
+  # The rule verifies that the correct configurations are uploaded in DPRAF
+  validate-dpraf-configuration:
+    - task: verify-configuration
+      docker-image: adp-release-auto
+      cmd: dpraf config-check
+            --debug
+            -c ${common.dpraf-config-file}
+            -k ${env.DPRAF_API_TOKEN}
+  # Generate preliminary version of PRI
+  # Enable upload by setting env variable to ERIDOC_UPLOAD=--upload, only do this in merging to master
+  # Generate PRI document
+  generate-pri:
+    - task: output-dir
+      cmd: mkdir -p build
+    - task: generate-pri-inputs
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env ERIDOC_USERNAME="${env.ERIDOC_USERNAME}"
+        - --env ERIDOC_PASSWORD="${env.ERIDOC_PASSWORD}"
+      cmd:
+        - munin-doc search
+          -c doc/product_structure.yaml
+          -docs build/documents.yaml
+          -pi build/pri_input.json
+          -v ${var.version}
+          --latest-approved
+    - task: generate-pri
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env PRODUCT_RELEASE_NUMBER="${var.version}"
+        - --env GERRIT_USERNAME="${env.ERIDOC_USERNAME}"
+        - --env GERRIT_PASSWORD="${env.ERIDOC_PASSWORD}"
+        - --env JIRA_TOKEN='${env.JIRA_TOKEN}'
+        - --env ERIDOC_USERNAME="${env.ERIDOC_USERNAME}"
+        - --env ERIDOC_PASSWORD="${env.ERIDOC_PASSWORD}"
+        - --env ERIDOC_CONFIG="${common.eridoc-config}"
+        - --env JIRA_COMPONENT_LONG_NAME="${common.jira-component-name}"
+        - --env GERRIT_URL="${common.gerrit-url}"
+        - --env DPRAF_REPORT_JSON="${pri-input-file}"
+        - --env DOCUMENTS_YAML="${pri-documents-file}"
+        - --env PRI_MANUAL_JSON="${common.pri-manual-input}"
+        - --env TO_CHANGE="${env.GERRIT_PATCHSET_REVISION}"
+        - --env PRI_TEMPLATE_VERSION="1.13"
+        - --env FROM_CHANGE="40e4fa07bfaddd4ca4c5f0b1a4ec00b86a27ebec"
+      cmd: pri.py
+           ${var.pri_params}
+           --checksum helm_chart="${var.sha256-Helm_Chart}"
+           --checksum docker_image_distributed_coordinator_ed="${var.sha256-Docker_Image_Distributed_Coordinator_ED}"
+           --checksum backup_restore_agent_image="${var.sha256-Backup_Restore_Agent_IMAGE}"
+           --eridoc-set semver=${var.semver}
+           --template-version=1.13
+           --generate-release-mail
+           --mimer
+  # The rule creates a CSV file from the dependencies.yaml file and uploads it to EVMS
+  evms-registration:
+    - task: csv-to-archive
+      docker-image: adp-release-auto
+      cmd: dependencies generate --evms
+                                 --format csv
+                                 --evms-product-name "${common.evms-product-name}"
+                                 --evms-product-version ${var.version}
+                                 --output-directory .
+                                 -d ${dependency-file-name}
+                                 -d ./doc/2pp_dependencies.yaml
+  # The rule checks the current version is registered in EVMS
+  evms-checker:
+    - task: evms-checker
+      docker-image: adp-release-auto
+      cmd: check-evms registration
+                                 --evms-user ${env.EVMS_USERNAME}
+                                 --evms-password ${env.EVMS_PASSWORD}
+                                 --product-name "${common.evms-product-name}"
+                                 --product-version ${var.version}
+                                 --check-cbos
+                                 --report-format html
+                                 --output-directory .
+                                 --debug
+  # Publish docker images to drop repository
+  # Call publish only when merged to master
+  image-publish:
+    - task: image-pull-internal
+      cmd: docker pull ${var.IMAGE_INTERNAL_NAME}:${var.version}
+    - task: image-tag-public
+      cmd: docker tag ${var.IMAGE_INTERNAL_NAME}:${var.version} ${image-full-name}:${var.version}
+    - task: image-push-public
+      cmd: docker push ${image-full-name}:${var.version}
+    - task: bragent-image-pull-internal
+      cmd: docker pull ${var.BRAGENT_IMAGE_INTERNAL_NAME}:${var.version}
+    - task: bragent-image-tag-public
+      cmd: docker tag ${var.BRAGENT_IMAGE_INTERNAL_NAME}:${var.version} ${bragent-full-name}:${var.version}
+    - task: bragent-image-push-public
+      cmd: docker push ${bragent-full-name}:${var.version}
+    - task: metrics-exporter-image-pull-internal
+      cmd: docker pull ${var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME}:${var.version}
+    - task: metrics-exporter-image-tag-public
+      cmd: docker tag ${var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME}:${var.version} ${metrics-exporter-full-name}:${var.version}
+    - task: metrics-exporter-image-push-public
+      cmd: docker push ${metrics-exporter-full-name}:${var.version}
+
+  # Create public version of helm chart
+  helm-package-public:
+    - task: helm-package-public
+      docker-image: adp-release-auto
+      cmd: helm-package
+        -f Helm/${common.helm-chart-name}
+        -w .bob
+        -o build
+        -v ${var.version}
+        -r VERSION=${var.version}
+        -r REPO_PATH=${image-repo-path-drop}
+        --replace eric-product-info.yaml:REPO_PATH=${image-repo-path-drop}
+        --replace eric-product-info.yaml:VERSION=${var.version}
+        -r LOG_SHIPPER_BSSF_REPO=${var.LOG_SHIPPER_BSSF_REPO}
+        -r LOG_SHIPPER_BSSF_NAME=${common.log-shipper-bssf-name}
+        -r LOG_SHIPPER_BSSF_VERSION=${env.LOG_SHIPPER_VERSION}
+        --replace templates/adp-common/common/_tolerations-merge.tpl:REPLACE_WITH_SERVICE_NAME=${common.helm-chart-name}
+
+  # Publish helm charts to drop repository
+  # Call publish only when merged to master
+  helm-publish:
+    - task: helm-upload
+      docker-image: adp-release-auto
+      cmd: upload_file.sh
+        --filename=build/${common.helm-chart-name}-${var.version}.tgz
+        --repository=${helm-chart-repo-fullpath-drop}
+        --api-token=${env.API_TOKEN}
+        --properties="product_metadata=${structured-data-file-location}"
+        --add-local=true
+  # Create and push git tag. Example v1.0.0-55
+  create-git-tag:
+    - task: git-tag
+      cmd:
+        - git tag -a "v${var.version}" -m "Release ${var.version}" ${env.GERRIT_PATCHSET_REVISION}
+        - git push origin "v${var.version}"
+  # Generate artifacts used as input for ADP Staging pipeline
+  generate-input-for-adp-staging:
+    - task: adp-artifacts-properties
+      docker-image: adp-release-auto
+      cmd: generate-adp-artifacts
+        --chart-name ${common.helm-chart-name}
+        --chart-version ${var.version}
+        --chart-repo ${helm-chart-repo-gs-all}
+        --image-name ${common.image-name}
+        --image-version ${var.version}
+        --image-repo ${common.image-registry}/${image-repo-path-drop}
+
+  # Requires SELI_API_TOKEN env variable
+  update-logshipper-stdout-redirect:
+    - task: fetch
+      cmd: curl -4 -H "X-JFrog-Art-Api:${env.SELI_API_TOKEN}" ${stdout-redirect-tar-url} -o .bob/stdout.tar
+    - task: untar
+      cmd: tar -xvf .bob/stdout.tar -C .bob
+    - task: copy
+      cmd: cp .bob/stdout-redirect Docker/
+    - task: copy-to-bra
+      cmd: cp .bob/stdout-redirect bragent/Docker/
+    - task: copy-to-metrics
+      cmd: cp .bob/stdout-redirect Docker/metricsexporter
+
+  bazaar-request:
+    - task: bazaar-request
+      docker-image: adp-release-auto
+      cmd: dependencies register
+        --dependencies ${dependency-file-name}
+        --bazaar
+        --bazaar-user ${env.BAZAAR_USERNAME}
+        --bazaar-token ${env.BAZAAR_TOKEN}
+        --bazaar-svl ${env.BAZAAR_SVL}
+
+  # Generate Characteristics Report
+  generate-characteristics-report:
+    - task: characteristics-report
+      docker-image: adp-release-auto
+      cmd: characteristics-report generate
+            -f ./doc/characteristic-report/updated_adp_char_report.json
+            --arm-api-token ${env.API_TOKEN}
+            --arm-url ${arm-doc-dev}
+            -out ./build
+            --format html
+  # Structured data
+  structured-data-generate:
+    - task: create-report-dir
+      cmd: mkdir -p ${common.structured-output-dir}
+    - task: structured-data-generate
+      docker-image: adp-release-auto
+      cmd: structure-data generate
+        --service-name ${common.helm-chart-name}
+        --apr-product ${apr-product-number}
+        --foss-license-agreement "${arm-doc-dev-license}/${var.version}/license.agreement.json"
+        --pm-metrics "${arm-doc-dev}/documents/${pm-metrics-file}"
+        --security-attributes "${arm-doc-dev}/documents/eric-data-distributed-coordinator-ed_security_attributes.json
+        --characteristic-report "${dev-arm-perf-repo}/characteristics-report.json"
+        --interfaces "${arm-doc-dev}/documents/${interface-file}"
+        --output ${common.structured-output-dir}
+
+  structured-data-validate:
+    - task: structured-data-validate
+      docker-image: adp-release-auto
+      cmd: structure-data validate
+        --file ${structured-data-file}
+
+  structured-data-upload:
+    - task: structured-data-upload
+      docker-image: adp-release-auto
+      cmd: structure-data upload
+        --file ${structured-data-file}
+        --url ${arm-doc-dev}
+        --token ${env.API_TOKEN}
+
+  #upload PMMetrics.json file
+  upload-pm-metrics:
+    - task: upload-pm-metrics-json
+      docker-image: adp-release-auto
+      cmd: upload_file.sh
+            -f "doc/${pm-metrics-file}"
+            -r "${arm-doc-dev}/documents/"
+            -t "${env.API_TOKEN}"
+
+  # Create product versions from product structure and FOSS dependencies
+  munin-update-version:
+    - task: create-products
+      docker-image: adp-release-auto
+      cmd: munin create-versions -t ${env.MUNIN_TOKEN} -c doc/product_structure.yaml -v ${var.semver} --debug ${env.DEBUG}
+
+  # Fetch checksums of images and helm charts
+  fetch-artifact-checksums:
+    # Get artifact hashs
+    - task: init
+      docker-image: adp-release-auto
+      cmd:
+        - arm get-checksum --url https://arm.sero.gic.ericsson.se/artifactory/proj-adp-eric-data-dc-ed-released-helm/eric-data-distributed-coordinator-ed/eric-data-distributed-coordinator-ed-${pra-released-version}.tgz --sha256 --apikey ${env.API_TOKEN} --output .bob/var.helm-chart-sha256
+        - cat .bob/var.helm-chart-sha256
+        - arm get-checksum --url https://arm.seli.gic.ericsson.se/artifactory/docker-default/proj-adp-eric-data-distributed-coordinator-ed-drop/${common.image-name}/${drop-version}/manifest.json --sha256 --apikey ${env.SELI_API_TOKEN} --output .bob/var.docker-image-etcd-sha256
+        - cat .bob/var.docker-image-etcd-sha256
+        - arm get-checksum --url https://arm.seli.gic.ericsson.se/artifactory/docker-default/proj-adp-eric-data-distributed-coordinator-ed-drop/${common.bragent-image-name}/${drop-version}/manifest.json --sha256 --apikey ${env.SELI_API_TOKEN} --output .bob/var.docker-image-bragent-sha256
+        - cat .bob/var.docker-image-bragent-sha256
+        - arm get-checksum --url https://arm.seli.gic.ericsson.se/artifactory/docker-default/proj-adp-eric-data-distributed-coordinator-ed-drop/${common.metrics-exporter-image-name}/${drop-version}/manifest.json --sha256 --apikey ${env.SELI_API_TOKEN} --output .bob/var.docker-image-metricsexporter-sha256
+        - cat .bob/var.docker-image-metricsexporter-sha256
+    - task: get-commit-hash
+      docker-image: adp-release-auto
+      cmd:
+        - git rev-list -1 v${drop-version} > .bob/var.committhash
+        - cat .bob/var.commithash
+
+  # Set artifact URLs in PLMS
+  munin-set-artifact:
+    - task: set-artifact
+      docker-image: adp-release-auto
+      cmd:
+        # Source code
+        - munin set-artifact
+          -t ${env.MUNIN_TOKEN}
+          -u ${git-clone-url}
+          --vcs git
+          --commit ${var.committhash}
+          -p ${source-product-number}
+          -v ${var.semver}
+        # Helm chart
+        - munin set-artifact
+          -t ${env.MUNIN_TOKEN}
+          -u https://arm.sero.gic.ericsson.se/artifactory/proj-adp-eric-data-dc-ed-released-helm/eric-data-distributed-coordinator-ed/eric-data-distributed-coordinator-ed-${pra-released-version}.tgz
+          --sha256 ${var.helm-chart-sha256}
+          -p ${helm-product-number}
+          -v ${var.semver}
+        # etcd IMAGE
+        - munin set-artifact
+          -t ${env.MUNIN_TOKEN}
+          -u https://arm.seli.gic.ericsson.se/artifactory/docker-default/proj-adp-eric-data-distributed-coordinator-ed-drop/${common.image-name}/${drop-version}/manifest.json
+          --sha256 ${var.docker-image-etcd-sha256}
+          -p ${image-file-product-number}
+          -v ${var.semver}
+        # BR Agent IMAGE
+        - munin set-artifact
+          -t ${env.MUNIN_TOKEN}
+          -u https://arm.seli.gic.ericsson.se/artifactory/docker-default/proj-adp-eric-data-distributed-coordinator-ed-drop/${common.bragent-image-name}/${drop-version}/manifest.json
+          --sha256 ${var.docker-image-bragent-sha256}
+          -p ${bragent-image-file-product-number}
+          -v ${var.semver}
+        # Metrics Exporter IMAGE
+        - munin set-artifact
+          -t ${env.MUNIN_TOKEN}
+          -u https://arm.seli.gic.ericsson.se/artifactory/docker-default/proj-adp-eric-data-distributed-coordinator-ed-drop/${common.metrics-exporter-image-name}/${drop-version}/manifest.json
+          --sha256 ${var.docker-image-metricsexporter-sha256}
+          -p ${metrics-exporter-file-product-number}
+          -v ${var.semver}
+
+  # Release products in PLMS
+  munin-release-version:
+    - task: release-versions
+      docker-image: adp-release-auto
+      cmd:
+        - munin release-versions
+          -t ${env.MUNIN_TOKEN}
+          -c doc/product_structure.yaml
+          -v ${var.semver}
+          --wait-prim-target 1800
+
+  # CBO CHECKER
+  check-cbo-version:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/cbo-check
+    - task: fetch-image
+      cmd:
+        - docker pull ${var.IMAGE_INTERNAL_NAME}:${var.version}
+        - docker pull ${var.BRAGENT_IMAGE_INTERNAL_NAME}:${var.version}
+        - docker pull ${var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME}:${var.version}
+    - task: check
+      docker-image: adp-release-auto
+      docker-envs:
+        - API_TOKEN="${env.API_TOKEN}"
+        - SELI_API_TOKEN="${env.SELI_API_TOKEN}"
+      docker-in-docker: socket
+      cmd: 'cbo-check
+      --arm-apikey ${env.SELI_API_TOKEN}
+      --image ${var.IMAGE_INTERNAL_NAME}:${var.version}
+      --image ${var.BRAGENT_IMAGE_INTERNAL_NAME}:${var.version}
+      --image ${var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME}:${var.version}
+      --report ./build/cbo-check'
+
+  # Handle Service Ports doc
+  handle-service-ports-docs:
+    - task: validate-and-upload-service-ports-file
+      docker-image: adp-release-auto
+      cmd:
+        - service-ports validate
+          --service-ports-file ${service-ports-file-path}
+          --arm-upload
+          --arm-api-token ${env.API_TOKEN}
+          --arm-upload-url ${service-ports-file-arm-location}
+    - task: generate-service-ports-md-fragment
+      docker-image: adp-release-auto
+      cmd:
+        - mkdir -p ${generated-ug-fragments-dir}
+        - service-ports generate-markdown
+          --json ${service-ports-file-path}
+          --output ${generated-ug-fragments-dir}/service_ports.md
+
+  characteristics:
+    - task: assert-ready
+      docker-image: py3-kube-helm
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd:
+        - kubectl get pod ${monitoring-pm-service-name} -n ${monitoring-namespace}
+    - task: generate-report-input
+      docker-image: athena
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd:
+        - python3 ${report-generator} ${tests-output} ${performance-namespace} ${template-input} ${cluster-name}
+    - task: push-to-arm
+      docker-image: adp-release-auto
+      cmd:
+        # upload to version/ folder for PRA pipeline pulling CHAR report
+        - curl
+          -vvv
+          -H "X-JFrog-Art-Api:${env.API_TOKEN}"
+          -T "${template-output}"
+          "${dev-arm-perf-repo}/${var.version}/characteristics-report.json"
+        # upload to root path for PCR pipeline pulling CHAR report
+        - curl
+          -vvv
+          -H "X-JFrog-Art-Api:${env.API_TOKEN}"
+          -T "${template-output}"
+          "${dev-arm-perf-repo}/characteristics-report.json"
+    - task: pull
+      docker-image: adp-release-auto
+      cmd: curl
+        -vvv
+        -H "X-JFrog-Art-Api:${env.API_TOKEN}"
+        "${dev-arm-perf-repo}/characteristics-report.json"
+        -o characteristics-report.json
+    - task: generate-other-formats
+      docker-image: adp-release-auto
+      cmd: characteristics-report generate
+        -f characteristics-report.json
+        -url ${dev-arm-perf-repo}
+        --arm-api-token "${env.API_TOKEN}"
+
+  build-httpptobe:
+    - rule: httpprobe.build
+      properties:
+       - cbo_version: ${common.CBO_VERSION}
+       - httpprobe_home: ${env.HTTPPROBE_HOME}
+
+  pm-metrics-check:
+    - task: pm-metrics-check
+      docker-image: pm-metrics-dr-check
+      cmd: pm-metrics-check
+        --file doc/${pm-metrics-file}
+        --skip-drs DR-D470206-050 GL-D470206-060
+        --api-token ${env.API_TOKEN}
+        --report-format html
+        --service-name ${service-name}
+        --version ${var.version}
+        --output-dir ./build/
+        --debug
+
+  # Service Footprint Checker
+  footprint-check:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/footprint-check
+    - task: footprint-check
+      docker-image: adp-helm-dr-check
+      cmd: footprint-check
+        --api-token ${env.API_TOKEN}
+        --username ${env.GERRIT_USERNAME}
+        --chart-name ${common.helm-chart-name}
+        --chart-repo ${var.CHART_INTERNAL_REPO}
+        --chart-version ${var.version}
+        --output ./build/footprint-check
+        --baseline-repo ${helm-chart-repo-gs-all}
+
+# Validate schema of interfaces.json file
+  validate-interface-fragment:
+    - task: validate-interface-fragment
+      docker-image: adp-release-auto
+      cmd: interfaces-structure-data validate
+        --file ${env.PWD}/Helm/${common.helm-chart-name}/models/interfaces.json ${env.PWD}/Helm/${common.helm-chart-name}/models/eric-log-shipper-sidecar_interfaces.json
+
+# focalpoint-release:
+# - task: generate-next-version
+#    cmd: cat VERSION_PREFIX > .bob/var.next-version
+# - task: release-to-focalpoint
+#  docker-image: adp-release-auto
+#  docker-envs:
+#    - FOCALPOINT_USERNAME = ${env.FOCALPOINT_USERNAME}
+#    - FOCALPOINT_PASSWORD = ${env.FOCALPOINT_PASSWORD}
+# cmd: focalpoint upload
+#      --service-name "ADP Distributed Coordinator ED"
+#      --version '9.1.0'
+#      --description 'ADP Distributed Coordinator ED 9.1.0 PRA Release'
+#      --dry-run true
+#      --debug
+
+  validate-exemption-fragment:
+    - task: validate-exemption-fragment
+      docker-image: adp-release-auto
+      docker-envs:
+        - GERRIT_USERNAME
+        - GERRIT_PASSWORD
+      cmd: security-attributes validate
+        --fragment ${env.PWD}/doc/eric-data-distributed-coordinator-ed_security_attributes.exemptions.json
+        --type exemptions
+
+  generate-security-attributes:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/security-attributes
+    - task: generate-security-attributes
+      docker-image: adp-release-auto
+      docker-envs:
+        - GERRIT_USERNAME
+        - GERRIT_PASSWORD
+      cmd: security-attributes generate
+        --service-name ${common.helm-chart-name}
+        --service-version ${var.semver}
+        --output ${common.security-attribute-file-location}
+
+  validate-complete-security-attributes-json:
+    - task: validate-complete-security-attributes-json
+      docker-image: adp-release-auto
+      docker-envs:
+        - GERRIT_USERNAME
+        - GERRIT_PASSWORD
+      cmd: security-attributes validate
+        --fragment ${common.security-attribute-file-location}
+        --type complete
+        --security-repo ${env.PWD}
+
+  #Generate ADP Service Helm Chart template
+  generate-helm-template:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/security-attributes/helm_template
+    - task: generate-helm-template
+      docker-image: k8-test
+      cmd: helm template ${env.PWD}/Helm/${common.helm-chart-name}
+        --output-dir ${env.PWD}/build/security-attributes/helm_template/${common.helm-chart-name}
+
+  #Generate Test Admission Control manifests and test against ADP Service Helm Chart template
+  generate-and-test-security-attributes-json:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/security-attributes/admission-control
+    - task: generate-and-test-security-attributes-json
+      docker-image: admission-control
+      cmd:
+        #Generate Test Admission Control manifests
+        - admission-control gatekeeper generate-manifests
+          --fragment ${common.security-attribute-file-location}
+          --output ${env.PWD}/build/security-attributes/admission-control
+
+        #Test ADP Service Helm Chart template against generated policy manifests
+        - admission-control gatekeeper test-chart
+          --chart-filepath=${env.PWD}/build/security-attributes/helm_template/${common.helm-chart-name}
+          --manifests-filepath=${env.PWD}/build/security-attributes/admission-control
+
+  # bob rule automation to fetch the latest template of SHH according to the version provided below
+  hooklauncher-chart-fragments:
+  - task: update-permission
+    cmd:
+      - chmod 755 ./automation_scripts/fetch_unpack_repo.sh
+  - task: download-SHH
+    cmd: sh -cx '
+      "./automation_scripts/fetch_unpack_repo.sh"
+      --repository "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"
+      --package "smart-helm-hooks-helmtemplates-devel-cxa301123"
+      --target-dir "${env.PWD}/Helm/${common.helm-chart-name}/templates/common/"
+      --file-name "eric-lcm-smart-helm-hooks-helmtemplates-devel-cxa301123-${SHH-version}.tar"'
+  - task: replace-service-name
+    cmd:
+      - find ${env.PWD}/Helm/${common.helm-chart-name}/templates/common/hooklauncher -type f -exec sed -i 's/REPLACE_WITH_SERVICE_NAME/${common.helm-chart-name}/g' {} +
+
+ # bob rule automation to fetch the latest templates according to the version provided
+  logshipper-uplift:
+  - task: update-permission
+    docker-image: adp-release-auto
+    docker-envs:
+      - ARM_TOKEN_KI
+    cmd:
+      - chmod 755 ./automation_scripts/fetch_unpack_repo.sh
+  - task: download-logshipper-sidecar
+    docker-image: adp-release-auto
+    docker-envs:
+      - ARM_TOKEN_KI
+    cmd: sh -c '
+      "./automation_scripts/fetch_unpack_repo.sh"
+      --repository "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm/"
+      --package "eric-log-shipper"
+      --target-dir ".bob/"
+      --file-name "eric-log-shipper-${common.log-version}.tgz"'
+  - task: copy-logshipper-sidecar-files
+    docker-image: adp-release-auto
+    cmd: sh -c
+      'cp
+      ".bob/eric-log-shipper/templates/"_log-shipper-sidecar*
+      "${env.PWD}/Helm/${common.helm-chart-name}/templates/"
+      && cp
+      ".bob/eric-log-shipper/templates/"_log-shipper-sidecar-configmap*
+      "${env.PWD}/Helm/${common.helm-chart-name}/templates/"
+      && cp
+      ".bob/eric-log-shipper/templates/"_log-shipper-sidecar-lt-client-internalcertificate*
+      "${env.PWD}/Helm/${common.helm-chart-name}/templates/"
+      && cp
+      ".bob/eric-log-shipper/templates/common/_aggregated-merge-sidecar.tpl"
+      "${env.PWD}/Helm/${common.helm-chart-name}/templates/"'
+  - task: update-log-producer-name
+    cmd: sh -c
+     'sed -i "s/eric-log-shipper-sidecar\./eric-data-distributed-coordinator-ed\./g" ${env.PWD}/Helm/${common.helm-chart-name}/templates/_log-shipper-sidecar-*.tpl;
+      sed -i "s/eric-log-shipper-sidecar\./eric-data-distributed-coordinator-ed\./g" ${env.PWD}/Helm/${common.helm-chart-name}/templates/_aggregated-merge-sidecar.tpl;'
+
+  # automatic download interface-fragment file
+  download-logshipper-interface:
+    - task: download-logshipper-sidecar-interface-fragment
+      docker-image: adp-release-auto
+      docker-envs:
+        - SELI_API_TOKEN="${env.SELI_API_TOKEN}"
+      cmd:
+       - curl -4 -H "X-JFrog-Art-Api:${env.SELI_API_TOKEN}" "https://arm.seli.gic.ericsson.se/artifactory/proj-adp-log-docs-released-generic-local/eric-log-shipper/documents/${common.logshipper-version}/eric-log-shipper-sidecar_interfaces.zip" --output-dir ${env.PWD}/Helm/${common.helm-chart-name}/models/ -O
+       - unzip -o ${env.PWD}/Helm/${common.helm-chart-name}/models/eric-log-shipper-sidecar_interfaces.zip -d ${env.PWD}/Helm/${common.helm-chart-name}/models/
+       - sed -i "s,<log-producer-chart-name>,eric-data-distributed-coordinator-ed,g" ${env.PWD}/Helm/${common.helm-chart-name}/models/eric-log-shipper-sidecar_interfaces.json
+       - rm -rf ${env.PWD}/Helm/${common.helm-chart-name}/models/eric-log-shipper-sidecar_interfaces.zip

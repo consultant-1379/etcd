@@ -1,0 +1,55 @@
+modelVersion: 2.0
+
+properties:
+  - image-name: eric-data-distributed-coordinator-ed
+  - service-name: Distributed Coordinator ED
+  - image-registry: armdocker.rnd.ericsson.se
+  - bragent-image-name: eric-data-distributed-coordinator-ed-bragent
+  - log-shipper-image-name: eric-data-distributed-coordinator-ed-log-shipper
+  - log-shipper-bssf-name: eric-log-shipper
+  - logshipper-image-name: "eric-log-shipper-sidecar"
+  - logshipper-xray-path: "proj-adp-log-released-docker-global/proj-adp-log-released"
+  - logshipper-version: "19.4.0"
+  - log-version: "19.4.0-14"
+  - logshipper-image-repo-path: "proj-adp-log-released"
+  - metrics-exporter-image-name: eric-data-distributed-coordinator-ed-metrics-exporter
+    # Microservice helm chart name
+  - helm-chart-name: eric-data-distributed-coordinator-ed
+  - helm-chart-repo-server: https://arm.sero.gic.ericsson.se/artifactory
+    # Path to YAML file containing all needed information about product structure to release in PRIM
+  - dpraf-config-file: 'doc/dpraf.config.yaml'
+    # Local folder where the dpraf output is generated based on dpraf-config-file during execution of adp-prim-release rule
+  - dpraf-output-dir: 'build/dpraf-output'
+    # Configuration file for eridoc documents
+  - eridoc-config: "doc/eridoc.config.yaml"
+    # Static information for PRI
+  - pri-manual-input: "doc/pri.manual.input.json"
+    # Product extended name in JIRA
+  - jira-component-name: "Distributed Coordinator ED"
+    # GERRIT repository URL
+  - gerrit-url: "https://gerrit-gamma.gic.ericsson.se/a/plugins/gitiles/AIA/microservices/etcd"
+    # Product Name for EVMS Registration
+  - evms-product-name: "Distributed Coordinator ED"
+    # EVMS Server URL upload link
+  - evms-server-url: "https://evms.internal.ericsson.com/"
+  # Structured-data output directory
+  - structured-output-dir: "build/structured-output"
+    # stdout binary
+  - stdout-redirect-version: "1.38.0"
+  - stdout-redirect-prod-num: "CXA 301 76/1"
+  - stdout-redirect-prod-rev: "R39A"
+  - maintainer: "PDLPTEAMRA@pdl.internal.ericsson.com"
+  - hooklauncher-image-name: eric-data-distributed-coordinator-ed-hooklauncher
+  - CBO_VERSION: "6.17.0-11"
+  - security-attribute-file-location: ./build/security-attributes/eric-data-distributed-coordinator-ed_security_attributes.json
+  # Smart Helm Hooks Hooklauncher image info (eric-data-distributed-coordinator-ed-smart-helm-hooks-hooklauncher)
+  # Always use a released version
+  - hooklauncher-prod-name: "Smart Helm Hook Image"
+  - hooklauncher-image-prod-num: "CXU 101 1909"
+  - hooklauncher-image-registry: "armdocker.rnd.ericsson.se"
+  - hooklauncher-image-repo-path: "proj-adp-shh-released"
+  - hooklauncher-image-name: "eric-lcm-smart-helm-hooks-hooklauncher"
+  - hooklauncher-image-full-path: ${hooklauncher-image-registry}/${hooklauncher-image-repo-path}/${hooklauncher-image-name}
+  - hooklauncher-xray-path: "ARM-SELI/proj-adp-shh-drop-docker-global/proj-adp-shh-drop"
+  - SHH-version: "2.21.0-8"
+  - SHH-semver: "2.21.0"

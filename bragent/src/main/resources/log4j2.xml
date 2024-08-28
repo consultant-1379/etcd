@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30"
+	packages="com.ericsson.adp.mgmt.dced.bragent.logging">
+	<Appenders>
+		<Console name="Appender" target="SYSTEM_OUT" follow="true">
+			<AdpJsonLayout compact="false" eventEol="true">
+				<!-- Mandatory Fields -->
+				<KeyValuePair key="version" value="1.2.0" />
+				<KeyValuePair key="timestamp"
+					value="YYYY-MM-dd'T'HH:mm:ss.SSSXXX" />
+				<KeyValuePair key="service_id"
+					value="eric-distributed-coordinator-dced-bra-agent" />
+				<RewriteField oldKey="level_standardLevel"
+					newKey="severity" />
+				<RewriteField oldKey="message_formattedMessage"
+					newKey="message" />
+				<!-- Optional Fields -->
+				<KeyValuePair key="function" value="Backup and Restore" />
+				<KeyValuePair key="category"
+					value="Distributed Coordinator DCED" />
+				<RewriteField oldKey="source_classLoaderName"
+					newKey="proc_id" />
+				<RewriteField oldKey="source_className" newKey="ul_id" />
+
+			</AdpJsonLayout>
+		</Console>
+	</Appenders>
+	<Loggers>
+		<Root level="${env:LOG_LEVEL:-INFO}">
+			<AppenderRef ref="Appender" />
+		</Root>
+	</Loggers>
+</Configuration>

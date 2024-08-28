@@ -1,0 +1,22 @@
+modelVersion: 2.0
+fosses:
+    # etcd
+  - product_number: CAX1057840
+    # Selected License
+    license: Apache-2.0
+    # Explain how license obligations are fulfilled (Max 1000 characters, no linefeed)
+    obligation: |
+      Including the full license text in a prominent place with the software when
+      the FOSS is distributed. This fulfills the following:
+      Ericsson must give any recipients of the software a copy of the Apache License.
+      Ericsson must cause any modified files to carry prominent notices stating that Ericsson changed the files.
+      In any source form Ericsson distributes, all copyright, patent, trademark and attribution notices must be retained.
+      If the software includes a NOTICE text file as part of its distribution,
+      then any derivative work Ericsson distributes must include a readable copy of the attribution notices contained within such NOTICE file.
+    # Explain how the FOSS is used (Max 1000 characters)
+    usage: |
+      This FOSS evaluation concerns the free open source software called etcd.
+      etcd is a distributed reliable key-value store for the most critical data
+      of a distributed system, with a focus on being: Simple, Secure, Fast & Reliable.
+    # Possible options: Static, Dynamic or Classpath
+    linking: Dynamic

@@ -1,0 +1,36 @@
+apiVersion: v2
+description: Umbrella chart to deploy Log Shipper sidecar in etcd.
+name: eric-data-distributed-coordinator-ed-umbrella
+version: 0.0.0-1
+
+dependencies:
+  - name: eric-sec-sip-tls
+    version: "11.1.0+16"
+    repository: "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"
+  - name: eric-sec-key-management
+    version: "8.1.0+18"
+    repository: "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"
+  - name: eric-data-coordinator-zk
+    version: "3.4.0+13"
+    repository: "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"
+  - name: eric-log-transformer
+    version: "17.1.0+14"
+    repository: "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"
+  - name: eric-data-search-engine
+    version: "14.0.0+31"
+    repository: "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"
+  - name: eric-log-shipper
+    version: "19.1.0+16"
+    repository: "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"
+    import-values:
+    - child: logShipper.config
+      parent: global.logShipper.config
+  - name: eric-data-distributed-coordinator-ed
+    version: "11.0.0-14"
+    repository: "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"
+  - name: eric-pm-server
+    version: "13.1.0+41"
+    repository: "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"
+  - name: eric-ctrl-bro
+    version: "10.0.0+26"
+    repository: "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm"

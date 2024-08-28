@@ -1,0 +1,22 @@
+= Distributed Coordinator ED Service Troubleshooting Guide
+:author: Andrei Gavrisan E
+:doc-name: Distributed Coordinator ED Service Troubleshooting Guide
+:doc-no: 1/15451-APR 201 59/1
+:revnumber: PA1
+:revdate: {sys: date +%Y-%m-%d}
+:approved-by-name: Davina McCloskey
+:approved-by-department: BDGSBECA
+
+//Template updated 2019-01-22 (PA2) (keep line to track template history)
+//PA2: Corrected chapter levels for Trouble Reports and Additional Support sub-chapters and added Recovery procedure.
+//PB1: Document Deprecated.
+
+== Obsolete
+This document is obsolete.
+The troubleshooting procedures are described in the Service User Guide (see <<Userguide>>).
+
+[bibliography]
+References
+----------
+[bibliography]
+* [[Userguide]] Distributed Coordinator ED User Guide doc-no:[1/1553-APR 201 59/1]

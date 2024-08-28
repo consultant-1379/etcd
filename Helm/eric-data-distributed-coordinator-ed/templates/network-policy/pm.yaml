@@ -1,0 +1,27 @@
+{{- if and (eq (include "eric-data-distributed-coordinator-ed.networkPolicy" .) "true") (.Values.service.endpoints.dced.metrics.enabled) -}}
+#For PM server connection
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.name" . }}-pm-allow
+  labels: {{- include "eric-data-distributed-coordinator-ed.labels" . | nindent 4}}
+  annotations: {{- include "eric-data-distributed-coordinator-ed.annotations" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "eric-data-distributed-coordinator-ed.name" . }}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: {{- include "eric-data-distributed-coordinator-ed.pmServer.name" . | nindent 12}}
+    ports:
+    - port: {{- include "eric-data-distributed-coordinator-ed.ports.client" . | nindent 8 }}
+      protocol: TCP
+    {{- if .Values.metricsexporter.enabled }}
+    - port: {{ .Values.metricsexporter.port }}
+      protocol: TCP
+    {{- end }}
+{{- end }}

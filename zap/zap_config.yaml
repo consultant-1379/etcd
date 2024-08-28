@@ -1,0 +1,19 @@
+zapConfig:
+  baseUrl: ""
+  scanType: "full"
+  config_dir: "zap"
+  globalConfig:
+  endpoints:
+  - name: "dced"
+    url: "https://eric-data-distributed-coordinator-ed:2379/metrics"
+  - name: "dced-metrics-exporter"
+    url: "https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/metrics"
+  report:
+    dir: "zap-reports"
+    format:
+    - html
+    - json
+  tlsConfig:
+    enable: true
+    path: ".bob/pm-server-client-cert.p12"
+    password: "secret"

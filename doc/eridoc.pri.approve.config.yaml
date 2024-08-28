@@ -1,0 +1,13 @@
+repository: eridoca
+# ADP Reference Microservice folder:
+folderId: 0b004cffc50cc850
+documents:
+  - title: "Distributed Coordinator ED {semver} PRI"
+    file: "./build/pri.pdf"
+    decimal-class: "10921"
+    class-prefix: ""
+    individual-number: "APR 201 59/2"
+    eri_document_type: "Pri Doc"
+    strategy: "ordinal"
+    lang: "en"
+    format: "pdf"

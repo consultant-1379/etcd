@@ -1,0 +1,10 @@
+documents:
+  # document name
+  - name: test-report
+    # file names of files to be packaged in the document
+    files:
+      - test-report/DistributedCoordinatorED_Test_Report.md
+      - ../bragent/target/site/surefire-report.html
+  - name: test-specification
+    files:
+      - test-specification/DistributedCoordinatorED_Test_Specification.md

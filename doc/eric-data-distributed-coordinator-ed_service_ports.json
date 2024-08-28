@@ -1,0 +1,83 @@
+{
+  "metadata" : {
+    "serviceHelmChartName" : "eric-data-distributed-coordinator-ed",
+    "usedSchemaVersion" : "1.2",
+    "fileVersion" : "1.0",
+    "dateEdited" : "2022-04-04"
+  },
+  "internalPorts": [
+    {
+      "serviceInterfaceName": "Distributed Coordinator ED Service Port",
+      "protocol": "HTTPS",
+      "ipAddressType": "OAM IP",
+      "port": 2379,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4", "IPv6"]
+    },
+    {
+      "serviceInterfaceName": "Distributed Coordinator ED Peer Service Port",
+      "protocol": "HTTPS",
+      "ipAddressType": "OAM IP",
+      "port": 2380,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4", "IPv6"]
+    },
+    {
+      "serviceInterfaceName": "Distributed Coordinator ED Agent Service Port",
+      "protocol": "HTTPS",
+      "ipAddressType": "OAM IP",
+      "port": 8000,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4", "IPv6"]
+    },
+    {
+      "serviceInterfaceName": "Distributed Coordinator ED httpprobe_main Service Port",
+      "protocol": "HTTP",
+      "ipAddressType": "OAM IP",
+      "port": 9000,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4", "IPv6"]
+    },
+    {
+      "serviceInterfaceName": "Distributed Coordinator ED Agent httpprobe_main Service Port",
+      "protocol": "HTTP",
+      "ipAddressType": "OAM IP",
+      "port": 9000,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4", "IPv6"]
+    },
+    {
+      "serviceInterfaceName": "Metrics Exporter Health Port",
+      "protocol": "HTTP",
+      "ipAddressType": "OAM IP",
+      "port": 9086,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4", "IPv6"]
+    },
+    {
+      "serviceInterfaceName": "Metrics Exporter Service Port",
+      "protocol": "HTTPS",
+      "ipAddressType": "OAM IP",
+      "port": 9087,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4", "IPv6"]
+    },
+    {
+      "serviceInterfaceName": "Log Input HTTP Client",
+      "protocol": "HTTPS",
+      "ipAddressType": "OAM IP",
+      "port": 9443,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4", "IPv6"]
+    },
+    {
+      "serviceInterfaceName": "Log Input HTTP Client (insecure)",
+      "protocol": "HTTP",
+      "ipAddressType": "OAM IP",
+      "port": 9080,
+      "transportProtocol": "TCP",
+      "ipVersion": ["IPv4", "IPv6"]
+    }
+  ],
+  "externalPorts": []
+}

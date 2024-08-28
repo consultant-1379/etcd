@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.name" . }}
+  labels:
+    {{- include "eric-data-distributed-coordinator-ed.labels" . | nindent 4 }}
+  annotations:
+    {{- $prometheusAnn := dict -}}
+    {{- if .Values.service.endpoints.dced.metrics.enabled }}
+      {{- if not .Values.enableNewScrapePattern }}
+        {{- $_ := set $prometheusAnn "prometheus.io/scrape" (.Values.service.endpoints.dced.metrics.enabled | toString) -}}
+        {{- if and ( eq .Values.service.endpoints.pm.tls.enforced "required" ) ( eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" ) }}
+          {{- $_ := set $prometheusAnn "prometheus.io/scheme" "https" -}}
+        {{- else }}
+          {{- $_ := set $prometheusAnn "prometheus.io/scheme" "http" -}}
+        {{- end }}
+      {{- else }}
+        {{- $_ := set $prometheusAnn "prometheus.io/path" "/metrics" -}}
+        {{- $_ := set $prometheusAnn "prometheus.io/scrape-role" "endpoints" -}}
+        {{- $_ := set $prometheusAnn "prometheus.io/scrape-interval" "15s" -}}
+        {{- if .Values.metricsexporter.enabled }}
+          {{- $_ := set $prometheusAnn "prometheus.io/scrape-role2" "endpoints" -}}
+          {{- $_ := set $prometheusAnn "prometheus.io/scrape-interval2" "15s" -}}
+          {{- $_ := set $prometheusAnn "prometheus.io/path2" "/metrics" -}}
+          {{- $_ := set $prometheusAnn "prometheus.io/port2" (.Values.metricsexporter.port | toString) -}}
+        {{- end }}
+      {{- end }}
+      {{- $_ := set $prometheusAnn "prometheus.io/port" (include "eric-data-distributed-coordinator-ed.ports.client" .) -}}
+    {{- end }}
+    {{- $commonAnn := include "eric-data-distributed-coordinator-ed.annotations" . | fromYaml -}}
+    {{- include "eric-data-distributed-coordinator-ed.mergeAnnotations" (dict "location" .Template.Name "sources" (list $prometheusAnn $commonAnn)) | trim | nindent 4 }}
+spec:
+{{- if or (eq (include "eric-data-distributed-coordinator-ed.internalIPFamily" .) "IPv4") (eq (include "eric-data-distributed-coordinator-ed.internalIPFamily" .) "IPv6") }}
+  # ipFamilies was introduced in K8s v1.20
+  ipFamilies: [{{- include "eric-data-distributed-coordinator-ed.internalIPFamily" . | quote }}]
+  ipFamilyPolicy: SingleStack
+{{- else }}
+  ipFamilyPolicy: PreferDualStack
+{{- end }}
+  type: ClusterIP
+  ports:
+    - port: {{ include "eric-data-distributed-coordinator-ed.ports.client" . }}
+    {{- if and ( eq .Values.service.endpoints.pm.tls.enforced "required" ) ( eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" ) }}
+      name: client-port-tls
+    {{- else }}
+      name: client-port
+    {{- end }}
+  selector:
+{{- include "eric-data-distributed-coordinator-ed.selectorLabels" . | indent 2 }}

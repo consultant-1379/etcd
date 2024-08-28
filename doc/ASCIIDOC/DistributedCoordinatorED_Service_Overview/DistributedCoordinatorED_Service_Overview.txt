@@ -1,0 +1,23 @@
+= Distributed Coordinator ED Service Overview
+:author: Andrei Gavrisan E
+:doc-name: DistributedCoordinatorED_ServiceOverview
+:doc-no: 1/1551-APR 201 59/1
+:revnumber: PA1
+:revdate: {sys: date +%Y-%m-%d}
+:approved-by-name: Davina McCloskey
+:approved-by-department: BDGSBECA
+
+//Based on template version PA4 (keep this line to track template history)
+
+== Overview
+
+This document is obsolete.
+The Service Overview is described in the Service User Guide (see <<Userguide>>).
+
+[bibliography]
+References
+----------
+
+[bibliography]
+* [[Userguide]] Distributed Coordinator ED User Guide doc-no:[1/1553-APR 201 59/1]
+

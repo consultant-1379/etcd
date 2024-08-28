@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "serviceHelmChartName": "eric-data-distributed-coordinator-ed",
+    "validFromServiceVersion": "10.1.0",
+    "usedSchemaVersion": "1.0.0",
+    "fileVersion": "1.1.0",
+    "dateEdited": "2024-01-04",
+    "usedConstraintsVersion": "1.0.0"
+  },
+  "images": [
+    {
+      "name": "*/eric-data-distributed-coordinator-ed:*"
+    },
+    {
+      "name": "*/eric-data-distributed-coordinator-ed-bragent:*"
+    },
+    {
+      "name": "*/eric-data-distributed-coordinator-ed-metrics-exporter:*"
+    },
+    {
+      "name": "*/eric-data-distributed-coordinator-ed-hooklauncher:*"
+    },
+    {
+      "ref": "eric-log-shipper-sidecar",
+      "description": "Deployed only if 'global.log.streamingMethod' or 'log.streamingMethod' is set to 'direct' or 'dual'"
+    }
+  ]
+}

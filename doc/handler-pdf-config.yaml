@@ -1,0 +1,18 @@
+documents:
+  # document name
+  - name: user-guide
+    # file names of files to be packaged in the document
+    files:
+      - user-guide/user_guide.md
+      - user-guide/DistributedCoordinatorED_architecture_overview.png
+      - user-guide/DistributedCoordinatorED_deployment_overview.png
+      - user-guide/DistributedCoordinatorED_deployment.png
+  - name: inner-source-guidelines
+    files:
+      - ../CONTRIBUTING.md
+  - name: test-specification
+    files:
+      - test-specification/DistributedCoordinatorED_Test_Specification.md
+  - name: developers-guide
+    files:
+      - developers-guide/DistributedCoordinatorED_Developers_Guide.md

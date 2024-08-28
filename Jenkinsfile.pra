@@ -1,0 +1,342 @@
+def bob = 'python3 bob/bob.py -r ruleset2.0.pra.yaml'
+def bob_non_pra = 'python3 bob/bob.py'
+
+pipeline {
+    agent {
+        node {
+            label params.SLAVE
+        }
+    }
+    environment {
+        KUBECONFIG = credentials('hoff102')
+        ARM_SERO_IDENTITY_TOKEN = credentials('hub-arm-sero-api-token')
+    }
+    stages {
+        stage('Prepare environment'){
+            steps {
+                echo "Update submodules to master fixed commit"
+                sh "git submodule update --init --recursive"
+                echo "Prepare Bob environment"
+                sh "${bob} clean"
+                echo "Init environment"
+                sh "${bob} init"
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN'), string(credentialsId: 'hub-arm-seli-api-token', variable: 'SELI_API_TOKEN')]) {
+                    sh "${bob} download-logshipper-interface"
+                }
+                }
+        }
+        stage('[MUNIN] Check parameters'){
+            when { expression { (params.MUNIN_RELEASE == "true") } }
+                steps {
+                    script {
+                        if (params.MUNIN_RELEASE_CANDIDATE == null) {
+                            error("MUNIN-RELEASE-CANDIDATE is mandatory")
+                        }
+                    }
+                    sh "${bob} munin-version"
+                }
+        }
+        stage('Store release artifacts') {
+            steps {
+                 withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                   sh "${bob} store-release-artifacts"
+                   archiveArtifacts "build/released-images/*.zip"
+                   archiveArtifacts "build/released-charts/*.tgz"
+                }
+            }
+        }
+        stage('Upload Metrics') {
+            when { expression { (params.UPLOAD_METRICS=="true") } }
+                steps{
+                    withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                           sh "${bob} upload-pm-metrics"
+                    }
+                }
+        }
+        stage('Upload Service Ports JSON'){
+            when { expression { (params.UPLOAD_SERVICE_PORTS=="true") } }
+                steps{
+                    withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                           sh "${bob} handle-service-ports-docs:validate-and-upload-service-ports-file"
+                    }
+                }
+        }
+        stage('Generate docs') {
+        when { expression { (params.SKIP_DOCS!="true") } }
+            steps {
+                    sh "${bob_non_pra} surefire-report"
+                    sh "${bob_non_pra} handle-service-ports-docs:generate-service-ports-md-fragment"
+                    sh "${bob_non_pra} generate-docs"
+            }
+        }
+     //   stage('Validate DP-RAF configuration') {
+          //  steps {
+            //   sh "${bob} validate-dpraf-configuration"
+          //  }
+     //   }
+        stage('Generate characteristics report formats') {
+            when { expression { (params.CHAR_REPORT_GENERATE=="true")}}
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                sh "${bob} characteristics:pull"
+                sh "${bob} characteristics:generate-other-formats"
+                archiveArtifacts artifacts: 'characteristics_report.html, characteristics_report.pdf, characteristics_report.md', allowEmptyArchive: true
+            }
+            }
+        }
+        stage('Publish characteristics report json fragment') {
+            when { expression { (params.CHAR_REPORT_GENERATE=="true") && (params.CHAR_REPORT_PUBLISH=="true")}}
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                sh "${bob} characteristics:publish-to-arm"
+            }
+            }
+        }
+        stage('Approve files in Eridoc') {
+            when { expression { (params.APPROVE_DOC_ERIDOC=="true") } }
+            steps {
+              withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'ERIDOC_USERNAME', passwordVariable: 'ERIDOC_PASSWORD')]) {
+                   sh "${bob} eridoc:approve"
+                   archiveArtifacts artifacts: '.bob/eridoc-approve-report.log', allowEmptyArchive: true
+              }
+            }
+        }
+      //  stage('Release product structure - Step 1') {
+       //     steps {
+           // sh "${bob} prim-release-step1"
+          //  }
+     //   }
+          stage('Generate PRI') {
+            when { expression { (params.SKIP_DOCS!="true") } }
+            steps {
+               withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'ERIDOC_USERNAME', passwordVariable: 'ERIDOC_PASSWORD'),string(credentialsId: 'eadphub-jira-pat', variable: 'JIRA_TOKEN')]) {
+                sh "${bob_non_pra} doc-init:upload"
+                sh "${bob} generate-pri"
+                archiveArtifacts 'build/pri.html'
+                    archiveArtifacts 'build/pri.json'
+                    archiveArtifacts 'build/pri.pdf'
+                    publishHTML (target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/',
+                        reportFiles: 'pri.html',
+                        reportName: "PRI"
+                    ])
+               }
+            }
+          }
+          stage('Approve PRI in Eridoc') {
+              when { expression { (params.APPROVE_DOC_ERIDOC=="true") } }
+                  steps {
+                      withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'ERIDOC_USERNAME', passwordVariable: 'ERIDOC_PASSWORD')]) {
+                          sh "${bob} eridoc:approve-pri"
+                          archiveArtifacts artifacts: '.bob/eridoc-pri-approve-report.log', allowEmptyArchive: true
+                      }
+                  }
+          }
+          stage('Update documents.yaml') {
+              when { expression { (params.SKIP_DOCS!="true") } }
+                  steps {
+                      withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'ERIDOC_USERNAME', passwordVariable: 'ERIDOC_PASSWORD')]) {
+                          sh "${bob} update-documents-yaml"
+                      }
+                  }
+          }
+       // stage('Release product structure - Step 2') {
+       //     steps {
+              //  sh "${bob} prim-release-step2"
+         //   }
+      //  }
+        stage('Upload Marketplace') {
+           when { expression { (params.SKIP_DOCS!="true") } }
+           steps {
+               withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN'),string(credentialsId: 'etcd-marketplace-token', variable: 'MARKETPLACE_TOKEN')]) {
+                   sh "${bob} generate-doc-zip-package"
+                   script {
+                           echo "Marketplace upload"
+                           sh "${bob} marketplace-upload"
+                           sh "${bob_non_pra} marketplace-upload:refresh-adp-portal-marketplace"
+                    }
+               }
+            }
+        }
+        stage('Check Marketplace Documents') {
+            when { expression { (params.Check_Marketplace_Documents=="true") } }
+            steps
+            {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')])
+                {
+                    sh "${bob} marketplace-check-documents"
+                }
+            }
+        }
+        stage('Publish helm release chart') {
+            when { expression { (params.PUBLISH_PLUS_CHART=="true") } }
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                    sh "${bob} helm-publish-release"
+                    //  sh "${bob} increment-version-prefix"
+                }
+            }
+        }
+        stage('[MUNIN] Fetch Artifact Checksum') {
+            when { expression { (params.MUNIN_RELEASE=="true") } }
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN'), string(credentialsId: 'hub-arm-seli-api-token', variable: 'SELI_API_TOKEN')]) {
+                    sh "${bob} fetch-artifact-checksums"
+                }
+            }
+        }
+        stage('[MUNIN] Set GITCA Artifacts in Munin') {
+            when { expression { (params.MUNIN_RELEASE=="true") } }
+            steps {
+                withCredentials([string(credentialsId: 'munin_token', variable: 'MUNIN_TOKEN'),
+                usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'GERRIT_USERNAME', passwordVariable: 'GERRIT_PASSWORD')]){
+                    sh "${bob} munin-connect-ca-artifact"
+                }
+            }
+        }
+        stage('[MUNIN] Upload to ACA and set info in Munin') {
+             when { expression { (params.MUNIN_RELEASE=="true") } }
+             steps {
+                 withCredentials([string(credentialsId: 'munin_token', variable: 'MUNIN_TOKEN'),
+                 usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'ACA_USERNAME', passwordVariable: 'ACA_PASSWORD')]){
+                     sh "${bob} upload-and-register-artifacts-in-aca"
+                 }
+             }
+        }
+        stage('[MUNIN] Release version in Munin') {
+            when { expression { (params.MUNIN_RELEASE=="true") } }
+            steps {
+                withCredentials([string(credentialsId: 'munin_token', variable: 'MUNIN_TOKEN')]){
+                    sh "${bob} munin-release-version"
+                }
+            }
+        }
+        stage('Generate Security Attributes') {
+            when { expression { (params.GENERATE_SECURITY_ATTRIBUTES=="true") } }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'GERRIT_USERNAME', passwordVariable: 'GERRIT_PASSWORD')]){
+                    sh "${bob} generate-security-attributes"
+
+                    sh "${bob} validate-complete-security-attributes-json"
+                    sh "${bob} generate-helm-template"
+                    sh "${bob} generate-and-test-security-attributes-json"
+                }
+            }
+        }
+        stage('Upload Security Attributes Fragment') {
+            when { expression { (params.GENERATE_SECURITY_ATTRIBUTES=="true" && params.UPLOAD_SECURITY_ATTRIBUTE_FRAGMENT=="true") } }
+                steps{
+                    withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                           sh "${bob} upload-security-attribute-fragment"
+                    }
+                }
+        }
+        stage('Upload License Agreement Fragment') {
+            when { expression { (params.UPLOAD_CPI_FRAGMENT=="true") } }
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-rnd-ki-api-token', variable: 'RND_KI_API_TOKEN')]){
+                    sh "${bob} upload-license-agreement-fragment"
+                }
+            }
+        }
+        stage('Upload Interfaces Fragment') {
+            when { expression { (params.UPLOAD_INTERFACE_FRAGMENT=="true") } }
+                steps{
+                    withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                            sh "${bob} validate-interface-fragment"
+                            sh "${bob} zip-interfaces-modules"
+                            sh "${bob} upload-interface-fragment"
+                    }
+                }
+        }
+        stage('Structured-data generate') {
+            when { expression { (params.STRUCTURED_DATA_GENERATE=="true") && (params.CHAR_REPORT_GENERATE=="true") && (params.CHAR_REPORT_PUBLISH=="true") } }
+            steps {
+                    sh "${bob} structured-data-generate"
+                    sh "${bob} structured-data-validate"
+                    archiveArtifacts 'build/structured-output/*.json'
+            }
+        }
+        stage('Structured-data upload') {
+            when { expression { (params.STRUCTURED_DATA_GENERATE=="true") && (params.STRUCTURED_DATA_UPLOAD=="true") } }
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                    sh "${bob} structured-data-upload"
+                }
+            }
+        }
+        stage('Increment VERSION_PREFIX in git repo') {
+            when { expression { (params.SKIP_VERSION_PREFIX!="true") } }
+            steps {
+              withCredentials([
+                               usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'GERRIT_USERNAME', passwordVariable: 'GERRIT_PASSWORD')])
+                {
+                  sh "${bob} increment-version-prefix"
+                }
+            }
+        }
+        stage('Register new version in EVMS') {
+            when { expression { (params.SKIP_EVMS!="true") } }
+                steps {
+                    withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'EVMS_USERNAME', passwordVariable: 'EVMS_PASSWORD')]) {
+                        sh "${bob} evms-registration"
+                    }
+                }
+        }
+        /* stage('Check EVMS Registration') {
+            when { expression { (params.SKIP_EVMS_REGISTRATION_CHECK=="false") } }
+              steps {
+                withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'EVMS_USERNAME', passwordVariable: 'EVMS_PASSWORD')])
+                       {
+                         sh "${bob} evms-checker"
+                       }
+
+              }
+        } */
+        stage('Check PLM') {
+            when { expression { (params.CHECK_PLM=="true") } }
+                steps {
+                    withCredentials([string(credentialsId: 'munin_token', variable: 'MUNIN_TOKEN'),
+                    usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'GERRIT_USERNAME', passwordVariable: 'GERRIT_PASSWORD')]){
+                        sh "${bob} plm-checker"
+                    }
+                }
+        }
+        stage('Check Fragment Design Rules') {
+           when { expression { (params.CHECK_FRAGMENT_DR=="true") } }
+           steps {
+               withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')])
+                   {
+                        sh "${bob} fragment-dr-check"
+                   }
+           }
+        }
+        stage('[Release] Generate input for ADP staging') {
+            when { expression { (params.PUBLISH_ADP_STAGING=="true") } }
+            steps {
+                sh "${bob} generate-input-for-adp-staging"
+                archiveArtifacts "artifact.properties"
+            }
+        }
+        stage('Cleanup Workspace') {
+            steps {
+                script {
+                        sh "rm -rf defensicstar.tgz \
+                        build/released-images"
+                }
+            }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: ".bob/*.log, build/plm-check/plm_check_report.html", allowEmptyArchive: true
+            archiveArtifacts artifacts: ".bob/*.*", allowEmptyArchive: true
+            archiveArtifacts artifacts: 'build/**/**/*.*', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'build/**/*.*', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'build/*.*', allowEmptyArchive: true
+        }
+    }
+}

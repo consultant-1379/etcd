@@ -1,0 +1,26 @@
+﻿= Trademark Information
+:author: Andrei Gavrisan E
+:doc-name: Trademarks for Distributed Coordinator ED
+:doc-no: 1/006 51-APR 201 59/2 Uen
+:revnumber: PA1
+:revdate: {sys: date +%Y-%m-%d}
+:approved-by-name: Davina McCloskey
+:approved-by-department: BDGSBECA
+
+== Services
+
+- Distributed Coordinator ED (ETCD)
+
+== Trademarks Used in Services
+
+For the documents about **Distributed Coordinator ED**, the trademarks used and their respective owners, are as follows:
+
+
+- **ETCD** is a trademark of CoreOS (Container Linux).
+- **HELM** is a trademark of Incipio Technologies, Inc.
+- **KUBERNETES** is a trademark of THE LINUX FOUNDATION.
+- **Docker** and the Docker logo are trademarks or registered trademarks of Docker, Inc. in the United States and/or other countries.
++
+Docker, Inc. and other parties may also have trademark rights in other terms used herein.
+- **GoLang** is a trademark of Google.
+- **Ericsson** is the trademark or registered trademark of Telefonaktiebolaget LM Ericsson.

@@ -1,0 +1,29 @@
+---
+default: true
+ul-start-left: false
+ul-indent: false
+ol-prefix:
+  style: one
+line-length:
+  code_blocks: false
+  tables: false
+code:
+  style: fenced
+list-marker-space: false
+no-trailing-punctuation:
+  punctuation: '.,;:!'
+  #no-inline-html:
+  #allowed_elements:
+  #   - "NAMESPACE"
+# ignore MD040/fenced-code-language Fenced code blocks should have a language specified
+MD040:
+  false
+#ignore MD031/blanks-around-fences Fenced code blocks should be surrounded by blank lines
+MD031:
+  false
+#ignore MD024/no-duplicate-heading/no-duplicate-header Multiple headings with the same content
+MD024:
+    false
+# ignore MD048/fenced-code-language Fenced code blocks 
+MD048:
+    false

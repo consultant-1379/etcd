@@ -1,0 +1,1073 @@
+log-schema-version: 1.2.0
+timestamp-format: "2006-01-02T15:04:05.000-07:00"
+service-id: "eric-data-distributed-coordinator-ed"
+pod-name: POD_NAME
+namespace: NAMESPACE
+container: CONTAINER_NAME
+fieldMapping:
+  -  key_value_separator: ":"
+     keys_separator: ","
+     mappings:
+       - source_key: ts
+         target_key: timestamp
+       - source_key: level
+         target_key: severity
+       - source_key: msg
+         target_key: message
+nest:
+  - field-name: caller
+    nest-under: extra_data.caller
+  - field-name: logger
+    nest-under: extra_data.logger
+  - field-name: forward-ticks
+    nest-under: extra_data.forward-ticks
+  - field-name: tlsinfo
+    nest-under: extra_data.tlsinfo
+  - field-name: walsnap
+    nest-under: extra_data.walsnap
+  - field-name: reuse-address
+    nest-under: extra_data.reuse-address
+  - field-name: reuse-port
+    nest-under: extra_data.reuse-port
+  - field-name: member-initialized
+    nest-under: extra_data.member-initialized
+  - field-name: force-new-cluster
+    nest-under: extra_data.force-new-cluster
+  - field-name: initial-election-tick-advance
+    nest-under: extra_data.initial-election-tick-advance
+  - field-name: pre-vote
+    nest-under: extra_data.pre-vote
+  - field-name: initial-corrupt-check
+    nest-under: extra_data.initial-corrupt-check
+  - field-name: compact-check-time-enabled
+    nest-under: extra_data.compact-check-time-enabled
+  - field-name: should-applyV3
+    nest-under: extra_data.should-applyV3
+  - field-name: remote-peer-active
+    nest-under: extra_data.remote-peer-active
+  - field-name: same-revisions
+    nest-under: extra_data.same-revisions
+  - field-name: same-hashes
+    nest-under: extra_data.same-hashes
+  - field-name: success
+    nest-under: extra_data.success
+  - field-name: request key
+    nest-under: extra_data.request key
+  - field-name: conf-state-json
+    nest-under: extra_data.conf-state-json
+  - field-name: waitBetween
+    nest-under: extra_data.waitBetween
+  - field-name: given-latency
+    nest-under: extra_data.given-latency
+  - field-name: given-latency-random-variable
+    nest-under: extra_data.given-latency-random-variable
+  - field-name: duration
+    nest-under: extra_data.duration
+  - field-name: compact-check-time-interval
+    nest-under: extra_data.compact-check-time-interval
+  - field-name: auto-compaction-retention
+    nest-under: extra_data.auto-compaction-retention
+  - field-name: batch interval
+    nest-under: extra_data.batch interval
+  - field-name: exceeded-duration
+    nest-under: extra_data.exceeded-duration
+  - field-name: publish-timeout
+    nest-under: extra_data.publish-timeout
+  - field-name: retry-timeout
+    nest-under: extra_data.retry-timeout
+  - field-name: clock-drift
+    nest-under: extra_data.clock-drift
+  - field-name: rtt
+    nest-under: extra_data.rtt
+  - field-name: backoff
+    nest-under: extra_data.backoff
+  - field-name: compact-period
+    nest-under: extra_data.compact-period
+  - field-name: retry-interval
+    nest-under: extra_data.retry-interval
+  - field-name: time spent
+    nest-under: extra_data.time spent
+  - field-name: min-watch-progress-notify-interval
+    nest-under: extra_data.min-watch-progress-notify-interval
+  - field-name: intervalSeconds
+    nest-under: extra_data.intervalSeconds
+  - field-name: taking
+    nest-under: extra_data.taking
+  - field-name: interval
+    nest-under: extra_data.interval-time
+  - field-name: expected-duration
+    nest-under: extra_data.expected-duration
+  - field-name: random-variable
+    nest-under: extra_data.random-variable
+  - field-name: delay
+    nest-under: extra_data.delay
+  - field-name: latency
+    nest-under: extra_data.latency
+  - field-name: latency-rv
+    nest-under: extra_data.latency-rv
+  - field-name: sleep
+    nest-under: extra_data.sleep
+  - field-name: wait-duration
+    nest-under: extra_data.wait-duration
+  - field-name: timeout
+    nest-under: extra_data.timeout
+  - field-name: jitterFraction
+    nest-under: extra_data.jitterFraction
+  - field-name: weight
+    nest-under: extra_data.weight
+  - field-name: queue-size
+    nest-under: extra_data.queue-size
+  - field-name: queue-capacity
+    nest-under: extra_data.queue-capacity
+  - field-name: watch-id
+    nest-under: extra_data.watch-id
+  - field-name: read-bytes
+    nest-under: extra_data.read-bytes
+  - field-name: write-bytes
+    nest-under: extra_data.write-bytes
+  - field-name: step_count
+    nest-under: extra_data.step_count
+  - field-name: min-cost
+    nest-under: extra_data.min-cost
+  - field-name: max-cost
+    nest-under: extra_data.max-cost
+  - field-name: default-cost
+    nest-under: extra_data.default-cost
+  - field-name: given-cost
+    nest-under: extra_data.given-cost
+  - field-name: max-cpu-set
+    nest-under: extra_data.max-cpu-set
+  - field-name: max-cpu-available
+    nest-under: extra_data.max-cpu-available
+  - field-name: quota-backend-bytes
+    nest-under: extra_data.quota-backend-bytes
+  - field-name: recommended-limit
+    nest-under: extra_data.recommended-limit
+  - field-name: batch limit
+    nest-under: extra_data.batch limit
+  - field-name: remote-peer-revision
+    nest-under: extra_data.remote-peer-revision
+  - field-name: remote-peer-compact-revision
+    nest-under: extra_data.remote-peer-compact-revision
+  - field-name: local-member-revision
+    nest-under: extra_data.local-member-revision
+  - field-name: local-member-compact-revision
+    nest-under: extra_data.local-member-compact-revision
+  - field-name: revision-1
+    nest-under: extra_data.revision-1
+  - field-name: compact-revision-1
+    nest-under: extra_data.compact-revision-1
+  - field-name: revision-2
+    nest-under: extra_data.revision-2
+  - field-name: compact-revision-2
+    nest-under: extra_data.compact-revision-2
+  - field-name: leader-revision
+    nest-under: extra_data.leader-revision
+  - field-name: follower-revision
+    nest-under: extra_data.follower-revision
+  - field-name: leader-compact-revision
+    nest-under: extra_data.leader-compact-revision
+  - field-name: follower-compact-revision
+    nest-under: extra_data.follower-compact-revision
+  - field-name: number-of-peers-checked
+    nest-under: extra_data.number-of-peers-checked
+  - field-name: number-of-peers
+    nest-under: extra_data.number-of-peers
+  - field-name: number-of-hashes-checked
+    nest-under: extra_data.number-of-hashes-checked
+  - field-name: requested-revision
+    nest-under: extra_data.requested-revision
+  - field-name: quota-maximum-size-bytes
+    nest-under: extra_data.quota-maximum-size-bytes
+  - field-name: number-of-discarded-entries
+    nest-under: extra_data.number-of-discarded-entries
+  - field-name: recommended-request-bytes
+    nest-under: extra_data.recommended-request-bytes
+  - field-name: backend-size-bytes
+    nest-under: extra_data.backend-size-bytes
+  - field-name: backend-size-in-use-bytes
+    nest-under: extra_data.backend-size-in-use-bytes
+  - field-name: forward-ticks
+    nest-under: extra_data.forward-ticks
+  - field-name: election-ticks
+    nest-under: extra_data.election-ticks
+  - field-name: active-remote-members
+    nest-under: extra_data.active-remote-members
+  - field-name: active-peers
+    nest-under: extra_data.active-peers
+  - field-name: num-entries
+    nest-under: extra_data.num-entries
+  - field-name: quota-size-bytes
+    nest-under: extra_data.quota-size-bytes
+  - field-name: status-code
+    nest-under: extra_data.status-code
+  - field-name: number-of-started-member
+    nest-under: extra_data.number-of-started-member
+  - field-name: quorum
+    nest-under: extra_data.quorum
+  - field-name: number-of-key
+    nest-under: extra_data.number-of-key
+  - field-name: incoming-snapshot-message-size-bytes
+    nest-under: extra_data.incoming-snapshot-message-size-bytes
+  - field-name: incoming-snapshot-size-bytes
+    nest-under: extra_data.incoming-snapshot-size-bytes
+  - field-name: needed-peers
+    nest-under: extra_data.needed-peers
+  - field-name: found-peers
+    nest-under: extra_data.found-peers
+  - field-name: revision-compaction-retention
+    nest-under: extra_data.revision-compaction-retention
+  - field-name: request count
+    nest-under: extra_data.request count
+  - field-name: request size
+    nest-under: extra_data.request size
+  - field-name: response count
+    nest-under: extra_data.response count
+  - field-name: response size
+    nest-under: extra_data.response size
+  - field-name: checksum-size
+    nest-under: extra_data.checksum-size
+  - field-name: total-bytes
+    nest-under: extra_data.total-bytes
+  - field-name: leaseID
+    nest-under: extra_data.leaseID
+  - field-name: remainingTTL
+    nest-under: extra_data.remainingTTL
+  - field-name: given-revision-main
+    nest-under: extra_data.given-revision-main
+  - field-name: given-revision-sub
+    nest-under: extra_data.given-revision-sub
+  - field-name: modified-revision-main
+    nest-under: extra_data.modified-revision-main
+  - field-name: modified-revision-sub
+    nest-under: extra_data.modified-revision-sub
+  - field-name: generations-size
+    nest-under: extra_data.generations-size
+  - field-name: revision-main
+    nest-under: extra_data.revision-main
+  - field-name: revision-sub
+    nest-under: extra_data.revision-sub
+  - field-name: revision-current
+    nest-under: extra_data.revision-current
+  - field-name: range-option-rev
+    nest-under: extra_data.range-option-rev
+  - field-name: range-option-limit
+    nest-under: extra_data.range-option-limit
+  - field-name: len-revpairs
+    nest-under: extra_data.len-revpairs
+  - field-name: len-values
+    nest-under: extra_data.len-values
+  - field-name: restored-compact-revision
+    nest-under: extra_data.restored-compact-revision
+  - field-name: current-rev
+    nest-under: extra_data.current-rev
+  - field-name: scheduled-compact-revision
+    nest-under: extra_data.scheduled-compact-revision
+  - field-name: expected-revision-bytes-size
+    nest-under: extra_data.expected-revision-bytes-size
+  - field-name: given-revision-bytes-size
+    nest-under: extra_data.given-revision-bytes-size
+  - field-name: number-of-revisions
+    nest-under: extra_data.number-of-revisions
+  - field-name: current-db-size-bytes-diff
+    nest-under: extra_data.current-db-size-bytes-diff
+  - field-name: current-db-size-bytes
+    nest-under: extra_data.current-db-size-bytes
+  - field-name: current-db-size-in-use-bytes-diff
+    nest-under: extra_data.current-db-size-in-use-bytes-diff
+  - field-name: current-db-size-in-use-bytes
+    nest-under: extra_data.current-db-size-in-use-bytes
+  - field-name: lease-ttl
+    nest-under: extra_data.lease-ttl
+  - field-name: watcherId
+    nest-under: extra_data.watcherId
+  - field-name: segment-bytes
+    nest-under: extra_data.segment-bytes
+  - field-name: port
+    nest-under: extra_data.port
+  - field-name: peer-cert-length
+    nest-under: extra_data.peer-cert-length
+  - field-name: peer-key-length
+    nest-under: extra_data.peer-key-length
+  - field-name: client-cert-length
+    nest-under: extra_data.client-cert-length
+  - field-name: client-key-length
+    nest-under: extra_data.client-key-length
+  - field-name: peer-port
+    nest-under: extra_data.peer-port
+  - field-name: snapshot-total-key
+    nest-under: extra_data.snapshot-total-key
+  - field-name: snapshot-hash
+    nest-under: extra_data.snapshot-hash
+  - field-name: snapshot-revision
+    nest-under: extra_data.snapshot-revision
+  - field-name: members-to-add
+    nest-under: extra_data.members-to-add
+  - field-name: i
+    nest-under: extra_data.i
+  - field-name: idx
+    nest-under: extra_data.idx
+  - field-name: committed-entries
+    nest-under: extra_data.committed-entries
+  - field-name: etcd-snapshot-count
+    nest-under: extra_data.etcd-snapshot-count
+  - field-name: start-revision
+    nest-under: extra_data.start-revision
+  - field-name: last-revision
+    nest-under: extra_data.last-revision
+  - field-name: num
+    nest-under: extra_data.num
+  - field-name: current-revision
+    nest-under: extra_data.current-revision
+  - field-name: total
+    nest-under: extra_data.total
+  - field-name: retries
+    nest-under: extra_data.retries
+  - field-name: compact-revision
+    nest-under: extra_data.compact-revision
+  - field-name: round
+    nest-under: extra_data.round
+  - field-name: case
+    nest-under: extra_data.case
+  - field-name: case-total
+    nest-under: extra_data.case-total
+  - field-name: ttl
+    nest-under: extra_data.ttl
+  - field-name: file
+    nest-under: extra_data.file
+  - field-name: suffix
+    nest-under: extra_data.suffix
+  - field-name: cert-file
+    nest-under: extra_data.cert-file
+  - field-name: key-file
+    nest-under: extra_data.key-file
+  - field-name: cs
+    nest-under: extra_data.cs
+  - field-name: retryPolicy
+    nest-under: extra_data.retryPolicy
+  - field-name: target
+    nest-under: extra_data.target
+  - field-name: dest-snap
+    nest-under: extra_data.dest-snap
+  - field-name: srcWAL
+    nest-under: extra_data.srcWAL
+  - field-name: v2Req.Path
+    nest-under: extra_data.v2Req.Path
+  - field-name: entry
+    nest-under: extra_data.entry
+  - field-name: srcDB
+    nest-under: extra_data.srcDB
+  - field-name: dest
+    nest-under: extra_data.dest
+  - field-name: snap-dir
+    nest-under: extra_data.snap-dir
+  - field-name: environment-variable
+    nest-under: extra_data.environment-variable
+  - field-name: variable-name
+    nest-under: extra_data.variable-name
+  - field-name: variable-value
+    nest-under: extra_data.variable-value
+  - field-name: flag-name
+    nest-under: extra_data.flag-name
+  - field-name: resolved-addr
+    nest-under: extra_data.resolved-addr
+  - field-name: data-received
+    nest-under: extra_data.data-received
+  - field-name: data-modified
+    nest-under: extra_data.data-modified
+  - field-name: data-size
+    nest-under: extra_data.data-size
+  - field-name: detail
+    nest-under: extra_data.detail
+  - field-name: steps
+    nest-under: extra_data.steps
+  - field-name: keys
+    nest-under: extra_data.keys
+  - field-name: auth-type
+    nest-under: extra_data.auth-type
+  - field-name: duplicate-role-name
+    nest-under: extra_data.duplicate-role-name
+  - field-name: user-roles
+    nest-under: extra_data.user-roles
+  - field-name: added-role-name
+    nest-under: extra_data.added-role-name
+  - field-name: old-user-roles
+    nest-under: extra_data.old-user-roles
+  - field-name: new-user-roles
+    nest-under: extra_data.new-user-roles
+  - field-name: revoked-role-name
+    nest-under: extra_data.revoked-role-name
+  - field-name: range-end
+    nest-under: extra_data.range-end
+  - field-name: permission-name
+    nest-under: extra_data.permission-name
+  - field-name: token
+    nest-under: extra_data.token
+  - field-name: option
+    nest-under: extra_data.option
+  - field-name: duplicate-parameter
+    nest-under: extra_data.duplicate-parameter
+  - field-name: ip-addresses
+    nest-under: extra_data.ip-addresses
+  - field-name: dns-names
+    nest-under: extra_data.dns-names
+  - field-name: service-instance-id
+    nest-under: extra_data.service-instance-id
+  - field-name: node
+    nest-under: extra_data.node
+  - field-name: service-scheme
+    nest-under: extra_data.service-scheme
+  - field-name: service-name
+    nest-under: extra_data.service-name
+  - field-name: server-name
+    nest-under: extra_data.server-name
+  - field-name: discovery-srv
+    nest-under: extra_data.discovery-srv
+  - field-name: found-cluster
+    nest-under: extra_data.found-cluster
+  - field-name: etcd-version
+    nest-under: extra_data.etcd-version
+  - field-name: git-sha
+    nest-under: extra_data.git-sha
+  - field-name: go-version
+    nest-under: extra_data.go-version
+  - field-name: go-os
+    nest-under: extra_data.go-os
+  - field-name: go-arch
+    nest-under: extra_data.go-arch
+  - field-name: wal-dir-dedicated
+    nest-under: extra_data.wal-dir-dedicated
+  - field-name: member-dir
+    nest-under: extra_data.member-dir
+  - field-name: heartbeat-interval
+    nest-under: extra_data.heartbeat-interval
+  - field-name: initial-advertise-peer-urls
+    nest-under: extra_data.initial-advertise-peer-urls
+  - field-name: listen-peer-urls
+    nest-under: extra_data.listen-peer-urls
+  - field-name: listen-metrics-urls
+    nest-under: extra_data.listen-metrics-urls
+  - field-name: cors
+    nest-under: extra_data.cors
+  - field-name: host-whitelist
+    nest-under: extra_data.host-whitelist
+  - field-name: initial-cluster-state
+    nest-under: extra_data.initial-cluster-state
+  - field-name: initial-cluster-token
+    nest-under: extra_data.initial-cluster-token
+  - field-name: corrupt-check-time-interval
+    nest-under: extra_data.corrupt-check-time-interval
+  - field-name: auto-compaction-mode
+    nest-under: extra_data.auto-compaction-mode
+  - field-name: auto-compaction-interval
+    nest-under: extra_data.auto-compaction-interval
+  - field-name: discovery-proxy
+    nest-under: extra_data.discovery-proxy
+  - field-name: downgrade-check-interval
+    nest-under: extra_data.downgrade-check-interval
+  - field-name: advertise-client-urls
+    nest-under: extra_data.advertise-client-urls
+  - field-name: peer-url
+    nest-under: extra_data.peer-url
+  - field-name: client-url
+    nest-under: extra_data.client-url
+  - field-name: cipher-suites
+    nest-under: extra_data.cipher-suites
+  - field-name: dir-type
+    nest-under: extra_data.dir-type
+  - field-name: fallback-proxy
+    nest-under: extra_data.fallback-proxy
+  - field-name: discovery-token
+    nest-under: extra_data.discovery-token
+  - field-name: cluster-file
+    nest-under: extra_data.cluster-file
+  - field-name: host
+    nest-under: extra_data.host
+  - field-name: filename
+    nest-under: extra_data.filename
+  - field-name: arch
+    nest-under: extra_data.arch
+  - field-name: grpcProxyAdvertiseClientURL
+    nest-under: extra_data.grpcProxyAdvertiseClientURL
+  - field-name: tls-info
+    nest-under: extra_data.tls-info
+  - field-name: srv-server
+    nest-under: extra_data.srv-server
+  - field-name: value
+    nest-under: extra_data.value
+  - field-name: raft-request
+    nest-under: extra_data.raft-request
+  - field-name: header
+    nest-under: extra_data.header
+  - field-name: local-member-version
+    nest-under: extra_data.local-member-version
+  - field-name: remote-member-cluster-version
+    nest-under: extra_data.remote-member-cluster-version
+  - field-name: minimum-cluster-version-supported
+    nest-under: extra_data.minimum-cluster-version-supported
+  - field-name: remote-member-version
+    nest-under: extra_data.remote-member-version
+  - field-name: remote-member-id
+    nest-under: extra_data.remote-member-id
+  - field-name: remote-peer-endpoints
+    nest-under: extra_data.remote-peer-endpoints
+  - field-name: follower-peer-id
+    nest-under: extra_data.follower-peer-id
+  - field-name: remote-peer-endpoint
+    nest-under: extra_data.remote-peer-endpoint
+  - field-name: quota-maximum-size
+    nest-under: extra_data.quota-maximum-size
+  - field-name: quota-name
+    nest-under: extra_data.quota-name
+  - field-name: max-request-size
+    nest-under: extra_data.max-request-size
+  - field-name: recommended-request-size
+    nest-under: extra_data.recommended-request-size
+  - field-name: wal-dir
+    nest-under: extra_data.wal-dir
+  - field-name: snapshot-size
+    nest-under: extra_data.snapshot-size
+  - field-name: backend-size
+    nest-under: extra_data.backend-size
+  - field-name: backend-size-in-use
+    nest-under: extra_data.backend-size-in-use
+  - field-name: forward-duration
+    nest-under: extra_data.forward-duration
+  - field-name: election-timeout
+    nest-under: extra_data.election-timeout
+  - field-name: local-server-version
+    nest-under: extra_data.local-server-version
+  - field-name: removed-member-id
+    nest-under: extra_data.removed-member-id
+  - field-name: transferee-member-id
+    nest-under: extra_data.transferee-member-id
+  - field-name: old-leader-member-id
+    nest-under: extra_data.old-leader-member-id
+  - field-name: new-leader-member-id
+    nest-under: extra_data.new-leader-member-id
+  - field-name: current-leader-member-id
+    nest-under: extra_data.current-leader-member-id
+  - field-name: requested-member-add
+    nest-under: extra_data.requested-member-add
+  - field-name: requested-member-remove-id
+    nest-under: extra_data.requested-member-remove-id
+  - field-name: requested-member-remove
+    nest-under: extra_data.requested-member-remove
+  - field-name: raft-conf-change
+    nest-under: extra_data.raft-conf-change
+  - field-name: raft-conf-change-node-id
+    nest-under: extra_data.raft-conf-change-node-id
+  - field-name: local-member-attributes
+    nest-under: extra_data.local-member-attributes
+  - field-name: request-path
+    nest-under: extra_data.request-path
+  - field-name: V2request
+    nest-under: extra_data.V2request
+  - field-name: raftReq
+    nest-under: extra_data.raftReq
+  - field-name: quota-size
+    nest-under: extra_data.quota-size
+  - field-name: member-id-from-config-change-entry
+    nest-under: extra_data.member-id-from-config-change-entry
+  - field-name: member-id-from-message
+    nest-under: extra_data.member-id-from-message
+  - field-name: experimental-bootstrap-defrag-threshold
+    nest-under: extra_data.experimental-bootstrap-defrag-threshold
+  - field-name: response
+    nest-under: extra_data.response
+  - field-name: user
+    nest-under: extra_data.user
+  - field-name: output
+    nest-under: extra_data.output
+  - field-name: alarm
+    nest-under: extra_data.alarm
+  - field-name: recovered-remote-peer-id
+    nest-under: extra_data.recovered-remote-peer-id
+  - field-name: recovered-remote-peer-urls
+    nest-under: extra_data.recovered-remote-peer-urls
+  - field-name: added-peer-id
+    nest-under: extra_data.added-peer-id
+  - field-name: added-peer-peer-urls
+    nest-under: extra_data.added-peer-peer-urls
+  - field-name: removed-remote-peer-urls
+    nest-under: extra_data.removed-remote-peer-urls
+  - field-name: unknown-remote-peer-id
+    nest-under: extra_data.unknown-remote-peer-id
+  - field-name: updated-peer-id
+    nest-under: extra_data.updated-peer-id
+  - field-name: cluster-version
+    nest-under: extra_data.cluster-version
+  - field-name: target-version
+    nest-under: extra_data.target-version
+  - field-name: server-version
+    nest-under: extra_data.server-version
+  - field-name: conf-state
+    nest-under: extra_data.conf-state
+  - field-name: target-cluster-version
+    nest-under: extra_data.target-cluster-version
+  - field-name: current-server-version
+    nest-under: extra_data.current-server-version
+  - field-name: determined-cluster-version
+    nest-under: extra_data.determined-cluster-version
+  - field-name: incoming-snapshot-message-size
+    nest-under: extra_data.incoming-snapshot-message-size
+  - field-name: incoming-snapshot-size
+    nest-under: extra_data.incoming-snapshot-size
+  - field-name: download-took
+    nest-under: extra_data.download-took
+  - field-name: remote-snapshot-sender-id
+    nest-under: extra_data.remote-snapshot-sender-id
+  - field-name: remote-peer-id-stream-handler
+    nest-under: extra_data.remote-peer-id-stream-handler
+  - field-name: remote-peer-id-header
+    nest-under: extra_data.remote-peer-id-header
+  - field-name: remote-peer-id-from
+    nest-under: extra_data.remote-peer-id-from
+  - field-name: cluster-id
+    nest-under: extra_data.cluster-id
+  - field-name: local-member-server-version
+    nest-under: extra_data.local-member-server-version
+  - field-name: local-member-server-minimum-cluster-version
+    nest-under: extra_data.local-member-server-minimum-cluster-version
+  - field-name: remote-peer-server-name
+    nest-under: extra_data.remote-peer-server-name
+  - field-name: remote-peer-server-version
+    nest-under: extra_data.remote-peer-server-version
+  - field-name: remote-peer-server-minimum-cluster-version
+    nest-under: extra_data.remote-peer-server-minimum-cluster-version
+  - field-name: peer-id
+    nest-under: extra_data.peer-id
+  - field-name: remote-peer-name
+    nest-under: extra_data.remote-peer-name
+  - field-name: round-tripper-name
+    nest-under: extra_data.round-tripper-name
+  - field-name: stream-type
+    nest-under: extra_data.stream-type
+  - field-name: stream-writer-type
+    nest-under: extra_data.stream-writer-type
+  - field-name: stream-reader-type
+    nest-under: extra_data.stream-reader-type
+  - field-name: message-type
+    nest-under: extra_data.message-type
+  - field-name: unknown-target-peer-id
+    nest-under: extra_data.unknown-target-peer-id
+  - field-name: remote-peer-urls
+    nest-under: extra_data.remote-peer-urls
+  - field-name: removed-remote-peer-id
+    nest-under: extra_data.removed-remote-peer-id
+  - field-name: urls
+    nest-under: extra_data.urls
+  - field-name: local-member-id
+    nest-under: extra_data.local-member-id
+  - field-name: updated-remote-peer-id
+    nest-under: extra_data.updated-remote-peer-id
+  - field-name: updated-remote-peer-urls
+    nest-under: extra_data.updated-remote-peer-urls
+  - field-name: remote-peer-id
+    nest-under: extra_data.remote-peer-id
+  - field-name: remote-peer-cluster-id
+    nest-under: extra_data.remote-peer-cluster-id
+  - field-name: local-member-cluster-id
+    nest-under: extra_data.local-member-cluster-id
+  - field-name: snapshot-file-path
+    nest-under: extra_data.snapshot-file-path
+  - field-name: read-permission
+    nest-under: extra_data.read-permission
+  - field-name: write-permission
+    nest-under: extra_data.write-permission
+  - field-name: proxy-url
+    nest-under: extra_data.proxy-url
+  - field-name: reason
+    nest-under: extra_data.reason
+  - field-name: self
+    nest-under: extra_data.self
+  - field-name: err-detail
+    nest-under: extra_data.err-detail
+  - field-name: peer
+    nest-under: extra_data.peer
+  - field-name: discovery-url
+    nest-under: extra_data.discovery-url
+  - field-name: common-name
+    nest-under: extra_data.common-name
+  - field-name: root-user
+    nest-under: extra_data.root-user
+  - field-name: root-role-name
+    nest-under: extra_data.root-role-name
+  - field-name: resource-path
+    nest-under: extra_data.resource-path
+  - field-name: user-name
+    nest-under: extra_data.user-name
+  - field-name: role-name
+    nest-under: extra_data.role-name
+  - field-name: member-id
+    nest-under: extra_data.member-id
+  - field-name: internal-server-error
+    nest-under: extra_data.internal-server-error
+  - field-name: v2auth-error
+    nest-under: extra_data.v2auth-error
+  - field-name: method
+    nest-under: extra_data.method
+  - field-name: request-uri
+    nest-under: extra_data.request-uri
+  - field-name: remote
+    nest-under: extra_data.remote
+  - field-name: response type
+    nest-under: extra_data.response type
+  - field-name: request content
+    nest-under: extra_data.request content
+  - field-name: meta-bucket-name
+    nest-under: extra_data.meta-bucket-name
+  - field-name: meta-bucket-name-key
+    nest-under: extra_data.meta-bucket-name-key
+  - field-name: size
+    nest-under: extra_data.size
+  - field-name: current-db-size
+    nest-under: extra_data.current-db-size
+  - field-name: current-db-size-in-use
+    nest-under: extra_data.current-db-size-in-use
+  - field-name: bucket-name
+    nest-under: extra_data.bucket-name
+  - field-name: prefix
+    nest-under: extra_data.prefix
+  - field-name: addr
+    nest-under: extra_data.addr
+  - field-name: key
+    nest-under: extra_data.key
+  - field-name: request
+    nest-under: extra_data.request
+  - field-name: remote-addr
+    nest-under: extra_data.remote-addr
+  - field-name: endpoints
+    nest-under: extra_data.endpoints
+  - field-name: tmp-dir-path
+    nest-under: extra_data.tmp-dir-path
+  - field-name: parent-dir-path
+    nest-under: extra_data.parent-dir-path
+  - field-name: dir-path
+    nest-under: extra_data.dir-path
+  - field-name: source-path
+    nest-under: extra_data.source-path
+  - field-name: rename-path
+    nest-under: extra_data.rename-path
+  - field-name: data-dir
+    nest-under: extra_data.data-dir
+  - field-name: args
+    nest-under: extra_data.args
+  - field-name: etcd-exec
+    nest-under: extra_data.etcd-exec
+  - field-name: etcd-flags
+    nest-under: extra_data.etcd-flags
+  - field-name: GOFAIL_FAILPOINTS
+    nest-under: extra_data.GOFAIL_FAILPOINTS
+  - field-name: failpoint-http-addr
+    nest-under: extra_data.failpoint-http-addr
+  - field-name: failpoint-addr
+    nest-under: extra_data.failpoint-addr
+  - field-name: command-path
+    nest-under: extra_data.command-path
+  - field-name: signal
+    nest-under: extra_data.signal
+  - field-name: url
+    nest-under: extra_data.url
+  - field-name: peer-cert
+    nest-under: extra_data.peer-cert
+  - field-name: peer-key
+    nest-under: extra_data.peer-key
+  - field-name: peer-trusted-ca
+    nest-under: extra_data.peer-trusted-ca
+  - field-name: client-cert
+    nest-under: extra_data.client-cert
+  - field-name: client-key
+    nest-under: extra_data.client-key
+  - field-name: client-trusted-ca
+    nest-under: extra_data.client-trusted-ca
+  - field-name: peer-cert-path
+    nest-under: extra_data.peer-cert-path
+  - field-name: peer-key-path
+    nest-under: extra_data.peer-key-path
+  - field-name: client-cert-path
+    nest-under: extra_data.client-cert-path
+  - field-name: client-key-path
+    nest-under: extra_data.client-key-path
+  - field-name: new-dir
+    nest-under: extra_data.new-dir
+  - field-name: base-dir
+    nest-under: extra_data.base-dir
+  - field-name: error
+    nest-under: extra_data.error
+  - field-name: listener-address
+    nest-under: extra_data.listener-address
+  - field-name: address
+    nest-under: extra_data.address
+  - field-name: member-name
+    nest-under: extra_data.member-name
+  - field-name: member-client-urls
+    nest-under: extra_data.member-client-urls
+  - field-name: snapshot-path
+    nest-under: extra_data.snapshot-path
+  - field-name: snapshot-file-size
+    nest-under: extra_data.snapshot-file-size
+  - field-name: snapshot-total-size
+    nest-under: extra_data.snapshot-total-size
+  - field-name: took
+    nest-under: extra_data.took
+  - field-name: peer-urls
+    nest-under: extra_data.peer-urls
+  - field-name: initial-cluster
+    nest-under: extra_data.initial-cluster
+  - field-name: target-member-id
+    nest-under: extra_data.target-member-id
+  - field-name: target-endpoint
+    nest-under: extra_data.target-endpoint
+  - field-name: request-to
+    nest-under: extra_data.request-to
+  - field-name: members
+    nest-under: extra_data.members
+  - field-name: revisions
+    nest-under: extra_data.revisions
+  - field-name: hashes
+    nest-under: extra_data.hashes
+  - field-name: dir
+    nest-under: extra_data.dir
+  - field-name: errors
+    nest-under: extra_data.errors
+  - field-name: desc
+    nest-under: extra_data.desc
+  - field-name: cases
+    nest-under: extra_data.cases
+  - field-name: checker
+    nest-under: extra_data.checker
+  - field-name: client-endpoints
+    nest-under: extra_data.client-endpoints
+  - field-name: to
+    nest-under: extra_data.to
+  - field-name: status
+    nest-under: extra_data.status
+  - field-name: operation
+    nest-under: extra_data.operation
+  - field-name: from
+    nest-under: extra_data.from
+  - field-name: path
+    nest-under: extra_data.path
+  - field-name: agent-address
+    nest-under: extra_data.agent-address
+  - field-name: tester-address
+    nest-under: extra_data.tester-address
+  - field-name: error-type
+    nest-under: extra_data.error-type
+  - field-name: error-desc
+    nest-under: extra_data.error-desc
+  - field-name: lease-id
+    nest-under: extra_data.lease-id
+  - field-name: stress-type
+    nest-under: extra_data.stress-type
+  - field-name: type
+    nest-under: extra_data.type
+  - field-name: member
+    nest-under: extra_data.member
+  - field-name: grpcAddr
+    nest-under: extra_data.grpcAddr
+  - field-name: grpc-address
+    nest-under: extra_data.grpc-address
+  - field-name: name
+    nest-under: extra_data.name
+  - field-name: advertise-peer-urls
+    nest-under: extra_data.advertise-peer-urls
+  - field-name: listen-client-urls
+    nest-under: extra_data.listen-client-urls
+  - field-name: grpc-url
+    nest-under: extra_data.grpc-url
+  - field-name: endpoint
+    nest-under: extra_data.endpoint
+  - field-name: certificate-validity-bound-not-after
+    nest-under: extra_data.certificate-validity-bound-not-after
+  - field-name: start
+    nest-under: extra_data.start
+  - field-name: end
+    nest-under: extra_data.end
+  - field-name: start time
+    nest-under: extra_data.start time
+  - field-name: max
+    nest-under: extra_data.max
+  - field-name: attempt
+    nest-under: extra_data.attempt
+  - field-name: current node auth revision
+    nest-under: extra_data.current node auth revision
+  - field-name: request auth revision
+    nest-under: extra_data.request auth revision
+  - field-name: revision
+    nest-under: extra_data.revision
+  - field-name: snapshot-count
+    nest-under: extra_data.snapshot-count
+  - field-name: max-wals
+    nest-under: extra_data.max-wals
+  - field-name: max-snapshots
+    nest-under: extra_data.max-snapshots
+  - field-name: snapshot-catchup-entries
+    nest-under: extra_data.snapshot-catchup-entries
+  - field-name: max-concurrent-streams
+    nest-under: extra_data.max-concurrent-streams
+  - field-name: limit
+    nest-under: extra_data.limit
+  - field-name: remote-peer-hash
+    nest-under: extra_data.remote-peer-hash
+  - field-name: local-member-hash
+    nest-under: extra_data.local-member-hash
+  - field-name: hash-1
+    nest-under: extra_data.hash-1
+  - field-name: hash-2
+    nest-under: extra_data.hash-2
+  - field-name: leader-hash
+    nest-under: extra_data.leader-hash
+  - field-name: follower-hash
+    nest-under: extra_data.follower-hash
+  - field-name: used
+    nest-under: extra_data.used
+  - field-name: commit-index-from-wal
+    nest-under: extra_data.commit-index-from-wal
+  - field-name: commit-index
+    nest-under: extra_data.commit-index
+  - field-name: max-request-bytes
+    nest-under: extra_data.max-request-bytes
+  - field-name: given-snapshot-count
+    nest-under: extra_data.given-snapshot-count
+  - field-name: updated-snapshot-count
+    nest-under: extra_data.updated-snapshot-count
+  - field-name: given-snapshot-catchup-entries
+    nest-under: extra_data.given-snapshot-catchup-entries
+  - field-name: updated-snapshot-catchup-entries
+    nest-under: extra_data.updated-snapshot-catchup-entries
+  - field-name: current-snapshot-index
+    nest-under: extra_data.current-snapshot-index
+  - field-name: incoming-leader-snapshot-index
+    nest-under: extra_data.incoming-leader-snapshot-index
+  - field-name: incoming-leader-snapshot-term
+    nest-under: extra_data.incoming-leader-snapshot-term
+  - field-name: current-applied-index
+    nest-under: extra_data.current-applied-index
+  - field-name: first-committed-entry-index
+    nest-under: extra_data.first-committed-entry-index
+  - field-name: local-member-applied-index
+    nest-under: extra_data.local-member-applied-index
+  - field-name: local-member-snapshot-index
+    nest-under: extra_data.local-member-snapshot-index
+  - field-name: local-member-snapshot-count
+    nest-under: extra_data.local-member-snapshot-count
+  - field-name: index
+    nest-under: extra_data.index
+  - field-name: term
+    nest-under: extra_data.term
+  - field-name: consistent-index
+    nest-under: extra_data.consistent-index
+  - field-name: entry-index
+    nest-under: extra_data.entry-index
+  - field-name: compact-index
+    nest-under: extra_data.compact-index
+  - field-name: experimental-bootstrap-defrag-threshold-bytes
+    nest-under: extra_data.experimental-bootstrap-defrag-threshold-bytes
+  - field-name: received-request-id
+    nest-under: extra_data.received-request-id
+  - field-name: sent-request-id
+    nest-under: extra_data.sent-request-id
+  - field-name: incoming-snapshot-index
+    nest-under: extra_data.incoming-snapshot-index
+  - field-name: bytes
+    nest-under: extra_data.bytes
+  - field-name: snapshot-index
+    nest-under: extra_data.snapshot-index
+  - field-name: prev-crc
+    nest-under: extra_data.prev-crc
+  - field-name: new-crc
+    nest-under: extra_data.new-crc
+  - field-name: hash
+    nest-under: extra_data.hash
+  - field-name: backend-consistent-index
+    nest-under: extra_data.backend-consistent-index
+  - field-name: http
+    nest-under: extra_data.http
+  - field-name: https
+    nest-under: extra_data.https
+  - field-name: traffic
+    nest-under: extra_data.traffic
+  - field-name: failpoint
+    nest-under: extra_data.failpoint
+  - field-name: workdir
+    nest-under: extra_data.workdir
+  - field-name: acurl
+    nest-under: extra_data.acurl
+  - field-name: new-storage-version
+    nest-under: extra_data.new-storage-version
+  - field-name: target-storage-version
+    nest-under: extra_data.target-storage-version
+  - field-name: minimal-server-version
+    nest-under: extra_data.minimal-server-version
+  - field-name: downgrade-target
+    nest-under: extra_data.downgrade-target
+  - field-name: prev-cluster-version
+    nest-under: extra_data.prev-cluster-version
+  - field-name: membersKeyPrefix
+    nest-under: extra_data.membersKeyPrefix
+  - field-name: storage-version
+    nest-under: extra_data.storage-version
+  - field-name: job
+    nest-under: extra_data.job
+  - field-name: discovery-endpoints
+    nest-under: extra_data.discovery-endpoints
+  - field-name: discovery-dial-timeout
+    nest-under: extra_data.discovery-dial-timeout
+  - field-name: discovery-request-timeout
+    nest-under: extra_data.discovery-request-timeout
+  - field-name: discovery-keepalive-time
+    nest-under: extra_data.discovery-keepalive-time
+  - field-name: discovery-keepalive-timeout
+    nest-under: extra_data.discovery-keepalive-timeout
+  - field-name: discovery-cert
+    nest-under: extra_data.discovery-cert
+  - field-name: discovery-key
+    nest-under: extra_data.discovery-key
+  - field-name: discovery-cacert
+    nest-under: extra_data.discovery-cacert
+  - field-name: discovery-user
+    nest-under: extra_data.discovery-user
+  - field-name: maximum-cluster-version-supported
+    nest-under: extra_data.maximum-cluster-version-supported
+  - field-name: leader-id
+    nest-under: extra_data.leader-id
+  - field-name: mismatch-member-id
+    nest-under: extra_data.mismatch-member-id
+  - field-name: missing-health-checks
+    nest-under: extra_data.missing-health-checks
+  - field-name: id
+    nest-under: extra_data.id
+  - field-name: broken-path
+    nest-under: extra_data.broken-path
+  - field-name: membersKeyPrefix
+    nest-under: extra_data.membersKeyPrefix
+  - field-name: memberKey
+    nest-under: extra_data.memberKey
+  - field-name: memberInfo
+    nest-under: extra_data.memberInfo
+  - field-name: service
+    nest-under: extra_data.service
+  - field-name: sampling-rate
+    nest-under: extra_data.sampling-rate
+  - field-name: max-learners
+    nest-under: extra_data.max-learners
+  - field-name: clusterSize
+    nest-under: extra_data.clusterSize
+  - field-name: pid
+    nest-under: extra_data.pid
+  - field-name: code
+    nest-under: extra_data.code
+  - field-name: probability
+    nest-under: extra_data.probability
+  - field-name: operationCount
+    nest-under: extra_data.operationCount
+  - field-name: cluster
+    nest-under: extra_data.cluster
+  - field-name: clusterSizeKey
+    nest-under: extra_data.clusterSizeKey
+  - field-name: peer-ids
+    nest-under: extra_data.peer-ids
+  - field-name: stacktrace
+    nest-under: extra_data.stacktrace

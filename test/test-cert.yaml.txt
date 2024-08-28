@@ -1,0 +1,26 @@
+apiVersion: siptls.sec.ericsson.com/v1
+kind: InternalCertificate
+metadata:
+  name: {name}
+  labels:
+    app.kubernetes.io/name: "eric-data-distributed-coordinator-ed-test"
+    app.kubernetes.io/instance: "etcd"
+    app.kubernetes.io/version: "eric-data-distributed-coordinator-ed-0.0.0-1"
+    app.kubernetes.io/managed-by: "Tiller"
+  annotations:
+    ericsson.com/product-name: "Distributed Coordinator ED"
+    ericsson.com/product-number: "CAV101067/1"
+    ericsson.com/product-revision: "RSTATE"
+spec:
+  kubernetes:
+    generatedSecretName: {name}
+    certificateName: clicert.pem
+    privateKeyName: cliprivkey.pem
+  certificate:
+    subject:
+      cn: root-test
+    issuer:
+      reference: eric-data-distributed-coordinator-ed-ca
+    extendedKeyUsage:
+      tlsClientAuth: true
+      tlsServerAuth: false

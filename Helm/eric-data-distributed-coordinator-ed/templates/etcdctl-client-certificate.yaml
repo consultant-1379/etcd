@@ -1,0 +1,26 @@
+{{- if eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" }}
+apiVersion: siptls.sec.ericsson.com/v1
+kind: InternalCertificate
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.name" . }}-etcdctl-client-cert
+  labels:
+    {{- include "eric-data-distributed-coordinator-ed.labels" . | nindent 4 }}
+  annotations:
+    {{- include "eric-data-distributed-coordinator-ed.annotations" . | nindent 4 }}
+spec:
+  kubernetes:
+    generatedSecretName: {{ template "eric-data-distributed-coordinator-ed.name" . }}-etcdctl-client-cert
+    certificateName: clicert.pem
+    privateKeyName: cliprivkey.pem
+  certificate:
+    subject:
+      cn: {{ .Values.service.endpoints.dced.certificates.client.commonName | default "root" }}
+    issuer:
+      reference: {{ template "eric-data-distributed-coordinator-ed.name" . }}-ca
+    extendedKeyUsage:
+      tlsClientAuth: true
+      tlsServerAuth: false
+    validity:
+      overrideTtl: 604800
+      overrideLeadTime: 601200
+{{- end -}}

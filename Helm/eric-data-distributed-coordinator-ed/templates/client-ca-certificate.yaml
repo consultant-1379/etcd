@@ -1,0 +1,18 @@
+{{- if eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" }}
+apiVersion: siptls.sec.ericsson.com/v1
+
+kind: InternalUserCA
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.name" . }}-ca
+  labels:
+    {{- include "eric-data-distributed-coordinator-ed.labels" . | nindent 4 }}
+  annotations:
+    {{- include "eric-data-distributed-coordinator-ed.annotations" . | nindent 4 }}
+spec:
+  kubernetes:
+    generatedSecretName: {{ template "eric-data-distributed-coordinator-ed.name" . }}-ca
+    certificateName: client-cacertbundle.pem
+  certificate:
+    subject:
+      cn: "{{ template "eric-data-distributed-coordinator-ed.name" . }} Internal Client CA"
+{{- end -}}

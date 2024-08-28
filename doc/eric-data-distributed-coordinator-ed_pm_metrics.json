@@ -1,0 +1,1083 @@
+{
+  "metadata" : {
+    "serviceHelmChartName" : "eric-data-distributed-coordinator-ed",
+    "usedSchemaVersion" : "3.0",
+    "fileVersion" : "1.2.0",
+    "dateEdited" : "2023-06-05"
+  },
+  "metrics" :
+  [
+    {
+      "pmMetric": "etcd_cluster_version",
+      "metricDescription" : "etcd cluster version Which version is running .",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_cluster_version"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_auth_revision",
+      "metricDescription" : "The current revision of auth store",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_auth_revision"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_disk_backend_commit_rebalance_duration_seconds_bucket",
+      "metricDescription" : "The latency distributions of commit.rebalance called by bboltdb backend",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_disk_backend_commit_rebalance_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_disk_backend_commit_rebalance_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distributions for commit.rebalance",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_disk_backend_commit_rebalance_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_disk_backend_commit_rebalance_duration_seconds_count",
+      "metricDescription" : "Count of the latency distributions for commit.rebalance",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_disk_backend_commit_rebalance_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_disk_backend_commit_spill_duration_seconds_bucket",
+      "metricDescription" : "The latency distributions of commit.spill called by bboltdb backend",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_disk_backend_commit_spill_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_disk_backend_commit_spill_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distributions for commit.spill",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_disk_backend_commit_spill_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_disk_backend_commit_spill_duration_seconds_count",
+      "metricDescription" : "Sum of the latency distributions for commit.spill",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_disk_backend_commit_spill_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_disk_backend_commit_write_duration_seconds_count",
+      "metricDescription" : "Count of the latency distributions for commit.spill",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_disk_backend_commit_write_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_disk_backend_commit_write_duration_seconds_bucket",
+      "metricDescription" : "The latency distributions of commit.write called by bboltdb backend",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_disk_backend_commit_write_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_disk_backend_commit_write_duration_seconds_sum",
+      "metricDescription" : "Sum of etcd_debugging_disk_backend_commit_write_duration_seconds",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_disk_backend_commit_write_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_lease_granted_total",
+      "metricDescription" : "The number of renewed leases seen by the leader",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_lease_granted_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_lease_revoked_total",
+      "metricDescription" : "The total number of revoked leases",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_lease_revoked_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_lease_ttl_total_bucket",
+      "metricDescription" : "Bucketed histogram of lease TTLs",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_lease_ttl_total_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_lease_ttl_total_sum",
+      "metricDescription" : "Sum of Bucketed histogram of lease TTLs",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_lease_ttl_total_sum"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_lease_ttl_total_count",
+      "metricDescription" : "Count of Bucketed histogram of lease TTLs",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_lease_ttl_total_count"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_compact_revision",
+      "metricDescription" : "The current revision of store",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_compact_revision"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_db_compaction_keys_total",
+      "metricDescription" : "Total number of db keys compacted",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_db_compaction_keys_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_db_compaction_pause_duration_milliseconds_bucket",
+      "metricDescription" : "Bucketed histogram of db compaction pause duration",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_db_compaction_pause_duration_milliseconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_db_compaction_pause_duration_milliseconds_sum",
+      "metricDescription" : "Sum of Bucketed histogram of db compaction pause duration",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_db_compaction_pause_duration_milliseconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_db_compaction_pause_duration_milliseconds_count",
+      "metricDescription" : "Count of Bucketed histogram of db compaction pause duration",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_db_compaction_pause_duration_milliseconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_db_compaction_total_duration_milliseconds_bucket",
+      "metricDescription" : "Bucketed histogram of db compaction total duration",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_db_compaction_total_duration_milliseconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_db_compaction_total_duration_milliseconds_sum",
+      "metricDescription" : "Sum of Bucketed histogram of db compaction total duration",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_db_compaction_total_duration_milliseconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_db_compaction_total_duration_milliseconds_count",
+      "metricDescription" : "Count of Bucketed histogram of db compaction total duration",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_db_compaction_total_duration_milliseconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_events_total",
+      "metricDescription" : "Total number of events sent by this member",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_events_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_index_compaction_pause_duration_milliseconds_bucket",
+      "metricDescription" : "Bucketed histogram of index compaction pause duration",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_index_compaction_pause_duration_milliseconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_index_compaction_pause_duration_milliseconds_sum",
+      "metricDescription" : "Sum of Bucketed histogram of index compaction pause duration",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_index_compaction_pause_duration_milliseconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_index_compaction_pause_duration_milliseconds_count",
+      "metricDescription" : "Count of Bucketed histogram of index compaction pause duration",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_index_compaction_pause_duration_milliseconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_keys_total",
+      "metricDescription" : "Total number of keys",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_keys_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_pending_events_total",
+      "metricDescription" : "Total number of pending events to be sent",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_pending_events_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_range_total",
+      "metricDescription" : "Total number of ranges seen by this member",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_range_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_slow_watcher_total",
+      "metricDescription" : "Total number of unsynced slow watchers",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_slow_watcher_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_total_put_size_in_bytes",
+      "metricDescription" : "The total size of put kv pairs seen by this member",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_total_put_size_in_bytes"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_watch_stream_total",
+      "metricDescription" : "Total number of watch streams",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_watch_stream_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_watcher_total",
+      "metricDescription" : "Total number of watchers",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_watcher_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_server_lease_expired_total",
+      "metricDescription" : "The total number of expired leases",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_server_lease_expired_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_snap_save_marshalling_duration_seconds_bucket",
+      "metricDescription" : "The marshalling cost distributions of save called by snapshot",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_snap_save_marshalling_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_snap_save_marshalling_duration_seconds_sum",
+      "metricDescription" : "Sum of the marshalling cost distributions of save called by snapshot",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_snap_save_marshalling_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_snap_save_marshalling_duration_seconds_count",
+      "metricDescription" : "Count of the marshalling cost distributions of save called by snapshot",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_snap_save_marshalling_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_snap_save_total_duration_seconds_bucket",
+      "metricDescription" : "The total latency distributions of save called by snapshot",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_snap_save_total_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_snap_save_total_duration_seconds_sum",
+      "metricDescription" : "Sum of the total latency distributions of save called by snapshot",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_snap_save_total_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_snap_save_total_duration_seconds_count",
+      "metricDescription" : "Count of he total latency distributions of save called by snapshot",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_snap_save_total_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_store_expires_total",
+      "metricDescription" : "Total number of expired keys",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_store_expires_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_store_reads_total",
+      "metricDescription" : "Total number of reads action by (get/getRecursive), local to this member",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_store_reads_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_store_watch_requests_total",
+      "metricDescription" : "Total number of incoming watch requests (new or reestablished)",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_store_watch_requests_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_store_watchers",
+      "metricDescription" : "Count of currently active watcher",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_store_watchers"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_store_writes_total",
+      "metricDescription" : "Total number of writes (e.g. set/compareAndDelete) seen by this member",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_store_writes_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_lease_renewed_total",
+      "metricDescription" : "The number of renewed leases seen by the leader",
+      "metricType": "Counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_lease_renewed_total"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_current_revision",
+      "metricDescription" : "The current revision of store",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_current_revision"}]
+    },
+    {
+      "pmMetric": "etcd_debugging_mvcc_db_compaction_last",
+      "metricDescription" : "The unix time of the last db compaction. Resets to 0 on start.",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_debugging_mvcc_db_compaction_last"}]
+    },
+    {
+      "pmMetric": "etcd_disk_backend_commit_duration_seconds_bucket",
+      "metricDescription" : "The latency distributions of commit called by backend",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_backend_commit_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_disk_backend_commit_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distributions of commit called by backend",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_backend_commit_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_disk_backend_commit_duration_seconds_count",
+      "metricDescription" : "Count of the latency distributions of commit called by backend",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_backend_commit_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_disk_backend_defrag_duration_seconds_bucket",
+      "metricDescription" : "The latency distribution of backend defragmentation",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_backend_defrag_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_disk_backend_defrag_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distribution of backend defragmentation",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_backend_defrag_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_disk_backend_defrag_duration_seconds_count",
+      "metricDescription" : "Count of the latency distribution of backend defragmentation",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_backend_defrag_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_disk_backend_snapshot_duration_seconds_bucket",
+      "metricDescription" : "The latency distribution of backend snapshots",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_backend_snapshot_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_disk_backend_snapshot_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distribution of backend snapshots",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_backend_snapshot_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_disk_backend_snapshot_duration_seconds_count",
+      "metricDescription" : "Count of the latency distribution of backend snapshots",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_backend_snapshot_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_disk_wal_fsync_duration_seconds_bucket",
+      "metricDescription" : "The latency distributions of fsync called by WAL",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_wal_fsync_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_disk_wal_fsync_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distributions of fsync called by WAL",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_wal_fsync_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_disk_wal_fsync_duration_seconds_count",
+      "metricDescription" : "Count of the latency distributions of fsync called by WAL",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_wal_fsync_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_disk_wal_write_bytes_total",
+      "metricDescription" : "Total number of bytes written in WAL",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_wal_write_bytes_total"}]
+    },
+    {
+      "pmMetric": "etcd_disk_defrag_inflight",
+      "metricDescription" : "Whether or not defrag is active on the member. 1 means active, 0 means not",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_disk_defrag_inflight"}]
+    },
+    {
+      "pmMetric": "etcd_grpc_proxy_cache_hits_total",
+      "metricDescription" : "Total number of cache hits",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_grpc_proxy_cache_hits_total"}]
+    },
+    {
+      "pmMetric": "etcd_grpc_proxy_cache_keys_total",
+      "metricDescription" : "Total number of keys/ranges cached",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_grpc_proxy_cache_keys_total"}]
+    },
+    {
+      "pmMetric": "etcd_grpc_proxy_cache_misses_total",
+      "metricDescription" : "Total number of cache misses",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_grpc_proxy_cache_misses_total"}]
+    },
+    {
+      "pmMetric": "etcd_grpc_proxy_cache_misses_total",
+      "metricDescription" : "Total number of cache misses",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_grpc_proxy_cache_misses_total"}]
+    },
+    {
+      "pmMetric": "etcd_grpc_proxy_events_coalescing_total",
+      "metricDescription" : "Total number of events coalescing",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_grpc_proxy_events_coalescing_total"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_db_open_read_transactions",
+      "metricDescription" : "The number of currently open read transactions",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_db_open_read_transactions"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_db_total_size_in_bytes",
+      "metricDescription" : "Total size of the underlying database physically allocated in bytes",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_db_total_size_in_bytes"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_db_total_size_in_use_in_bytes",
+      "metricDescription" : "Total size of the underlying database logically in use in bytes",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_db_total_size_in_use_in_bytes"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_delete_total",
+      "metricDescription" : "Total number of deletes seen by this member",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_delete_total"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_hash_duration_seconds_bucket",
+      "metricDescription" : "The latency distribution of storage hash operation",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_hash_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_hash_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distribution of storage hash operation",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_hash_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_hash_duration_seconds_count",
+      "metricDescription" : "Count of the latency distribution of storage hash operation",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_hash_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_hash_rev_duration_seconds_bucket",
+      "metricDescription" : "The latency distribution of storage hash by revision operation",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_hash_rev_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_hash_rev_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distribution of storage hash by revision operation",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_hash_rev_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_hash_rev_duration_seconds_count",
+      "metricDescription" : "Count of the latency distribution of storage hash by revision operation",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_hash_rev_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_put_total",
+      "metricDescription" : "Total number of puts seen by this member",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_put_total"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_range_total",
+      "metricDescription" : "Total number of ranges seen by this member",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_range_total"}]
+    },
+    {
+      "pmMetric": "etcd_mvcc_txn_total",
+      "metricDescription" : "Total number of txns seen by this member",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_mvcc_txn_total"}]
+    },
+    {
+      "pmMetric": "etcd_network_client_grpc_received_bytes_total",
+      "metricDescription" : "The total number of bytes received from grpc clients",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_network_client_grpc_received_bytes_total"}]
+    },
+    {
+      "pmMetric": "etcd_network_client_grpc_sent_bytes_total",
+      "metricDescription" : "The total number of bytes sent to grpc clients",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_network_client_grpc_sent_bytes_total"}]
+    },
+    {
+      "pmMetric": "etcd_grpc_proxy_watchers_coalescing_total",
+      "metricDescription" : "Total number of current watchers coalescing",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_grpc_proxy_watchers_coalescing_total"}]
+    },
+    {
+      "pmMetric": "etcd_network_active_peers",
+      "metricDescription" : "The current number of active peer connections",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_network_active_peers"}]
+    },
+    {
+      "pmMetric": "etcd_network_peer_received_bytes_total",
+      "metricDescription" : "The total number of bytes received from peers",
+      "metricType": "Counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_network_peer_received_bytes_total"}]
+    },
+    {
+      "pmMetric": "etcd_network_peer_round_trip_time_seconds_bucket",
+      "metricDescription" : "Round-Trip-Time histogram between peers",
+      "metricType": "Histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_network_peer_round_trip_time_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_network_peer_round_trip_time_seconds_count",
+      "metricDescription" : "Count of Round-Trip-Time seconds between peers ",
+      "metricType": "Histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_network_peer_round_trip_time_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_network_peer_round_trip_time_seconds_sum",
+      "metricDescription" : "Sum of Round-Trip-Time seconds between peers",
+      "metricType": "Histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_network_peer_round_trip_time_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_network_peer_sent_bytes_total",
+      "metricDescription" : "The total number of bytes sent to peers",
+      "metricType": "Counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_network_peer_sent_bytes_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_client_requests_total",
+      "metricDescription" : "The total number of client requests per client version",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_client_requests_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_go_version",
+      "metricDescription" : "Which Go version server is running with. 1 for 'server_go_version' label with current version",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_go_version"}]
+    },
+    {
+      "pmMetric": "etcd_server_has_leader",
+      "metricDescription" : "Whether or not a leader exists. 1 is existence, 0 is not",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_has_leader"}]
+    },
+    {
+      "pmMetric": "etcd_server_health_failures",
+      "metricDescription" : "The total number of failed health checks",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_health_failures"}]
+    },
+    {
+      "pmMetric": "etcd_server_health_success",
+      "metricDescription" : "The total number of leader heartbeat send failures (likely overloaded from slow disk)",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_health_success"}]
+    },
+    {
+      "pmMetric": "etcd_server_id",
+      "metricDescription" : "Server or member ID in hexadecimal format. 1 for 'server_id' label with current ID",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_id"}]
+    },
+    {
+      "pmMetric": "etcd_server_is_leader",
+      "metricDescription" : " Whether or not this member is a leader. 1 if is, 0 otherwise",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_is_leader"}]
+    },
+    {
+      "pmMetric": "etcd_server_is_learner",
+      "metricDescription" : "Whether or not this member is a learner. 1 if is, 0 otherwise",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_is_learner"}]
+    },
+    {
+      "pmMetric": "etcd_server_leader_changes_seen_total",
+      "metricDescription" : "The number of leader changes seen",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_leader_changes_seen_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_learner_promote_successes",
+      "metricDescription" : "The total number of successful learner promotions while this member is leader",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_learner_promote_successes"}]
+    },
+    {
+      "pmMetric": "etcd_server_proposals_applied_total",
+      "metricDescription" : "The total number of consensus proposals applied",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_proposals_applied_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_proposals_committed_total",
+      "metricDescription" : "The total number of consensus proposals committed",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_proposals_committed_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_proposals_failed_total",
+      "metricDescription" : "The total number of failed proposals seen",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_proposals_failed_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_proposals_pending",
+      "metricDescription" : "The current number of pending proposals to commit",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_proposals_pending"}]
+    },
+    {
+      "pmMetric": "etcd_server_quota_backend_bytes",
+      "metricDescription" : "Current backend storage quota size in bytes",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_quota_backend_bytes"}]
+    },
+    {
+      "pmMetric": "etcd_server_read_indexes_failed_total",
+      "metricDescription" : "The total number of failed read indexes seen",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_read_indexes_failed_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_slow_apply_total",
+      "metricDescription" : "The total number of slow apply requests (likely overloaded from slow disk)",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_slow_apply_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_slow_read_indexes_total",
+      "metricDescription" : "The total number of pending read indexes not in sync with leader's or timed out read index requests",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_slow_read_indexes_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_snapshot_apply_in_progress_total",
+      "metricDescription" : "1 if the server is applying the incoming snapshot. 0 if none",
+      "metricType": "counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_snapshot_apply_in_progress_total"}]
+    },
+    {
+      "pmMetric": "etcd_server_version",
+      "metricDescription" : "Which version is running. 1 for 'server_version' label with current version",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_version"}]
+    },
+    {
+      "pmMetric": "etcd_server_apply_duration_seconds_bucket",
+      "metricDescription" : "The latency distributions of v2 apply called by backend.",
+      "metricType": "Histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_apply_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_server_apply_duration_seconds_count",
+      "metricDescription" : "Count of etcd_server_apply_duration_seconds",
+      "metricType": "Histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_apply_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_server_apply_duration_seconds_sum",
+      "metricDescription" : "Sum of etcd_server_apply_duration_seconds",
+      "metricType": "Histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_apply_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_server_heartbeat_send_failures_total",
+      "metricDescription" : "The total number of leader heartbeat send failures (likely overloaded from slow disk)",
+      "metricType": "Counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_server_heartbeat_send_failures_total"}]
+    },
+    {
+      "pmMetric": "etcd_snap_db_fsync_duration_seconds_bucket",
+      "metricDescription" : "The latency distributions of fsyncing .snap.db file",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_snap_db_fsync_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_snap_db_fsync_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distributions of fsyncing .snap.db file",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_snap_db_fsync_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_snap_db_fsync_duration_seconds_count",
+      "metricDescription" : "Count of the latency distributions of fsyncing .snap.db file",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_snap_db_fsync_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_snap_db_save_total_duration_seconds_bucket",
+      "metricDescription" : "The total latency distributions of v3 snapshot save",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_snap_db_save_total_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_snap_db_save_total_duration_seconds_sum",
+      "metricDescription" : "Sum of the total latency distributions of v3 snapshot save",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_snap_db_save_total_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_snap_db_save_total_duration_seconds_count",
+      "metricDescription" : "Count of the total latency distributions of v3 snapshot save",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_snap_db_save_total_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "etcd_snap_fsync_duration_seconds_bucket",
+      "metricDescription" : "The latency distributions of fsync called by snap",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_snap_fsync_duration_seconds_bucket"}]
+    },
+    {
+      "pmMetric": "etcd_snap_fsync_duration_seconds_sum",
+      "metricDescription" : "Sum of the latency distributions of fsync called by snap",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_snap_fsync_duration_seconds_sum"}]
+    },
+    {
+      "pmMetric": "etcd_snap_fsync_duration_seconds_count",
+      "metricDescription" : "Count of the latency distributions of fsync called by snap",
+      "metricType": "histogram",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"etcd_snap_fsync_duration_seconds_count"}]
+    },
+    {
+      "pmMetric": "process_start_time_seconds",
+      "metricDescription" : "Start time of the process since unix epoch in seconds.",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"process_start_time_seconds"}]
+    },
+    {
+      "pmMetric": "process_virtual_memory_bytes",
+      "metricDescription" : "Virtual memory size in bytes",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"process_virtual_memory_bytes"}]
+    },
+    {
+      "pmMetric": "process_virtual_memory_max_bytes",
+      "metricDescription" : "Maximum amount of virtual memory available in bytes",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"process_virtual_memory_max_bytes"}]
+    },
+    {
+      "pmMetric": "process_cpu_seconds_total",
+      "metricDescription" : "Total user and system CPU time spent in seconds",
+      "metricType": "Counter",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"process_cpu_seconds_total"}]
+    },
+    {
+      "pmMetric": "process_max_fds",
+      "metricDescription" : "Maximum number of open file descriptors",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"process_max_fds"}]
+    },
+    {
+      "pmMetric": "process_open_fds",
+      "metricDescription" : "Number of open file descriptors",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"process_open_fds"}]
+    },
+    {
+      "pmMetric": "process_resident_memory_bytes",
+      "metricDescription" : "Resident memory size in bytes.",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"process_resident_memory_bytes"}]
+    },
+    {
+      "pmMetric": "dced_volume_stats_available_bytes",
+      "metricDescription" : "Total number of available bytes on the volume",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"dced_volume_stats_available_bytes"}]
+    },
+    {
+      "pmMetric": "dced_volume_stats_capacity_bytes",
+      "metricDescription" : "Total size of the volume in bytes",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"dced_volume_stats_capacity_bytes"}]
+    },
+    {
+      "pmMetric": "dced_volume_stats_used_bytes",
+      "metricDescription" : "Total number of used bytes on the volume",
+      "metricType": "gauge",
+      "metricStatus": "stable",
+      "metricCategory": "USE",
+      "metricLabel": [{"label" :"dced_volume_stats_used_bytes"}]
+    }
+  ]
+}

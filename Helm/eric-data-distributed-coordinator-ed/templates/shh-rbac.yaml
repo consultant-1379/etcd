@@ -1,0 +1,37 @@
+{{- if eq (include "eric-data-distributed-coordinator-ed.hkln.executor" .) "service" -}}
+{{- $helmHook := dict -}}
+{{- $_ := set $helmHook "helm.sh/hook" "pre-rollback" -}}
+{{- $_ := set $helmHook "helm.sh/hook-weight" "-210" -}} {{- /* Must run before any hooklauncher job !!! */ -}}
+{{- $commonAnn := fromYaml (include "eric-data-distributed-coordinator-ed.hkln.annotations" .) -}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.hkln.name" . }}-role
+  labels:
+    {{- include "eric-data-distributed-coordinator-ed.hkln.labels" . | nindent 4 }}
+  annotations:
+    {{- include "eric-data-distributed-coordinator-ed.mergeAnnotations" (dict "location" .Template.Name "sources" (list $helmHook $commonAnn)) | trim | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/exec
+      - persistentvolumeclaims
+    verbs: ["get", "list", "watch", "patch", "delete", "create", "update"]
+  - apiGroups: ["apps"]
+    resources:
+      - statefulsets/scale
+      - statefulsets
+    verbs: ["get", "list", "watch", "patch", "delete", "create", "update"]
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.hkln.name" . }}-sa
+  labels:
+    {{- include "eric-data-distributed-coordinator-ed.hkln.labels" . | nindent 4 }}
+  annotations:
+    {{- include "eric-data-distributed-coordinator-ed.mergeAnnotations" (dict "location" .Template.Name "sources" (list $helmHook $commonAnn)) | trim | nindent 4 }}
+{{- end -}}

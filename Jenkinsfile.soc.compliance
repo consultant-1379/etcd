@@ -1,0 +1,173 @@
+
+def bob = 'python3 bob/bob.py'
+pipeline {
+    agent {
+        node {
+          label params.SLAVE
+        }
+     }
+    parameters  {
+        string(name: 'CHART_NAME', defaultValue: 'eric-data-distributed-coordinator-ed', description: 'Chart name')
+        string(name: 'CHART_VERSION', defaultValue: '8.0.0-6', description: 'Chart version')
+        booleanParam(name: 'HELM_DR_CHECKER', defaultValue: true, description: 'Execute helm design rule checker')
+        booleanParam(name: 'IMAGE_DR_CHECKER', defaultValue: true, description: 'Execute image design rule checker')
+        booleanParam(name: 'MARKETPLACE_DR_CHECKER', defaultValue: true, description: 'Execute marketplace design rule checker')
+        booleanParam(name: 'EVMS_DR_CHECKER', defaultValue: true, description: 'Execute evms design rule checker')
+        booleanParam(name: 'PLMS_DR_CHECKER', defaultValue: true, description: 'Execute plms design rule checker')
+        booleanParam(name: 'ARTIFACT_DR_CHECKER', defaultValue: true, description: 'Execute service fragment design rule checker')
+        booleanParam(name: 'PM_METRICS_DR_CHECKER', defaultValue: true, description: 'Execute PM Metrics design rule checker')
+        booleanParam(name: 'UPDATE_SOC_COMPLIANCE', defaultValue: true, description: 'Update SOC compliance')
+        booleanParam(name: 'GET_SOC_COMPLIANCE', defaultValue: true, description: 'Get SOC compliance')
+        booleanParam(name: 'AES_RELEASE', defaultValue: true, description: 'AES Release')
+        booleanParam(name: 'SANDBOX', defaultValue: false, description: 'To test in sandbox environment')
+        booleanParam(name: 'FOCAL_POINT_RELEASE', defaultValue: false, description: 'Focal Point Release')
+        booleanParam(name: 'AGGREGATE_DR_REPORT', defaultValue: true, description: 'Aggregate all the DR checkers reports')
+    }
+    stages {
+        stage('Prepare environment'){
+          steps {
+            echo "Update submodules to master fixed commit"
+            sh "git submodule update --init --recursive"
+            echo "Prepare Bob environment"
+            sh "${bob} clean"
+            echo "grant access for docker.sock which will use in java11 image"
+            sh "sudo chmod 666 /var/run/docker.sock"
+            withCredentials([string(credentialsId: 'hub-arm-seli-api-token', variable: 'SELI_API_TOKEN')]) {
+                echo "Init environment"
+                sh "${bob} init"
+            }
+          }
+        }
+        stage('Init') {
+            steps {
+                sh "./bob/bob -r ruleset.2.0.soc.yaml init"
+            }
+        }
+        stage('Focal Point Release') {
+            when { expression { env.FOCAL_POINT_RELEASE == 'true' }}
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'FOCALPOINT_USERNAME', passwordVariable: 'FOCALPOINT_PASSWORD')]) {
+                    sh "./bob/bob -r ruleset.2.0.soc.yaml focalpoint-release"
+                }
+            }
+        }
+        stage('AES Release') {
+            when { expression { env.AES_RELEASE == 'true' }}
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'AES_USERNAME', passwordVariable: 'AES_PASSWORD')]) {
+                    sh "./bob/bob -r ruleset.2.0.soc.yaml create-release"
+                }
+            }
+        }
+        stage('DR Check docker image') {
+            when { expression { env.IMAGE_DR_CHECKER == 'true' }}
+            steps {
+                sh "./bob/bob -r ruleset.2.0.soc.yaml image-dr-check"
+
+                publishHTML([
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/reports',
+                        reportFiles: 'image_design-rule-check-report.html',
+                        reportName: 'Docker_Image_Design_Rules_Report',
+                        reportTitles: ''
+                ])
+            }
+        }
+        stage('DR Check helm chart') {
+            when { expression { (env.HELM_DR_CHECKER=="true") } }
+            steps {
+                 script {
+                      try {
+                         sh "./bob/bob -r ruleset.2.0.soc.yaml helm-dr-checker"
+                      } catch (err) {
+                         echo err
+                      }
+                 }
+                publishHTML(target: [
+                        allowMissing: false,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: 'build/reports',
+                        reportFiles: 'design-rule-check-report.html',
+                        reportName: 'Helm_Chart_Design_Rules_Report',
+                        reportTitles: ''
+                ])
+            }
+        }
+        stage('DR Checkers for release version') {
+            parallel {
+                stage('PLMS_DR_CHECKER') {
+                    when { expression { env.PLMS_DR_CHECKER == 'true' }}
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'PLMS_USERNAME', passwordVariable: 'PLMS_PASSWORD'),
+                                        string(credentialsId: 'munin_token', variable: 'MUNIN_TOKEN')
+                                        ]){
+                            sh "./bob/bob -r ruleset.2.0.soc.yaml plm-checker"
+                        }
+                    }
+                }
+                stage('EVMS_DR_CHECKER') {
+                    when { expression { env.EVMS_DR_CHECKER == 'true'}}
+                    steps {
+                        withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'EVMS_USERNAME', passwordVariable: 'EVMS_PASSWORD')]){
+                            sh "./bob/bob -r ruleset.2.0.soc.yaml evms-checker"
+                        }
+                    }
+                }
+                stage('MARKETPLACE_DR_CHECKER') {
+                    when { expression { env.MARKETPLACE_DR_CHECKER == 'true'}}
+                    steps {
+                        withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN'),string(credentialsId: 'etcd-marketplace-token', variable: 'MARKETPLACE_TOKEN')]){
+                            sh "./bob/bob -r ruleset.2.0.soc.yaml marketplace-dr-checker"
+                        }
+                    }
+                }
+                stage('ARTIFACT_DR_CHECKER') {
+                    when { expression { env.ARTIFACT_DR_CHECKER == 'true'}}
+                    steps {
+                        withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'HELM_TOKEN')]){
+                            sh "./bob/bob -r ruleset.2.0.soc.yaml artifact-dr-checker"
+                        }
+                    }
+                }
+                stage('PM_METRICS_DR_CHECKER') {
+                    when { expression { env.PM_METRICS_DR_CHECKER == 'true'}}
+                    steps {
+                        withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'HELM_TOKEN')]){
+                            sh "./bob/bob -r ruleset.2.0.soc.yaml pm-metrics-checker"
+                        }
+                    }
+                }
+            }
+        }
+        stage('Aggregate DR reports') {
+            when { expression { env.AGGREGATE_DR_REPORT == 'true'}}
+            steps {
+                    sh "./bob/bob -r ruleset.2.0.soc.yaml aggregate-reports"
+            }
+        }
+        stage('Update SOC compliance ') {
+            when { expression { env.UPDATE_SOC_COMPLIANCE == 'true' }}
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'AES_USERNAME', passwordVariable: 'AES_PASSWORD')]){
+                    sh "./bob/bob -r ruleset.2.0.soc.yaml update-soc-compliance"
+                }
+            }
+        }
+        stage('Get SOC compliance Report') {
+            when { expression { env.GET_SOC_COMPLIANCE == 'true' }}
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'eadphub-psw', usernameVariable: 'AES_USERNAME', passwordVariable: 'AES_PASSWORD')]){
+                    sh "./bob/bob -r ruleset.2.0.soc.yaml fetch-compliance-report"
+                }
+            }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: 'build/**/*.*', allowEmptyArchive: true
+        }
+    }
+}

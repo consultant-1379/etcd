@@ -1,0 +1,185 @@
+def bob = './bob/bob'
+def ruleset = 'ruleset.nightly.yaml'
+
+pipeline {
+    agent {
+        node {
+            label params.SLAVE
+        }
+    }
+    environment {
+        DEFENSICS_HOME_DIR="defensics_home"
+        DEFENSICS_HOME="${env.WORKSPACE}/defensics_home"
+        KUBECONFIG = credentials('hoff102')
+        VHUB_API_TOKEN = credentials('vuln-hub-api-token')
+    }
+    stages {
+        stage('Prepare environment'){
+            steps {
+                echo "Update submodules to master"
+                sh "git submodule update --init --recursive"
+                withCredentials([string(credentialsId: 'hub-arm-seli-api-token', variable: 'SELI_API_TOKEN')]) {
+                  sh "${bob} -r ${ruleset} init"
+                }
+            }
+        }
+        stage('Create ARMdocker credentials secret file') {
+           steps {
+               withCredentials([file(credentialsId: 'hub-armdocker-config-json', variable: 'DOCKER_CONFIG')]) {
+                  sh 'cp $DOCKER_CONFIG armdocker-config.json'
+               }
+            }
+        }
+        stage('Kubeaudit') {
+            when { expression { (params.SKIP_KUBEAUDIT=="false") } }
+            steps {
+                sh "${bob} -r ${ruleset} kube-audit"
+                archiveArtifacts 'kube-audit/**/*'
+            }
+        }
+        stage('Kubesec') {
+            when { expression { (params.SKIP_KUBESEC=="false") } }
+            steps {
+                sh "${bob} -r ${ruleset} kube-sec"
+                archiveArtifacts artifacts: 'kube-sec-reports/**/*', allowEmptyArchive: true
+            }
+        }
+        stage('Deploy services') {
+            when { expression { (params.SKIP_NMAP=="false") || (params.SKIP_ZAP=="false") || (params.SKIP_FUZZ=="false") } }
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                    sh "${bob} -r ${ruleset} deploy-to-k8s"
+                }
+            }
+        }
+        stage('Defensics Scan') {
+            when { expression { (params.SKIP_FUZZ=="false") } }
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN'), string(credentialsId: 'hub-arm-seli-api-token', variable: 'SELI_API_TOKEN')]) {
+                    sh "mkdir -p $DEFENSICS_HOME_DIR"
+                    sh "wget https://arm.sero.gic.ericsson.se/artifactory/proj-adp-eric-data-dced-scripts-generic-local/defensicstar.tgz"
+                    sh "tar -xvzf defensicstar.tgz -C $DEFENSICS_HOME_DIR"
+                    sh "${bob} -r ${ruleset} defensics"
+                    sh "rm -rf $DEFENSICS_HOME_DIR"
+                    archiveArtifacts artifacts: 'defensics/**/*', allowEmptyArchive: true
+                }
+            }
+        }
+        stage('NMap Port Scan') {
+            when { expression { (params.SKIP_NMAP=="false") } }
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                    sh "${bob} -r ${ruleset} nmap-port-scan"
+                    archiveArtifacts artifacts: 'nmap_reports/nmap_report/**.*', allowEmptyArchive: true
+                }
+            }
+        }
+        stage('ZAP scan') {
+            when { expression { (params.SKIP_ZAP=="false") } }
+            steps {
+                script {
+                    try {
+                      withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                        sh "${bob} -r ${ruleset} system-test-with-vulnerability-check"
+                      }
+                    } catch (err) {
+                        echo err.getMessage()
+                    }
+                    archiveArtifacts artifacts: 'zap-reports/**.*', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('cleanup resources') {
+            when { expression { (params.SKIP_NMAP=="false")  || (params.SKIP_ZAP=="false") || (params.SKIP_FUZZ=="false") } }
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                    sh "${bob} -r ${ruleset} cleanup-deployments"
+                }
+            }
+        }
+        stage('Trivy Scan') {
+            when { expression { (params.SKIP_TRIVY=="false") } }
+            steps {
+                sh "${bob} -r ${ruleset} trivy-inline-scan"
+                archiveArtifacts artifacts: 'trivy-reports/**.*', allowEmptyArchive: true
+            }
+        }
+        stage('Grype Scan') {
+            when { expression { (params.SKIP_GRYPE=="false") } }
+            steps {
+                sh "${bob} -r ${ruleset} grype-scan"
+                archiveArtifacts artifacts: 'grype-reports/**.*', allowEmptyArchive: true
+            }
+        }
+        stage('Cleanup grype/trivy images') {
+            when { expression { (params.SKIP_GRYPE=="false") } }
+            steps {
+                sh "${bob} -r ${ruleset} cleanup-grype-trivy-images"
+            }
+        }
+        stage('Retrieve Tenable.sc report') {
+            when { expression { (params.SKIP_TENABLE=="false") } }
+            steps {
+                withCredentials([string(credentialsId: 'hub-arm-sero-api-token', variable: 'API_TOKEN')]) {
+                    sh "${bob} -r ${ruleset} fetch-tenable-report"
+                    archiveArtifacts artifacts: 'tenablesc-reports/**.*', allowEmptyArchive: true
+                }
+            }
+        }
+        stage('Retrieve XRAY report') {
+            when { expression { (params.SKIP_RAW_XRAY=="false") } }
+            steps {
+                withCredentials([string(credentialsId: 'xray-api-token', variable: 'API_TOKEN')]) {
+                    script {
+                        try {
+                           sh "${bob} -r ${ruleset} get-dced-raw-xray-report-json"
+                           archiveArtifacts artifacts: 'xray-reports/**.*', allowEmptyArchive: true
+                        } catch (err) {
+                           echo err.getMessage()
+                        }
+                    }
+                }
+            }
+        }
+        stage('CISCAT') {
+            when { expression { (params.SKIP_CISCAT=="false") } }
+            steps {
+                sh "${bob} -r ${ruleset} cis-cat-scan"
+                archiveArtifacts artifacts: 'ciscat-report/**/*', allowEmptyArchive: true
+            }
+        }
+        stage('Generate Vulnerability report V2.0') {
+            when { expression { (params.SKIP_VA_REPORT=="false") } }
+                steps {
+                    withCredentials([string(credentialsId: 'xray-api-token', variable: 'API_TOKEN')]) {
+                    script {
+                        try {
+                            sh "${bob} -r ${ruleset} generate-VA-report-V2"
+                        } catch (err) {
+                            echo err.getMessage()
+                        }
+                    }
+                }
+            }
+        }
+        stage('Cleanup Workspace') {
+            steps {
+                script {
+                    sh "rm -rf \
+                        defensicstar.tgz \
+                        defensicstar.tgz.1 \
+                        bragent/target/bragent-0.0.1-SNAPSHOT.jar \
+                        bragent/Docker/target/bragent-0.0.1-SNAPSHOT.jar"
+                }
+            }
+        }
+    }
+    post {
+        always {
+            archiveArtifacts artifacts: 'pod_logs/*.*,', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'va_report/**.*', allowEmptyArchive: true
+            archiveArtifacts artifacts: 'xray-reports/*.*,', allowEmptyArchive: true
+        }
+    }
+}

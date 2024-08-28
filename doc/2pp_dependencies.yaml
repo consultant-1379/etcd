@@ -1,0 +1,34 @@
+modelVersion: '1.1'
+2pp_dependencies:
+  - name: Common Base OS Micro Image
+    version: 6.17.0
+    abc_number: CXU1011463
+    evms:
+      register: "yes"
+  - name: Backup and Restore Agent API Java Library ## EVMS has versions of BRO API 3.0.4 onwards.
+    version: 5.8.0
+    abc_number: CXA30109
+    evms:
+      register: "yes"
+  - name: Stdout Redirect
+    version: 1.38.0
+    abc_number: CXA30176
+    evms:
+      register: "yes"
+  - name: Metrics Exporter
+    version: 1.55.0
+    abc_number: CXA301003/1
+    evms:
+      register: "yes"
+  - name: Smart Helm Hook Image
+    version: 2.21.0
+    evms:
+      register: "yes"
+    abc_number: CXU1011909
+  - name: ADP Log Shipper Sidecar Image
+    version: 19.4.0
+    abc_number: CXU1011191
+    evms:
+      register: "yes"
+dependencies:
+          []

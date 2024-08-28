@@ -1,0 +1,37 @@
+documents:
+  # document name
+  - name: user-guide
+    # file names of files to be packaged in the document
+    files:
+      - ../doc/user-guide/user_guide.md
+      - ../doc/user-guide/DistributedCoordinatorED_architecture_overview.png
+      - ../doc/user-guide/DistributedCoordinatorED_deployment_overview.png
+      - ../doc/user-guide/DistributedCoordinatorED_deployment.png
+  - name: pri
+    files:
+      - ../build/pri.html
+  - name: ReadMe
+    files:
+      - ../README.md
+  - name: Contributing
+    files:
+      - ../CONTRIBUTING.md
+  - name: DistributedCoordinatorED_Developers_Guide
+    files:
+      - ../doc/developers-guide/DistributedCoordinatorED_Developers_Guide.md
+  - name: test-report
+    # file names of files to be packaged in the document
+    files:
+      - ../doc/test-report/DistributedCoordinatorED_Test_Report.md
+  - name: test-specification
+    files:
+      - ../doc/test-specification/DistributedCoordinatorED_Test_Specification.md
+  - name: svl-replacement-doc
+    files:
+      - ../build/doc-svl-replacement/svl.md
+  - name: characteristics-report
+    files: # Only works if ruleset2.0.pra.yaml::characteristics::generate-other-formats has been run before packaging :/
+      - ../characteristics_report.html
+  - name: pm-metrics
+    files:
+      - eric-data-distributed-coordinator-ed_pm_metrics.json

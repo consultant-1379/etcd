@@ -1,0 +1,22 @@
+
+schemaVersion: "2.0.0"
+
+# Verifies that the files required to run the container are present and executable
+
+fileExistenceTests:
+  - name: 'etcd'
+    path: /usr/local/bin/etcd
+    shouldExist: true
+    permissions: '-rwxrwxr-x'
+  - name: 'etcdctl'
+    path: /usr/local/bin/etcdctl
+    shouldExist: true
+    permissions: '-rwxrwxr-x'
+
+fileContentTests:
+  - name: 'os-release'
+    path: /etc/os-release
+    expectedContents: [
+      'ID="sles"',
+      'VERSION_ID="15.5"'
+    ]

@@ -1,0 +1,68 @@
+{{- if .Values.brAgent.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.agentName" . }}
+  annotations:
+    {{- include "eric-data-distributed-coordinator-ed.annotations" . | nindent 4 }}
+  labels:
+    {{- $labels := dict "chart" (include "eric-data-distributed-coordinator-ed.chart" .) -}}
+    {{- $commonLabels := include "eric-data-distributed-coordinator-ed.agent.labels" . | fromYaml -}}
+    {{- include "eric-data-distributed-coordinator-ed.mergeLabels" (dict "location" .Template.Name "sources" (list $labels $commonLabels)) | trim | nindent 4 }}
+data:
+  application.properties: |
+    orchestrator.host={{ include "eric-data-distributed-coordinator-ed.agent.broServiceName" . }}
+    orchestrator.port={{ include "eric-data-distributed-coordinator-ed.agent.broGrpcServicePort" . }}
+{{- if .Values.brAgent.brLabelValue }}
+    dced.agent.id={{ .Values.brAgent.brLabelValue }}
+{{ else }}
+    dced.agent.id=dc-etcd
+{{- end }}
+    dced.agent.apiVersion=5.8.0
+    dced.agent.softwareVersion.semanticVersion={{ .Chart.Version  }}
+    dced.agent.softwareVersion.commercialVersion={{ .Chart.Version  }}
+    dced.agent.fragment.backup.data.path={{.Values.brAgent.backupFileName}}
+    dced.endpoint.url={{ template "eric-data-distributed-coordinator-ed.agent.endpoint" . }}
+    {{- if .Values.brAgent.backupTypeList }}
+    dced.agent.scope={{- template "eric-data-distributed-coordinator-ed.agent.backupTypes" . }}
+    {{- end }}
+    dced.read.timeout.secs={{.Values.brAgent.dcedReadTimeout}}
+{{- if .Values.brAgent.maxInboundMessageSize }}
+    dced.agent.max.inbound.message.size={{.Values.brAgent.maxInboundMessageSize}}
+{{ else }}
+    dced.agent.max.inbound.message.size=262144000
+{{- end }}
+{{ .Values.brAgent.properties.applicationProperties | indent 4 }}
+{{- if eq (include "eric-data-distributed-coordinator-ed.tls.enabled" .) "true" }}
+    dced.ca.file={{ template "eric-data-distributed-coordinator-ed.siptlsca.certbundle" }}
+    dced.client.cert.file={{ template "eric-data-distributed-coordinator-ed.certs.clientcert" }}
+    dced.client.cert.keyfile={{ template "eric-data-distributed-coordinator-ed.certs.clientkey" }}
+    dced.certificates.enabled=true
+{{ else }}
+    dced.certificates.enabled=false
+{{- end }}
+    dced.agent.bro.flag.grpc.siptls.security.enabled={{ include "eric-data-distributed-coordinator-ed.brAgent.tls" . }}
+  {{- if eq (include "eric-data-distributed-coordinator-ed.brAgent.tls" . ) "true" }}
+    dced.agent.bro.siptls.ca.path={{ template "eric-data-distributed-coordinator-ed.siptlsca.certbundle" }}
+    dced.agent.bro.siptls.ca.name={{ include "eric-data-distributed-coordinator-ed.agent.broServiceName" . }}
+    dced.agent.bro.client.cert.file={{- .Values.service.endpoints.dced.certificates.client.bro -}}/clientcert.pem
+    dced.agent.bro.client.cert.keyfile={{- .Values.service.endpoints.dced.certificates.client.bro -}}/clientprivkey.pem
+  {{- else }}
+    dced.agent.bro.siptls.ca.path=""
+    dced.agent.bro.siptls.ca.name=""
+    dced.agent.bro.client.cert.file=""
+    dced.agent.bro.client.cert.keyfile=""
+  {{- end }}
+    dced.agent.softwareVersion.description=The Backup and Restore Agent for Distributed Coordinator ED
+    dced.agent.softwareVersion.productionDate=date
+    dced.agent.softwareVersion.productName=distributed-coordinator-ed-brAgent
+    dced.agent.softwareVersion.productNumber=CXC 201 2039/1
+    dced.agent.softwareVersion.type=Database
+    dced.agent.softwareVersion.revision=2
+    dced.agent.download.location=/sharedData/backupdata/
+    logging.config=log4j2.xml
+    spring.main.banner-mode=off
+
+  log4j2.xml: |
+{{ .Values.brAgent.logging.log4jxml | indent 4 }}
+{{ end }}

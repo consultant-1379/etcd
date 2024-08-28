@@ -1,0 +1,27 @@
+{{- if eq ( include "eric-data-distributed-coordinator-ed.tls.enabled" . ) "true" }}
+apiVersion: siptls.sec.ericsson.com/v1
+kind: InternalCertificate
+metadata:
+  name: {{ template "eric-data-distributed-coordinator-ed.name" . }}-server-cert
+  labels:
+    {{- include "eric-data-distributed-coordinator-ed.labels" . | nindent 4 }}
+  annotations:
+    {{- include "eric-data-distributed-coordinator-ed.annotations" . | nindent 4 }}
+spec:
+  kubernetes:
+    generatedSecretName: {{ template "eric-data-distributed-coordinator-ed.name" . }}-cert
+    certificateName: srvcert.pem
+    privateKeyName: srvprivkey.pem
+  certificate:
+    subject:
+      cn: {{ template "eric-data-distributed-coordinator-ed.name" . }}
+    subjectAlternativeName:
+      dns: {{ include "eric-data-distributed-coordinator-ed.dns" . }}
+    extendedKeyUsage:
+      tlsClientAuth: true
+      tlsServerAuth: true
+    validity:
+      overrideTtl: 604800
+      overrideLeadTime: 601200
+{{- end -}}
+

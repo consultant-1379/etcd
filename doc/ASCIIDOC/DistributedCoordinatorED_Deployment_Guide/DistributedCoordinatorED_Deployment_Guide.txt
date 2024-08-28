@@ -1,0 +1,26 @@
+= Distributed Coordinator ED Service Deployment Guide
+:author: Andrei Gavrisan E
+:doc-name: DistributedCoordinatorED_Deployment_Guide
+:doc-no: 1/1531-APR 201 59/1
+:revnumber: PA1
+:revdate: {sys: date +%Y-%m-%d}
+:approved-by-name: Davina McCloskey
+:approved-by-department: BDGSBECA
+
+//Template updated 2020-01-20 (keep to track template history)
+//PA5: Security Guidelines added to comply with Security GPRs
+//PA6: Minor update. Misspelling in security chapter, Protocol changed to Protocol
+//PA7: Major update: Overview chapters moved to the Service Overview, Dimensioning and Characteristics information added.
+
+== Overview
+
+This document is obsolete.
+The Deployment Guide is described in the Service User Guide (see <<Userguide>>).
+
+[bibliography]
+References
+----------
+
+[bibliography]
+* [[Userguide]] Distributed Coordinator ED User Guide doc-no:[1/1553-APR 201 59/1]
+

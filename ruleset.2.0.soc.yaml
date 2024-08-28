@@ -1,0 +1,231 @@
+modelVersion: 2.0
+docker-images:
+  - adp-release-auto: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bob-adp-release-auto:latest
+  - adp-checker: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-checkers:latest
+  - image-dr-check: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-image-dr-check:latest
+  - adp-helm-dr-check: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/common-library-adp-helm-dr-check:latest
+import:
+  common: common-properties.yaml
+properties:
+  - report-folder: 'build/reports'
+  - release-full-name: "ADP ${common.service-name} ${var.RELEASE_VERSION}"
+  - image-repo-path-internal: proj-adp-eric-data-distributed-coordinator-ed-internal
+  - image-internal-full-name: ${common.image-registry}/${image-repo-path-internal}/${common.image-name}
+  - bragent-internal-full-name: ${common.image-registry}/${image-repo-path-internal}/${common.bragent-image-name}
+  - metrics-exporter-internal-full-name: ${common.image-registry}/${image-repo-path-internal}/${common.metrics-exporter-image-name}
+  #- hooklauncher-internal-full-name: ${common.image-registry}/${image-repo-path-internal}/${common.hooklauncher-image-name}
+  - arm-doc-released: ${common.helm-chart-repo-server}/proj-adp-eric-data-dc-ed-docs-released-generic-local/
+  - apr-product-number: 'APR20159'
+
+env:
+  - CHART_NAME
+  - CHART_VERSION
+  - HELM_TOKEN
+  - PLMS_USERNAME
+  - PLMS_PASSWORD
+  - MUNIN_TOKEN
+  - EVMS_USERNAME
+  - EVMS_PASSWORD
+  - AES_USERNAME
+  - AES_PASSWORD
+  - SANDBOX(default=false)
+  - FOCALPOINT_PASSWORD
+  - FOCALPOINT_USERNAME
+
+var:
+  - semver
+  - RELEASE_VERSION
+  - helm-dr-vm-args
+  - image-dr-vm-args
+  - rstate
+  - IMAGE_INTERNAL_NAME
+  - BRAGENT_IMAGE_INTERNAL_NAME
+  - METRICS_EXPORTER_IMAGE_INTERNAL_NAME
+ # - HOOKLAUNCHER_IMAGE_INTERNAL_NAME
+rules:
+  clean:
+    - task: rm
+      cmd:
+        - rm -rf .bob/
+        - rm -rf build/
+        - mkdir -p build/reports/
+  init:
+    - task: assign-values
+      cmd:
+        - echo '${image-internal-full-name}' > .bob/var.IMAGE_INTERNAL_NAME
+        - echo '${bragent-internal-full-name}' > .bob/var.BRAGENT_IMAGE_INTERNAL_NAME
+        - echo '${metrics-exporter-internal-full-name}' > .bob/var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME
+       # - echo '${hooklauncher-internal-full-name}' > .bob/var.HOOKLAUNCHER_IMAGE_INTERNAL_NAME
+    - task: helm-dr-vm-args
+      cmd: echo " -DhelmDesignRule.config.DR-D1120-055-AD=skip -DhelmDesignRule.config.DR-D1120-055=skip" > .bob/var.helm-dr-vm-args
+    - task: image-dr-vm-args
+      cmd: echo "" > .bob/var.image-dr-vm-args
+    - task: generate-released-version
+      cmd:
+        - echo  ${env.CHART_VERSION} | cut -d '+' -f 1 | cut -d '-' -f 1 > .bob/var.semver
+        - echo  ${env.CHART_VERSION} | cut -d '+' -f 1 | cut -d '-' -f 1 > .bob/var.RELEASE_VERSION
+    - task: rstate
+      docker-image: adp-release-auto
+      cmd: get_rstate.py ${env.CHART_VERSION} > .bob/var.rstate
+  create-release:
+    - task: create-new-release
+      docker-image: adp-checker
+      docker-envs:
+        - AES_USERNAME
+        - AES_PASSWORD
+      cmd: aes release-from-baseline
+        --sandbox ${env.SANDBOX}
+        --product-name "${common.service-name}"
+        --release-name "${release-full-name}"
+        --skip-if-release-exist
+        --debug
+
+  image-dr-check:
+    - task: fetch-image
+      cmd:
+        - docker pull ${var.IMAGE_INTERNAL_NAME}:${env.CHART_VERSION}
+        - docker pull ${var.BRAGENT_IMAGE_INTERNAL_NAME}:${env.CHART_VERSION}
+        - docker pull ${var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME}:${env.CHART_VERSION}
+        #- docker pull ${var.HOOKLAUNCHER_IMAGE_INTERNAL_NAME}:${env.CHART_VERSION}
+    - task: check-image-dr
+      docker-image: image-dr-check
+      docker-flags:
+      - "-v /var/run/docker.sock:/var/run/docker.sock"
+      - "-u $(id -u):$(id -g) $(for x in $(id -G); do printf \" --group-add %s\" \"$x\"; done)"
+      cmd: image-dr-check -i ${var.IMAGE_INTERNAL_NAME}:${env.CHART_VERSION} -o ${report-folder}/dced
+    - task: bragent-check-image-dr
+      docker-image: image-dr-check
+      docker-flags:
+      - "-v /var/run/docker.sock:/var/run/docker.sock"
+      - "-u $(id -u):$(id -g) $(for x in $(id -G); do printf \" --group-add %s\" \"$x\"; done)"
+      cmd: image-dr-check -i ${var.BRAGENT_IMAGE_INTERNAL_NAME}:${env.CHART_VERSION} -o ${report-folder}/bragent
+    - task: metrics-exporter-check-image-dr
+      docker-image: image-dr-check
+      docker-flags:
+      - "-v /var/run/docker.sock:/var/run/docker.sock"
+      - "-u $(id -u):$(id -g) $(for x in $(id -G); do printf \" --group-add %s\" \"$x\"; done)"
+      cmd: image-dr-check -i ${var.METRICS_EXPORTER_IMAGE_INTERNAL_NAME}:${env.CHART_VERSION} -o ${report-folder}/metrics-exporter
+   # - task: hook-launcher-check-image-dr
+    #  docker-image: image-dr-check
+    #  docker-flags:
+    #  - "-v /var/run/docker.sock:/var/run/docker.sock"
+     # - "-u $(id -u):$(id -g) $(for x in $(id -G); do printf \" --group-add %s\" \"$x\"; done)"
+      #cmd: image-dr-check -i ${var.HOOKLAUNCHER_IMAGE_INTERNAL_NAME}:${env.CHART_VERSION} -o ${report-folder}/hook-launcher
+
+  # Check helm chart design rules for compliance
+  helm-dr-checker:
+    - task: helm-chart-check-dr
+      docker-image: adp-helm-dr-check
+      #cmd: java -jar /helm-dr-check.jar --helm-chart Helm/${common.helm-chart-name} --output ${report-folder}/ > .bob/design-rule-check-report.log
+      cmd: "bash -c 'helm-dr-check
+        ${var.helm-dr-vm-args}
+        --helm-chart ${common.helm-chart-name}-${var.semver}.tgz
+        --output ${report-folder}/ > .bob/design-rule-check-report.log
+        --helm-v3; exit 0'"
+
+  plm-checker:
+    - task: plm-checker
+      docker-image: adp-release-auto
+      docker-envs:
+        - PLMS_USERNAME
+        - PLMS_PASSWORD
+        - MUNIN_TOKEN
+      cmd: "bash -c 'plm-dr-check
+        --product-number \"${apr-product-number}\"
+        --version ${var.semver}
+        --skip-dr DR-D470211-171
+        --output-directory ${report-folder}/
+        --report-format json
+        --debug; exit 0'"
+  evms-checker:
+    - task: evms-checker
+      docker-image: adp-release-auto
+      docker-envs:
+        - EVMS_USERNAME
+        - EVMS_PASSWORD
+      cmd: "bash -c 'check-evms registration
+        --product-name \"${common.service-name}\"
+        --product-version ${var.semver}
+        --check-cbos
+        --output-directory ${report-folder}/
+        --report-format json
+        --debug; exit 0'"
+  marketplace-dr-checker:
+    - task: marketplace-dr-checker
+      docker-image: adp-checker
+      docker-envs:
+        - MARKETPLACE_TOKEN
+      cmd: "bash -c 'marketplace-dr-check
+        -v ${var.semver}
+        -c ${common.helm-chart-name}
+        -r json
+        -o ${report-folder}
+        --debug; exit 0'"
+  artifact-dr-checker:
+    - task: artifact-dr-checker
+      docker-image: adp-release-auto
+      cmd: "bash -c 'artifact-dr-check
+        --structure-data-file-url \"${arm-doc-released}documents/${var.RELEASE_VERSION}/${env.CHART_NAME}-structured-data.json\"
+        --api-token ${env.HELM_TOKEN}
+        --service-name \"${common.service-name}\"
+        --version ${var.semver}
+        --pm-metrics
+        --yang-ac
+        --characteristic-report
+        --output-dir ${report-folder}/
+        --report-format json
+        --debug; exit 0'"
+  pm-metrics-checker:
+    - task: pm-metrics-checker
+      docker-image: adp-checker
+      cmd: "bash -c 'pm-metrics-check
+        --structure-data-file-url \"${arm-doc-released}documents/${var.RELEASE_VERSION}/${env.CHART_NAME}-structured-data.json\"
+        --api-token ${env.HELM_TOKEN}
+        --service-name \"${common.service-name}\"
+        --version ${var.semver}
+        --output-dir ${report-folder}/
+        --report-format json
+        --debug; exit 0'"
+  aggregate-reports:
+    - task: aggregate
+      docker-image: adp-checker
+      cmd: aes aggregate-reports
+        --reports-dir ${report-folder}/
+        --output-file ${report-folder}/final_report.json
+        --product-name "${common.service-name}"
+        --release-name "${release-full-name}"
+  update-soc-compliance:
+    - task: update
+      docker-image: adp-checker
+      docker-envs:
+        - AES_USERNAME
+        - AES_PASSWORD
+      cmd: aes update-compliance
+        --sandbox ${env.SANDBOX}
+        --report ${report-folder}/final_report.json
+        --product-name "${common.service-name}"
+        --release-name "${release-full-name}"
+        --debug
+  fetch-compliance-report:
+    - task: fetch-report
+      docker-image: adp-checker
+      docker-envs:
+        - AES_USERNAME
+        - AES_PASSWORD
+      cmd: aes get-compliance-report
+        --sandbox ${env.SANDBOX}
+        --product-name "${common.service-name}"
+        --release-name "${release-full-name}"
+        --output ${report-folder}/compliance_report.json
+        --debug
+  focalpoint-release:
+    - task: release-to-focalpoint
+      docker-image: adp-release-auto
+      docker-envs:
+        - FOCALPOINT_USERNAME
+        - FOCALPOINT_PASSWORD
+      cmd: focalpoint upload
+        --service-name "ADP ${common.service-name}"
+        --version '${var.semver}'
+        --description '${release-full-name} PRA Release'
+        --debug

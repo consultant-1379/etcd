@@ -1,0 +1,137 @@
+[
+    {
+        "Service_Name": "Distributed Coordinator ED",
+        "CAV_Product": {
+            "Product_id": "APR 201 59/2",
+            "New_Rstate": "R11A"
+        },
+        "Software_Products": [
+            {
+                "Product_Type": "Helm Chart",
+                "Name": "Distributed Coordinator ED HELM_CHART",
+                "Product_id": "CXC 201 2039/2",
+                "GASK_id": "190 10-CXC 201 2039/2 rev D",
+                "New_Rstate": "R11A",
+                "Product_Label": "Helm_Chart",
+                "Checksum": "a6ce4894c2a6d1d147b9d4b4b01d5b3aeb7b36b79d451be234b950bc1540069a"
+            },
+            {
+                "Product_Type": "Docker image",
+                "Name": "Distributed Coordinator ED DOCKER_IMAGE_DISTRIBUTED_COORDINATOR_ED",
+                "Product_id": "CXC 201 2038/2",
+                "GASK_id": "190 10-CXC 201 2038/2 rev D",
+                "New_Rstate": "R11A",
+                "Product_Label": "Docker_Image_Distributed_Coordinator_ED",
+                "Checksum": "f2fbba801775b054a8b13e02f9095a85c3eae00ad7a7c9e18d51c95679699a70"
+            },
+            {
+                "Product_Type": "Docker image",
+                "Name": "Distributed Coordinator ED BACKUP_&_RESTORE_AGENT_IMAGE",
+                "Product_id": "CXC 174 2753/2",
+                "GASK_id": "190 10-CXC 174 2753/2 rev D",
+                "New_Rstate": "R11A",
+                "Product_Label": "Backup_Restore_Agent_IMAGE",
+                "Checksum": "d00e6a5b5b27b8a115b5ad6f648a5fc548107b607b52b7e7869cf50d4ed2f572"
+            },
+            {
+                "Product_Type": "Docker image",
+                "Name": "Distributed Coordinator ED METRICS_EXPORTER_IMAGE",
+                "Product_id": "CXA 301 003/1",
+                "New_Rstate": "R11A",
+                "Product_Label": "Metrics_Exporter_IMAGE",
+                "Checksum": "207ff1c44d422ca4b6952fcd28b2cb746d00c0858756bbef278b6ca63c01282b"
+            }
+        ],
+        "Ticket_identity": [
+            {
+                "Release": "Distributed Coordinator ED 2.10.0+16",
+                "Ticket_Identity": "T-"
+            }
+        ],
+        "Related_documents": [
+            {
+                "Document_id": "1/198 17-APR 201 59/2",
+                "Title": "Application Developer Guide",
+                "Rev": "F",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            },
+            {
+                "Document_id": "152 83-APR 201 59/2-11",
+                "Title": "Test Report",
+                "Rev": "A",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            },
+            {
+                "Document_id": "1/152 41-APR 201 59/2",
+                "Title": "Test Specification",
+                "Rev": "K",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            },
+            {
+                "Document_id": "240 07-APR 201 59/2",
+                "Title": "Change Record",
+                "Rev": "E",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            },
+            {
+                "Document_id": "240 05-APR 201 59/2",
+                "Title": "Encryption Usage Information",
+                "Rev": "D",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            },
+            {
+                "Document_id": "240 0-APR 201 59",
+                "Title": "Export Control",
+                "Rev": "D",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            },
+            {
+                "Document_id": "1/240 50-APR 201 59/2-2",
+                "Title": "Software Vendor List",
+                "Rev": "J",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            },
+            {
+                "Document_id": "1/006 64-APR 201 59/2",
+                "Title": "RA and PIA Report",
+                "Rev": "L",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            },
+            {
+                "Document_id": "1/1597-APR 201 59/2",
+                "Title": "VA Scan Report",
+                "Rev": "L",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            },
+            {
+                "Document_id": "1/0360-APR 201 59/2",
+                "Title": "Secure Coding Report",
+                "Rev": "D",
+                "URL": "",
+                "Support_Other": "EriDoc"
+            }
+        ],
+        "Installation_Instruction": {
+            "Document_id": "1/1553-APR 201 59/2",
+            "Title": "User Guide",
+            "Rev": "L",
+            "Support_Other": "EriDoc"
+        },
+        "Verification_Report": {
+            "Document_id": "152 83-APR 201 59/2-11",
+            "Title": "Test Report",
+            "Rev": "A",
+            "URL": "",
+            "Support_Other": "EriDoc"
+        }
+    }
+]

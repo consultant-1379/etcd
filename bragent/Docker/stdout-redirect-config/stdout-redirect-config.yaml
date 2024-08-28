@@ -1,0 +1,6 @@
+log-schema-version: 1.2.0
+timestamp-format: "2006-01-02T15:04:05.000-07:00"
+service-id: "eric-data-distributed-coordinator-ed"
+pod-name: POD_NAME
+namespace: NAMESPACE
+container: CONTAINER_NAME

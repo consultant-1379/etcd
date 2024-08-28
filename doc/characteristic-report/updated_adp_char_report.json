@@ -1,0 +1,189 @@
+{
+    "ADP-Microservice-Characteristics-Report": {
+        "model_version": "2.0.0",
+        "service": {
+            "name": "Data Distributed Coordinator ED",
+            "version": "2.10.0"
+        },
+        "resource-configuration": [
+            {
+                "flavor": "standard",
+                "resources": [
+                    {
+                        "pod": "eric-data-distributed-coordinator-ed",
+                        "instances": 3,
+                        "containers": [
+                            {
+                                "name": "dced",
+                                "cpu-req": "400m",
+                                "cpu-limit": "1",
+                                "mem-req": "400Mi",
+                                "mem-limit": "1Gi"
+                            },
+                            {
+                                "name": "metricsexporter",
+                                "cpu-req": "100m",
+                                "cpu-limit": "200m",
+                                "mem-req": "8Mi",
+                                "mem-limit": "32Mi"
+                            },
+                            {
+                                "name": "logshipper",
+                                "cpu-req": "50m",
+                                "cpu-limit": "100m",
+                                "mem-req": "50Mi",
+                                "mem-limit": "100Mi"
+                            }
+                        ]
+                    },
+                    {
+                        "pod": "eric-data-distributed-coordinator-ed-agent-b4cd86fd6-6zgtm",
+                        "instances": 2,
+                        "containers": [
+                            {
+                                "name": "eric-data-distributed-coordinator-ed-agent",
+                                "cpu-req": "400m",
+                                "cpu-limit": "1",
+                                "mem-req": "400mi",
+                                "mem-limit": "2Gi"
+                            },
+                            {
+                                "name": "logshipper",
+                                "cpu-req": "50m",
+                                "cpu-limit": "100m",
+                                "mem-req": "50Mi",
+                                "mem-limit": "100Mi"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "results": [
+            {
+                "use-case": "manual_test",
+                "description": "",
+                "duration": 2009,
+                "lables": [
+                    "LCM"
+                ],
+                "service-configuration": {
+                    "implementation": "sidecar",
+                    "enabled-features": [
+                        "tls"
+                    ]
+                },
+                "used-resources-configuration": {
+                    "flavor": "minimum",
+                    "resources": [
+                        {
+                            "pod": "eric-data-distributed-coordinator-ed-0",
+                            "containers": [
+                                {
+                                    "name": "dced",
+                                    "cpu-req": "400m",
+                                    "cpu-limit": "1000m",
+                                    "mem-req": "400Mi",
+                                    "mem-limit": "1024Mi"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "metrics": [
+                    {
+                        "pod": "eric-data-distributed-coordinator-ed-0",
+                        "container": "dced",
+                        "metrics": {
+                            "cpu_avg_milli_cores": 68,
+                            "cpu_max_milli_cores": 75,
+                            "memory_avg_mib": 73,
+                            "memory_max_mib": 75
+                        }
+                    }
+                ],
+                "additional-results": {},
+                "test-meta-data": {
+                    "time": "",
+                    "duration": ""
+                },
+                "traffic": {
+                    "tps": "18",
+                    "request-avg-size": "20kb",
+                    "total-requests": "300",
+                    "total-errors": "0",
+                    "latency": "5ms"
+                }
+            },
+            {
+                "use-case": "test_create_backup",
+                "description": "",
+                "duration": 2005,
+                "labels": [
+                    "LCM"
+                ],
+                "service-configuration": {
+                    "implementation": "sidecar",
+                    "enabled-features": [
+                        "tls"
+                    ]
+                },
+                "used-resources-configuration": {
+                    "flavor": "minimum",
+                    "resources": [
+                        {
+                            "pod": "eric-data-distributed-coordinator-ed-agent-b4cd86fd6-mdzlz",
+                            "containers": [
+                                {
+                                    "name": "eric-data-distributed-coordinator-ed-agent",
+                                    "cpu-req": "400m",
+                                    "cpu-limit": "1000m",
+                                    "mem-req": "400Mi",
+                                    "mem-limit": "2048Mi"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "metrics": [
+                    {
+                        "pod": "eric-data-distributed-coordinator-ed-agent-b4cd86fd6-mdzlz",
+                        "container": "eric-data-distributed-coordinator-ed-agent",
+                        "metrics": {
+                            "cpu_avg_milli_cores": 5,
+                            "cpu_max_milli_cores": 8,
+                            "memory_avg_mib": 167,
+                            "memory_max_mib": 172
+                        }
+                    }
+                ],
+                "additional-results": {},
+                "test-meta-data": {
+                    "time": "",
+                    "duration": ""
+                },
+                "traffic": {
+                    "tps": "18",
+                    "request-avg-size": "20kb",
+                    "total-requests": "300",
+                    "total-errors": "0",
+                    "latency": "5ms"
+                }
+            }
+        ],
+        "test-environment": {
+            "cluster": "hoff102",
+            "cpu": {
+                "model": "",
+                "CPU-MHz": 2400,
+                "bogomips": 4589.37
+            },
+            "memory": "445Gi",
+            "kaas": "CCD-2.15.1",
+            "kubernetes-version": "1.21.1",
+            "other-info": {
+                "description_url": "http://url"
+            }
+        }
+    }
+}

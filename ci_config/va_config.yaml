@@ -1,0 +1,2300 @@
+model_version: 2.1
+product_va_config:
+    product_name: eric-data-distributed-coordinator-ed
+    version: 8.1.0
+    description: "The Distributed Coordinator ED Service is a distributed key value store that provides a reliable way to store data across a cluster of machines."
+    test_responsibles: "missing"
+    issue_trackers:
+      default: "https://eteamproject.internal.ericsson.com/browse/"
+    spoc: "ZTISSAN"
+    security_test_scope: "missing"
+    excluded_from_scope: "missing"
+    formal_va_scope: "missing"
+    hardened_reference_system: "missing"
+    updated_tools_and_plugins: "missing"
+    run_port_scan: "missing"
+    run_vulnerability_scan: "missing"
+    run_configuration_scan: "missing"
+    run_fuzz_test: "missing"
+    perform_dos_test: "missing"
+    perform_edge_boundary_value_condition_test: "missing"
+    perform_owasp_top_ten_scan: "missing"
+    perform_ad_hoc_manual_test: "missing"
+    report_findings_as_trs: "missing"
+    perform_structured_manual_penetration_test: "missing"
+    perform_extended_risk_assessment_test: "missing"
+    perform_red_team_penetration_test: "missing"
+    verify_security_design_rules: "missing"
+    continuous_vulnerability_test: "missing"
+    maintain_false_positive_record: "missing"
+    explanations_for_tools_not_scanned:
+      xray: "missing"
+      trivy: "missing"
+      anchore: "missing"
+      nmap: "missing"
+      nessus: "missing"
+      zap: "missing"
+      kubeaudit: "missing"
+      defensics: "missing"
+      kubesec: "missing"
+    additional_zap_information: "missing"
+    product_purpose: "missing"
+    test_nature: "missing"
+    security_posture: "missing"
+    residual_risk: "missing"
+    references: "missing"
+    release_notes_for_va_report: "missing"
+    release_notes_for_st_report: "missing"
+    additional_tool_information:
+      xray: "missing"
+      trivy: "missing"
+      anchore: "missing"
+      nmap: "7.93"
+      nessus: "missing"
+      zap: "D-2023-06-19"
+      kubeaudit: "missing"
+      defensics: "0.8"
+      kubesec: "missing"
+    show_required_manual_action_warnings: "false"
+    mitigations:
+      "CVE-2023-24537":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This CVE targets DCED via the Hooklauncher container (HL) and the included 2PP SW library called Stdout-redirect. For HL, this vulnerability is associated with the go/scanner module. However, this appears to be a false positive, as the module does not get included in the binary. The vulnerability can only manifest during compilation, and it would fail visibly if triggered. Thus, the HL container remains unaffected by this vulnerability. Regarding the Stdout-redirect 2PP software library, the vulnerability only affects components when the Parse functions on Go source code with //line directives are used in a vulnerable manner, with very large line numbers. Stdout-redirect does not utilize the parse function with //line directives in such a way."
+        mitigation: "The vulnerability will be fixed when the LCM of Hooklauncher and Stdout-redirect uplifts the Golang to the fixed version. "
+        tools: "xray"
+        description: "Calling any of the Parse functions on Go source code which contains //line directives with very large line numbers can cause an infinite loop due to integer overflow."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-24537"
+      "CVE-2022-21597":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The vulnerabale component is not used in DCED and DCED BrAgent, so the vulnerability is not applicable for DCED. No Mitigation required as the vulnerabale component is not used in DCED and DCED BrAgent."
+        tools: "xray"
+        description: "Vulnerability in the Oracle GraalVM Enterprise Edition product of Oracle Java SE (component: JavaScript). Supported versions that are affected are Oracle GraalVM Enterprise Edition: 20.3.7, 21.3.3 and 22.2.0. Easily exploitable vulnerability allows unauthenticated attacker with network access via HTTP to compromise Oracle GraalVM Enterprise Edition. Successful attacks of this vulnerability can result in unauthorized read access to a subset of Oracle GraalVM Enterprise Edition accessible data. CVSS 3.1 Base Score 5.3 (Confidentiality impacts). CVSS Vector: (CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N)."
+        packages_and_paths:
+          - "[/java-11-openjdk-headless:0:11.0.19.0-150000.3.96.1]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.3"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-21597"
+      "CVE-2023-2804":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The vulnerable package libjpeg-turbo comes from CBOS and not directly used in DCED. DCED or it's BRAgent is not affected by this vulnerability. Hence this Vulnerability is not applicable for DCED. To fix this, DCED will update to new LCM of CBOS version once it is available."
+        tools: "xray"
+        description: "A heap-based buffer overflow issue was discovered in libjpeg-turbo in h2v2_merged_upsample_internal() function of jdmrgext.c file. The vulnerability can only be exploited with 12-bit data precision for which the range of the sample data type exceeds the valid sample range, hence, an attacker could craft a 12-bit lossless JPEG image that contains out-of-range 12-bit samples. An application attempting to decompress such image using merged upsampling would lead to segmentation fault or buffer overflows, causing an application to crash."
+        packages_and_paths:
+          - "[/libjpeg8:0:8.2.2-150400.15.9]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.1"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-2804"
+      "CVE-2023-24536":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This  CVE targets DCED via the Hooklauncher container (HL) and the included 2PP SW library called Stdout-redirect. Hence DCED is not impacted with this vulnerability"
+        mitigation: "This vulnerbility is not applicable to DCED . The vulnerability becomes remediated when the LCM of Hooklauncher and Stdout-redirect uplifts Golang to the fixed version."
+        tools: "xray"
+        description: "Multipart form parsing can consume large amounts of CPU and memory when processing form inputs containing very large numbers of parts. This stems from several causes: 1. mime/multipart.Reader.ReadForm limits the total memory a parsed multipart form can consume. ReadForm can undercount the amount of memory consumed, leading it to accept larger inputs than intended. 2. Limiting total memory does not account for increased pressure on the garbage collector from large numbers of small allocations in forms with many parts. 3. ReadForm can allocate a large number of short-lived buffers, further increasing pressure on the garbage collector. The combination of these factors can permit an attacker to cause an program that parses multipart forms to consume large amounts of CPU and memory, potentially resulting in a denial of service. This affects programs that use mime/multipart.Reader.ReadForm, as well as form parsing in the net/http package with the Request methods FormFile, FormValue, ParseMultipartForm, and PostFormValue. With fix, ReadForm now does a better job of estimating the memory consumption of parsed forms, and performs many fewer short-lived allocations. In addition, the fixed mime/multipart.Reader imposes the following limits on the size of parsed forms: 1. Forms parsed with ReadForm may contain no more than 1000 parts. This limit may be adjusted with the environment variable GODEBUG=multipartmaxparts=. 2. Form parts parsed with NextPart and NextRawPart may contain no more than 10,000 header fields. In addition, forms parsed with ReadForm may contain no more than 10,000 header fields across all parts. This limit may be adjusted with the environment variable GODEBUG=multipartmaxheaders=."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/health/httpprobe_main/github.com/golang/go, /usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go]"
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-24536"
+      "CVE-2022-2880":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "DCED does not use the vulnerable component \"net/http/httputil\" for its operations . This  vulnerability is not applicable to DCED."
+        mitigation: "This CVE will be removed when stdout and CBO is fixed with the golang version, DCED would uplift to fixed versions of CBO and stdout "
+        tools: "xray"
+        description: "Requests forwarded by ReverseProxy include the raw query parameters from the inbound request, including unparsable parameters rejected by net/http. This could permit query parameter smuggling when a Go proxy forwards a parameter with an unparsable value. After fix, ReverseProxy sanitizes the query parameters in the forwarded query when the outbound request's Form field is set after the ReverseProxy. Director function returns, indicating that the proxy has parsed the query parameters. Proxies which do not parse query parameters continue to forward the original query parameters unchanged. / Requests forwarded by ReverseProxy include the raw query parameters from the inbound request, including unparseable parameters rejected by net/http. This could permit query parameter smuggling when a Go proxy forwards a parameter with an unparseable value. After fix, ReverseProxy sanitizes the query parameters in the forwarded query when the outbound request's Form field is set after the ReverseProxy. Director function returns, indicating that the proxy has parsed the query parameters. Proxies which do not parse query parameters continue to forward the original query parameters unchanged."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-2880"
+      "CVE-2021-37137":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):(From eric-data-distributed-coordinator-ed 4.6.0):(From eric-data-distributed-coordinator-ed 4.5.0):(From eric-data-distributed-coordinator-ed 4.4.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "The affected part of code (snappyframedecoder class netty-codec package) is not used directly in DCED or BRO Agent API or BRAgent. There is no reference to the affected method decode() in the GRPC-java version 1.37.0. Hence, DCED and its BRAgent are not impacted by this vulnerability."
+        mitigation: "When the new GRPC version is available with the updated Netty version 4.1.68.Final, DCED BRAgent would upversion to that new GRPC version."
+        tools: "anchore, xray"
+        description: "The Snappy frame decoder function doesn't restrict the chunk length which may lead to excessive memory usage. Beside this it also may buffer reserved skippable chunks until the whole chunk was received which may lead to excessive memory usage as well. This vulnerability can be triggered by supplying malicious input that decompresses to a very big size (via a network stream or a file) or by sending a huge skippable chunk."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCE-2022-2407"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/netty-codec-4.1.59.Final.jar]"
+          - "package: netty-codec-4.1.59.Final, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/netty-codec-4.1.59.Final.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2021-37137"
+      "CVE-2022-38750":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "This will only occur with uncontrolled input. As this is used by the kube client it only manages structured inputs from kubernetes. Hence, this is Not Applicable for DCED and BRAgent. Hence, DCED is not impacted due to this vulnerability. No mitigation required as this vulnerability is not applicable to DCED."
+        tools: "anchore, xray"
+        description: "Using snakeYAML to parse untrusted YAML files may be vulnerable to Denial of Service attacks (DOS). If the parser is running on user supplied input, an attacker may supply content that causes the parser to crash by stackoverflow."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/snakeyaml-1.30.jar]"
+          - "package: snakeyaml-1.30, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/snakeyaml-1.30.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.5"
+          - "6.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-38750"
+      "CVE-2023-31484":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "The Vulnerable package CPAN.pm comes from CBO and DCED does not use this package directly. Hence, this vulnerability is not applicable for DCED."
+        mitigation: "DCED will uplift to new version of CBOS where the fix would be available."
+        tools: "xray"
+        description: "CPAN.pm before 2.35 does not verify TLS certificates when downloading distributions over HTTPS."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/perl-base:0:5.26.1-150300.17.11.1.26142.1.PTF.1211123]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.4"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-31484"
+      "CVE-2021-22570":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "anchore/grype has mentioned this CVE as False Positive. Refer to https://github.com/anchore/grype/issues/558. This vulnerability does not impact to DCED."
+        tools: "anchore"
+        description: "Nullptr dereference when a null char is present in a proto symbol. The symbol is parsed incorrectly, leading to an unchecked call into the proto file's name during generation of the resulting error message. Since the symbol is incorrectly parsed, the file is nullptr. We recommend upgrading to version 3.15.0 or greater."
+        packages_and_paths:
+          - "package: protobuf-java-3.12.0, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/protobuf-java-3.12.0.jar"
+          - "package: protobuf-java-util-3.12.0, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/protobuf-java-util-3.12.0.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "6.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2021-22570"
+      "CVE-2021-43797":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "DCED-BRAgent does not directly use netty, it is brought into the project via GRPC-java. The GRPC implementation does not skip control character which is needed to trigger this vulnerability, thus the DCED-BRAgent is not affected by this CVE. This vulnerability is not applicable for DCED. The vulnerability is reported in Netty-Codec-Http version: 4.1.69. Vulnerability will be removed once Netty-Codec-Http version is uplifted to 4.1.71."
+        tools: "anchore, xray"
+        description: "Netty is an asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients. Netty prior to version 4.1.71.Final skips control chars when they are present at the beginning / end of the header name. It should instead fail fast as these are not allowed by the spec and could lead to HTTP request smuggling. Failing to do the validation might cause netty to \"sanitize\" header names before it forward these to another remote system when used as proxy. This remote system can't see the invalid usage anymore, and therefore does not do the validation itself. Users should upgrade to version 4.1.71.Final."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/netty-codec-http-4.1.59.Final.jar]"
+          - "package: netty-codec-http-4.1.59.Final, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/netty-codec-http-4.1.59.Final.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "6.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2021-43797"
+      "CVE-2023-24532":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "This vulnerability targets the DCED via the Go language standard package crypto/elliptic, with the functions ScalarMult and ScalarBaseMult of the P-256 curve. Stdout redirect is just software library which based on golang. CVE is vulnerable only when crypto/elliptic package is used.  DCED with Stdout redirect(2PP) is not using the vulnerable package for its functionality. Hence, this vulnerability is not applicable for DCED.DCED would uplift stdout redirect once fixed go lang version is available."
+        tools: "xray"
+        description: "The ScalarMult and ScalarBaseMult methods of the P256 Curve may return an incorrect result if called with some specific unreduced scalars (a scalar larger than the order of the curve). This does not impact usages of crypto/ecdsa or crypto/ecdh."
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.3"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-24532"
+      "XRAY-179837":
+        TR:
+        reporter: "ztissan"
+        severity: "critical"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):(From eric-data-distributed-coordinator-ed 4.6.0):(From eric-data-distributed-coordinator-ed 4.5.0):(From eric-data-distributed-coordinator-ed 4.4.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "No impact. BRO is not doing curl calls directly. Also, this targets the SHH hooklauncher, however none of the binaries or libraries impacted by this CVE are used by HookLauncher, so do not impact services integrating Smart Helm Hooks. This CVE will be removed in a later CBOS uplift."
+        mitigation: "When the new GRPC version is available with the updated Netty version 4.1.68.Final, DCED BRAgent would upversion to that new GRPC version."
+        tools: "xray"
+        description: "Netty contains an overflow condition in the Lz4FrameEncoder::finishEncode() function in codec/src/main/java/io/netty/handler/codec/compression/Lz4FrameEncoder.java that is triggered when compressing data and writing the last header. This may allow an attacker to cause a buffer overflow, resulting in a denial of service or potentially allowing the execution of arbitrary code."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCE-2022-2407"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/netty-codec-4.1.59.Final.jar]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "9.8"
+      "CVE-2022-2879":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This vulnerability comes from go lang. DCED does not use particular go lang it comes along with 3PP ETCD, hence, this vulnerability is not applicable to  DCED."
+        mitigation: "When ETCD 3PP would be released with  new Go versions , DCED would uplift to that latest ETCD 3PP version.Then vulnerability is removed."
+        tools: "xray"
+        description: "Reader.Read does not set a limit on the maximum size of file headers. A maliciously crafted archive could cause Read to allocate unbounded amounts of memory, potentially causing resource exhaustion or panics. After fix, Reader.Read limits the maximum size of header blocks to 1 MiB."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-2879"
+      "CVE-2022-41723":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "DCED does not use particular go lang it packages along with 3PP ETCD, hence, this vulnerability is not applicable for DCED."
+        mitigation: "When ETCD 3PP would be released with Go versions higher than 1.20.1, DCED would uplift to that latest ETCD 3PP version. Then vulnerability will be removed when new etcd version is available."
+        tools: "anchore, xray"
+        description: "A maliciously crafted HTTP/2 stream could cause excessive CPU consumption in the HPACK decoder, sufficient to cause a denial of service from a small number of small requests."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000337"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/golang.org/x/net]"
+          - "package: golang.org/x/net-v0.5.0, path: None"
+          - "package: golang.org/x/net-v0.4.0, path: None"
+          - "[/usr/local/bin/etcd/golang.org/x/net, /usr/local/bin/etcdctl/golang.org/x/net]"
+          - "[/hooklauncher/hooklauncher/golang.org/x/net]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-41723"
+      "CVE-2023-24539":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This vulnerability targets the SHH hooklauncher (HL) codebase via the Go package html/template/css.go that is used against innocuous CSS values. DCED or its BRO does not have/use any CSS and therefore this vulnerability not applicable to DCED."
+        mitigation: "The vulnerability will be fixed when the LCM of Hooklauncher uplifts the Golang to the fixed version"
+        tools: "xray"
+        description: "Angle brackets (<>) are not considered dangerous characters when inserted into CSS contexts. Templates containing multiple actions separated by a '/' character can result in unexpectedly closing the CSS context and allowing for injection of unexpected HTML, if executed with untrusted input."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000802"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/health/httpprobe_main/github.com/golang/go, /usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go]"
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.3"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-24539"
+      "CVE-2021-21409":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "DCED-BRAgent does not directly use netty, it is brought into the project via GRPC-java.
+        The GRPC implementation does not contain Http2HeaderFrame class which is needed to trigger this vulnerability is not present, thus the DCED-BRAgent is not affected by this CVE. This vulnerability is not applicable for DCED. Netty uplift once done in BRO Agent API, DCED would upversion to that BRO Agent API."
+        tools: "anchore, xray"
+        description: "Netty is an open-source, asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients. In Netty (io.netty:netty-codec-http2) before version 4.1.61.Final there is a vulnerability that enables request smuggling. The content-length header is not correctly validated if the request only uses a single Http2HeaderFrame with the endStream set to to true. This could lead to request smuggling if the request is proxied to a remote peer and translated to HTTP/1.1. This is a followup of GHSA-wm47-8v5p-wjpj/CVE-2021-21295 which did miss to fix this one case. This was fixed as part of 4.1.61.Final."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/netty-codec-http2-4.1.59.Final.jar]"
+          - "package: netty-codec-http2-4.1.59.Final, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/netty-codec-http2-4.1.59.Final.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.9"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2021-21409"
+      "CVE-2023-29404":
+        TR:
+        reporter: "ztissan"
+        severity: "critical"
+        impact: "missing"
+        category: "NA"
+        rationale_for_category: "DCED does not use particular go lang it comes along with 3PP ETCD, hence, this vulnerability is not applicable to  DCED."
+        mitigation: "When ETCD 3PP would be released with new Go version, DCED would uplift to that latest ETCD 3PP version. Then vulnerability will be removed when new etcd version is available."
+        tools: "xray"
+        description: "The go command may execute arbitrary code at build time when using cgo. This may occur when running \"go get\" on a malicious module, or when running any other command which builds untrusted code. This is can by triggered by linker flags, specified via a \"#cgo LDFLAGS\" directive. The arguments for a number of flags which are non-optional are incorrectly considered optional, allowing disallowed flags to be smuggled through the LDFLAGS sanitization. This affects usage of both the gc and gccgo compilers."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/metrics-exporter/github.com/golang/go, /usr/bin/stdout-redirect/github.com/golang/go]"
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go, /opt/redirect/stdout-redirect/github.com/golang/go]"
+          - "[/usr/local/bin/health/httpprobe_main/github.com/golang/go, /opt/redirect/stdout-redirect/github.com/golang/go, /usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "9.8"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-29404"
+      "CVE-2023-24538":
+        TR:
+        reporter: "ztissan"
+        severity: "critical"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "Vulnerability affects only html/template package in go which is used to implement data-driven templates for generating HTML, stdout redirect is software library which is based on go and it has no functionality to use html/template, vulnerable package is mostly used in web application."
+        mitigation: " The vulnerability is not applicable to DCED, we will uplift  stdout-redirect which will have fix for that"
+        tools: "xray"
+        description: "Templates do not properly consider backticks (`) as Javascript string delimiters, and do not escape them as expected. Backticks are used, since ES6, for JS template literals. If a template contains a Go template action within a Javascript template literal, the contents of the action can be used to terminate the literal, injecting arbitrary Javascript code into the Go template. As ES6 template literals are rather complex, and themselves can do string interpolation, the decision was made to simply disallow Go template actions from being used inside of them (e.g. \"var a = {{.}}\"), since there is no obviously safe way to allow this behavior. This takes the same approach as github.com/google/safehtml. With fix, Template.Parse returns an Error when it encounters templates like this, with an ErrorCode of value 12. This ErrorCode is currently unexported, but will be exported in the release of Go 1.21. Users who rely on the previous behavior can re-enable it using the GODEBUG flag jstmpllitinterp=1, with the caveat that backticks will now be escaped. This should be used with caution."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/health/httpprobe_main/github.com/golang/go, /usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go]"
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "9.8"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-24538"
+      "CVE-2022-1471":
+        TR:
+        reporter: "ztissan"
+        severity: "critical"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "BRAgent only parses yaml information from KubeAPI which is a trusted source. BRAgent does not read the yaml directly.This issue only occurs with uncontrolled input. As snakeyaml is used by the kube client it only manages structured inputs from kubernetes. Therefore DCED or its BRAgent is not affected by this vulnerability."
+        mitigation: "DCED would plan to upversion to latest BRA Agent API which would contain the fix for this."
+        tools: "anchore, xray"
+        description: "SnakeYaml's Constructor() class does not restrict types which can be instantiated during deserialization. Deserializing yaml content provided by an attacker can lead to remote code execution. We recommend using SnakeYaml's SafeConsturctor when parsing untrusted content to restrict deserialization. We recommend upgrading to version 2.0 and beyond. / SnakeYaml's Constructor() class does not restrict types which can be instantiated during deserialization. Deserializing yaml content provided by an attacker can lead to remote code execution. We recommend using SnakeYaml's SafeConsturctor when parsing untrusted content to restrict deserialization. We recommend upgrading to version 2.0 and beyond. / SnakeYaml's Constructor() class does not restrict types which can be instantiated during deserialization. Deserializing yaml content provided by an attacker can lead to remote code execution. We recommend using SnakeYaml's SafeConsturctor when parsing untrusted content to restrict deserialization. We recommend upgrading to version 2.0 and beyond. / SnakeYaml's Constructor() class does not restrict types which can be instantiated during deserialization. Deserializing yaml content provided by an attacker can lead to remote code execution. We recommend using SnakeYaml's SafeConsturctor when parsing untrusted content to restrict deserialization."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2022-000569"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "DCED will update to latest Snakeyaml in PRA version 8.2.0 . We have an internal ticket to update the same ."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/snakeyaml-1.30.jar]"
+          - "package: snakeyaml-1.30, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/snakeyaml-1.30.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "9.8"
+          - "8.3"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-1471"
+      "CVE-2022-25857":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):(From eric-data-distributed-coordinator-ed 4.6.0):(From eric-data-distributed-coordinator-ed 4.5.0):(From eric-data-distributed-coordinator-ed 4.4.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "According to the 3pp providers (and our usage as well), the yaml file being used is provided by an admin. Also there is not untrusted 3rd parties are written.  this vulnerability is Not Applicable for BR Agent and DCED. This will only occur with uncontrolled input. As this is used by the kube client it only manages structured inputs from kubernetes."
+        mitigation: "DCED would plan to upversion to latest BRA Agent API which would contain the fix for this."
+        tools: "anchore, xray"
+        description: "The package org.yaml:snakeyaml from 0 and before 1.31 are vulnerable to Denial of Service (DoS) due missing to nested depth limitation for collections."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/snakeyaml-1.30.jar]"
+          - "package: snakeyaml-1.30, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/snakeyaml-1.30.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-25857"
+      "CVE-2023-29400":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "DCED does not use particular go lang it comes along with 3PP ETCD, hence, this vulnerability is not applicable to  DCED."
+        mitigation: "When ETCD 3PP would be released with new Go version, DCED would uplift to that latest ETCD 3PP version. Then vulnerability will be removed when new etcd version is available."
+        tools: "xray"
+        description: "Templates containing actions in unquoted HTML attributes (e.g. \"attr={{.}}\") executed with empty input can result in output with unexpected results when parsed due to HTML normalization rules. This may allow injection of arbitrary attributes into tags."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000802"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/bragent/health/httpprobe_main/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.3"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-29400"
+      "CVE-2022-3510":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "DCED or its BRAgent don't use Message-Type Extensions in protobuf-java so DCED and its BRAgent are not affected by this vulnerability. This vulnerability is NA for DCED."
+        mitigation: "DCED BRAgent would need upversion to latest GRPC version."
+        tools: "anchore, xray"
+        description: "A parsing issue similar to CVE-2022-3171, but with Message-Type Extensions in protobuf-java core and lite versions prior to 3.21.7, 3.20.3, 3.19.6 and 3.16.3 can lead to a denial of service attack. Inputs containing multiple instances of non-repeated embedded messages with repeated or unknown fields causes objects to be converted back-n-forth between mutable and immutable forms, resulting in potentially long garbage collection pauses. We recommend updating to the versions mentioned above."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2022-000569"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "package: protobuf-java-3.12.0, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/protobuf-java-3.12.0.jar"
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/protobuf-java-3.12.0.jar]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-3510"
+      "CVE-2022-3171":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):(From eric-data-distributed-coordinator-ed 4.6.0):(From eric-data-distributed-coordinator-ed 4.5.0):(From eric-data-distributed-coordinator-ed 4.4.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This would impact the BR agent of DCED, however the impact is very minor as at most it causes a pause of the JVM garbage collection. No reports of this behavior to date in BRAgent of DCED."
+        mitigation: "uplift to the latest version of GRPC for the next release of the agent API."
+        tools: "anchore, xray"
+        description: "A parsing issue with binary data in protobuf-java core and lite versions prior to 3.21.7, 3.20.3, 3.19.6 and 3.16.3 can lead to a denial of service attack. Inputs containing multiple instances of non-repeated embedded messages with repeated or unknown fields causes objects to be converted back-n-forth between mutable and immutable forms, resulting in potentially long garbage collection pauses. We recommend updating to the versions mentioned above."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCE-2022-2407"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "package: protobuf-java-3.12.0, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/protobuf-java-3.12.0.jar"
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/protobuf-java-3.12.0.jar]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "4.3"
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-3171"
+      "CVE-2021-22569":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NA"
+        rationale_for_category: "DCED and its BRAgent are not directly exposed to this vulnerability because this vulnerability only apply in the microservices that make use of protobuf-java deserialization. Protobuff issue Introduced into DCED BR Agent via the GRPC component we use. Hence, this vulnerability is not applicable for DCED."
+        mitigation: "When the new GRPC version is available with the updated Netty version 4.1.68.Final, DCED BRAgent would upversion to that new GRPC version."
+        tools: "anchore, xray"
+        description: "An issue in protobuf-java allowed the interleaving of com.google.protobuf.UnknownFieldSet fields in such a way that would be processed out of order. A small malicious payload can occupy the parser for several minutes by creating large numbers of short-lived objects that cause frequent, repeated pauses. We recommend upgrading libraries beyond the vulnerable versions."
+        packages_and_paths:
+          - "package: protobuf-java-3.12.0, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/protobuf-java-3.12.0.jar"
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/protobuf-java-3.12.0.jar]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.5"
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2021-22569"
+      "CVE-2022-38749":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "There is no untrusted yaml files parsed in DCED. Hence, this vulnerability is not applicable to DCED. No mitigation required as this vulnerability is not applicable to DCED."
+        tools: "anchore, xray"
+        description: "Using snakeYAML to parse untrusted YAML files may be vulnerable to Denial of Service attacks (DOS). If the parser is running on user supplied input, an attacker may supply content that causes the parser to crash by stackoverflow."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/snakeyaml-1.30.jar]"
+          - "package: snakeyaml-1.30, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/snakeyaml-1.30.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "6.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-38749"
+      "CVE-2023-29403":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "missing"
+        category: "NA"
+        rationale_for_category: "DCED does not use particular go lang it comes along with 3PP ETCD, hence, this vulnerability is not applicable to  DCED."
+        mitigation: "When ETCD 3PP would be released with new Go version, DCED would uplift to that latest ETCD 3PP version. Then vulnerability will be removed when new etcd version is available."
+        tools: "xray"
+        description: "On Unix platforms, the Go runtime does not behave differently when a binary is run with the setuid/setgid bits. This can be dangerous in certain cases, such as when dumping memory state, or assuming the status of standard i/o file descriptors. If a setuid/setgid binary is executed with standard I/O file descriptors closed, opening any files can result in unexpected content being read or written with elevated privileges. Similarly, if a setuid/setgid program is terminated, either via panic or signal, it may leak the contents of its registers."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/metrics-exporter/github.com/golang/go, /usr/bin/stdout-redirect/github.com/golang/go]"
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go, /opt/redirect/stdout-redirect/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go, /opt/redirect/stdout-redirect/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.8"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-29403"
+      "CVE-2022-38751":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "There is no untrusted yaml files parsed in DCED. Hence, this vulnerability is not applicable to DCED. No mitigation required as this vulnerability is not applicable to DCED."
+        tools: "anchore, xray"
+        description: "Using snakeYAML to parse untrusted YAML files may be vulnerable to Denial of Service attacks (DOS). If the parser is running on user supplied input, an attacker may supply content that causes the parser to crash by stackoverflow."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/snakeyaml-1.30.jar]"
+          - "package: snakeyaml-1.30, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/snakeyaml-1.30.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "6.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-38751"
+      "CVE-2022-38752":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "There is no untrusted yaml files parsed in DCED. Hence, this vulnerability is not applicable to DCED. No mitigation required as this vulnerability is not applicable to DCED."
+        tools: "anchore, xray"
+        description: "Using snakeYAML to parse untrusted YAML files may be vulnerable to Denial of Service attacks (DOS). If the parser is running on user supplied input, an attacker may supply content that causes the parser to crash by stack-overflow."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/snakeyaml-1.30.jar]"
+          - "package: snakeyaml-1.30, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/snakeyaml-1.30.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "6.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-38752"
+      "CVE-2021-21295":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "DCED-BRAgent does not directly use netty, it is brought into the project via GRPC-java.
+        The GRPC implementation does not contain Http2HeaderFrame class which is needed to trigger this vulnerability is not present, thus the DCED-BRAgent is not affected by this CVE. This vulnerability is not applicable for DCED. Netty uplift once done in BRO Agent API, DCED would upversion to that BRO Agent API. "
+        tools: "anchore, xray"
+        description: "Netty is an open-source, asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients. In Netty (io.netty:netty-codec-http2) before version 4.1.60.Final there is a vulnerability that enables request smuggling. If a Content-Length header is present in the original HTTP/2 request, the field is not validated by `Http2MultiplexHandler` as it is propagated up. This is fine as long as the request is not proxied through as HTTP/1.1. If the request comes in as an HTTP/2 stream, gets converted into the HTTP/1.1 domain objects (`HttpRequest`, `HttpContent`, etc.) via `Http2StreamFrameToHttpObjectCodec `and then sent up to the child channel's pipeline and proxied through a remote peer as HTTP/1.1 this may result in request smuggling. In a proxy case, users may assume the content-length is validated somehow, which is not the case. If the request is forwarded to a backend channel that is a HTTP/1.1 connection, the Content-Length now has meaning and needs to be checked. An attacker can smuggle requests inside the body as it gets downgraded from HTTP/2 to HTTP/1.1. For an example attack refer to the linked GitHub Advisory. Users are only affected if all of this is true: `HTTP2MultiplexCodec` or `Http2FrameCodec` is used, `Http2StreamFrameToHttpObjectCodec` is used to convert to HTTP/1.1 objects, and these HTTP/1.1 objects are forwarded to another remote peer. This has been patched in 4.1.60.Final As a workaround, the user can do the validation by themselves by implementing a custom `ChannelInboundHandler` that is put in the `ChannelPipeline` behind `Http2StreamFrameToHttpObjectCodec`."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/netty-codec-http2-4.1.59.Final.jar]"
+          - "package: netty-codec-http2-4.1.59.Final, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/netty-codec-http2-4.1.59.Final.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.9"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2021-21295"
+      "CVE-2022-0552":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "DCED is not impacted by this vulnerability as there is no direct usage of netty-codec-http maven package in DCED. This vulnerability is not applicable for DCED. DCED will uplift to new version of Netty when the fix would be available."
+        tools: "xray"
+        description: "A flaw was found in the original fix for the netty-codec-http CVE-2021-21409, where the OpenShift Logging openshift-logging/elasticsearch6-rhel8 container was incomplete. The vulnerable netty-codec-http maven package was not removed from the image content. This flaw affects origin-aggregated-logging versions 3.11."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/netty-codec-http2-4.1.59.Final.jar]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.9"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-0552"
+      "CVE-2023-1667":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The vulnerable package libssh comes from CBOS and not directly used in DCED. DCED or it's BRAgent is not affected by this vulnerability. Hence this Vulnerability is not applicable for DCED. To fix this, DCED will update to new CBOS version once it is available. "
+        tools: "xray"
+        description: "A NULL pointer dereference was found In libssh during re-keying with algorithm guessing. This issue may allow an authenticated client to cause a denial of service."
+        packages_and_paths:
+          - "[/libssh-config:0:0.9.6-150400.1.5, /libssh4:0:0.9.6-150400.1.5]"
+          - "[/libssh4:0:0.9.6-150400.1.5, /libssh-config:0:0.9.6-150400.1.5]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "4.3"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-1667"
+      "CVE-2016-1000027":
+        TR:
+        reporter: "ztissan"
+        severity: "critical"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This is due to spring framework prior to versions 5.3.20+ . Though DCED has spring framework 5.3.18 , it is not impacted as no deserialization of untrusted data happens in DCED. CVE is N/A for DCED."
+        mitigation: "DCED design would uplift spring framework in a future release, then this vulnerability would be removed."
+        tools: "anchore"
+        description: "Pivotal Spring Framework through 5.3.16 suffers from a potential remote code execution (RCE) issue if used for Java deserialization of untrusted data. Depending on how the library is implemented within a product, this issue may or not occur, and authentication may be required. NOTE: the vendor's position is that untrusted data is not an intended use case. The product's behavior will not be changed because some users rely on deserialization of trusted data."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "package: spring-core-5.3.27, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/spring-core-5.3.27.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "9.8"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2016-1000027"
+      "CVE-2023-2650":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):missing"
+        category: "NA"
+        rationale_for_category: "The vulnerable package OBJ_obj2txt() is not used  in DCED. Hence this vulnerability is not applicable to DCED."
+        mitigation: " When new version of CBOS would be released with fixed version of OpenSSL to 1.1.1u will be  available. DCED would update to the fixed version"
+        tools: "trivy"
+        description: "Issue summary: Processing some specially crafted ASN.1 object identifiers ordata containing them may be very slow.Impact summary: Applications that use OBJ_obj2txt() directly, or use any ofthe OpenSSL subsystems OCSP, PKCS7/SMIME, CMS, CMP/CRMF or TS with no messagesize limit may experience notable to very long delays when processing thosemessages, which may lead to a Denial of Service.An OBJECT IDENTIFIER is composed of a series of numbers - sub-identifiers -most of which have no size limit.  OBJ_obj2txt() may be used to translatean ASN.1 OBJECT IDENTIFIER given in DER encoding form (using the OpenSSLtype ASN1_OBJECT) to its canonical numeric text form, which are thesub-identifiers of the OBJECT IDENTIFIER in decimal form, separated byperiods.When one of the sub-identifiers in the OBJECT IDENTIFIER is very large(these are sizes that are seen as absurdly large, taking up tens or hundredsof KiBs), the translation to a decimal number in text may take a very longtime.  The time complexity is O(n^2) with 'n' being the size of thesub-identifiers in bytes (*).With OpenSSL 3.0, support to fetch cryptographic algorithms using names /identifiers in string form was introduced.  This includes using OBJECTIDENTIFIERs in canonical numeric text form as identifiers for fetchingalgorithms.Such OBJECT IDENTIFIERs may be received through the ASN.1 structureAlgorithmIdentifier, which is commonly used in multiple protocols to specifywhat cryptographic algorithm should be used to sign or verify, encrypt ordecrypt, or digest passed data.Applications that call OBJ_obj2txt() directly with untrusted data areaffected, with any version of OpenSSL.  If the use is for the mere purposeof display, the severity is considered low.In OpenSSL 3.0 and newer, this affects the subsystems OCSP, PKCS7/SMIME,CMS, CMP/CRMF or TS.  It also impacts anything that processes X.509certificates, including simple things like verifying its signature.The impact on TLS is relatively low, because all versions of OpenSSL have a100KiB limit on the peer's certificate chain.  Additionally, this onlyimpacts clients, or servers that have explicitly enabled clientauthentication.In OpenSSL 1.1.1 and 1.0.2, this only affects displaying diverse objects,such as X.509 certificates.  This is assumed to not happen in such a waythat it would cause a Denial of Service, so these versions are considerednot affected by this issue in such a way that it would be cause for concern,and the severity is therefore considered low."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000802"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "package: libopenssl1_1"
+          - "package: openssl-1_1"
+        images:
+          - "sles:5.16.0-12"
+        cvss_v3_base_score:
+          - "nvd: , redhat: , ghsa: "
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-2650"
+      "CVE-2022-41722":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This vulnerability targets the Windows OS only. None of the binaries or libraries impacted by this CVE are used by DCED. So DCED is not affected by this vulnerability"
+        mitigation: "No mitigation is required as this issue is not applicable to DCED"
+        tools: "xray"
+        description: "A path traversal vulnerability exists in filepath.Clean on Windows. On Windows, the filepath.Clean function could transform an invalid path such as \"a/../c:/b\" into the valid path \"c:\\b\". This transformation of a relative (if invalid) path into an absolute path could enable a directory traversal attack. After fix, the filepath.Clean function transforms this path into the relative (but still invalid) path \".\\c:\\b\"."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-41722"
+      "CVE-2021-37136":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):(From eric-data-distributed-coordinator-ed 4.6.0):(From eric-data-distributed-coordinator-ed 4.5.0):(From eric-data-distributed-coordinator-ed 4.4.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "DCED and its BRAgent are not exposed to this vulnerability  because no compression is used for communications in DCED and its BRAgent."
+        mitigation: "When the new GRPC version is available with the updated Netty version 4.1.68.Final, DCED BRAgent would upversion to that new GRPC version."
+        tools: "anchore, xray"
+        description: "The Bzip2 decompression decoder function doesn't allow setting size restrictions on the decompressed output data (which affects the allocation size used during decompression). All users of Bzip2Decoder are affected. The malicious input can trigger an OOME and so a DoS attack"
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCE-2022-2407"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/netty-codec-4.1.59.Final.jar]"
+          - "package: netty-codec-4.1.59.Final, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/netty-codec-4.1.59.Final.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2021-37136"
+      "CVE-2023-24540":
+        TR:
+        reporter: "ztissan"
+        severity: "critical"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This vulnerability targets the SHH hooklauncher (HL) codebase via the Go package \\t\\n\\f\\r\\u0020\\u2028\\u2029 that is used against JavaScript contexts. DCED or its BRO does not have/use any CSS or JavaScript contexts. Hence this vulnerability not applicable to DCED."
+        mitigation: "The vulnerability will be fixed when the LCM of Hooklauncher uplifts the Golang to the fixed version"
+        tools: "xray"
+        description: "Not all valid JavaScript whitespace characters are considered to be whitespace. Templates containing whitespace characters outside of the character set \"\\t\\n\\f\\r\\u0020\\u2028\\u2029\" in JavaScript contexts that also contain actions may not be properly sanitized during execution."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000802"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "9.8"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-24540"
+      "CVE-2022-41720":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This vulnerability is restricted to only Windows Operating System and can be accessed via os.DirFS and http. Dir. DCED service containers use SUSE Linux OS, hence DCED is not affected by this vulnerability."
+        mitigation: "No mitigation is required as this issue is not applicable to DCED"
+        tools: "xray"
+        description: "On Windows, restricted files can be accessed via os.DirFS and http.Dir. The os.DirFS function and http.Dir type provide access to a tree of files rooted at a given directory. These functions permit access to Windows device files under that root. For example, os.DirFS(\"C:/tmp\").Open(\"COM1\") opens the COM1 device. Both os.DirFS and http.Dir only provide read-only filesystem access. In addition, on Windows, an os.DirFS for the directory (the root of the current drive) can permit a maliciously crafted path to escape from the drive and access any path on the system. With fix applied, the behavior of os.DirFS(\"\") has changed. Previously, an empty root was treated equivalently to \"/\", so os.DirFS(\"\").Open(\"tmp\") would open the path \"/tmp\". This now returns an error."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/etcd/github.com/golang/go]"
+          - "[/usr/local/bin/etcdctl/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-41720"
+      "CVE-2022-41854":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "This Vulnerability is from BRAgent used in DCED. All the yaml information that BRO parses always comes from a trusted source that is KubeAPI and BRO doesn't read yaml directly. So, this vulnerability is Not Applicable to DCED. This CVE will be removed when kubernetes.client would uplift to 16.0.1."
+        tools: "anchore, xray"
+        description: "Those using Snakeyaml to parse untrusted YAML files may be vulnerable to Denial of Service attacks (DOS). If the parser is running on user supplied input, an attacker may supply content that causes the parser to crash by stack overflow. This effect may support a denial of service attack."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/snakeyaml-1.30.jar]"
+          - "package: snakeyaml-1.30, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/snakeyaml-1.30.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "6.5"
+          - "5.8"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-41854"
+      "CVE-2023-35116":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "missing"
+        category: "NA"
+        rationale_for_category: "DCED service is using jackson-databind-2.14.0. DCED is not impacted by this vulnerability as there is no unspecified impacts via crafted object that uses cyclic dependencies.."
+        mitigation: "No mitigation is required since DCED is not using jackson-databind  2.15.2."
+        tools: "xray"
+        description: "** DISPUTED ** An issue was discovered jackson-databind thru 2.15.2 allows attackers to cause a denial of service or other unspecified impacts via crafted object that uses cyclic dependencies. NOTE: the vendor's perspective is that the product is not intended for use with untrusted input."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/jackson-databind-2.14.0.jar]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-35116"
+      "CVE-2022-41715":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "DCED does not use particular go lang it comes along with 3PP ETCD, hence, this vulnerability is not applicable to  DCED"
+        mitigation: "When ETCD 3PP would be released with new Go version, DCED would uplift to that latest ETCD 3PP version. Then vulnerability will be removed when new etcd version is available."
+        tools: "xray"
+        description: "Programs which compile regular expressions from untrusted sources may be vulnerable to memory exhaustion or denial of service. The parsed regexp representation is linear in the size of the input, but in some cases the constant factor can be as high as 40,000, making relatively small regexps consume much larger amounts of memory. After fix, each regexp being parsed is limited to a 256 MB memory footprint. Regular expressions whose representation would use more space than that are rejected. Normal use of regular expressions is unaffected."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-41715"
+      "CVE-2021-3521":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "DCED uses RPM and public keys from Trusted source, hence this vulnerability is not applicable for DCED. The Vulnerable package comes from CBO. To fix this, we will update to new CBOS version once it is available."
+        tools: "xray"
+        description: "There is a flaw in RPM's signature functionality. OpenPGP subkeys are associated with a primary key via a \"binding signature.\" RPM does not check the binding signature of subkeys prior to importing them. If an attacker is able to add or socially engineer another party to add a malicious subkey to a legitimate public key, RPM could wrongly trust a malicious signature. The greatest impact of this flaw is to data integrity. To exploit this flaw, an attacker must either compromise an RPM repository or convince an administrator to install an untrusted RPM or public key. It is strongly recommended to only use RPMs and public keys from trusted sources."
+        packages_and_paths:
+          - "[/rpm:0:4.14.3-150300.55.1]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "4.4"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2021-3521"
+      "CVE-2023-29405":
+        TR:
+        reporter: "ztissan"
+        severity: "critical"
+        impact: "missing"
+        category: "NA"
+        rationale_for_category: "DCED does not use particular go lang it comes along with 3PP ETCD, hence, this vulnerability is not applicable to  DCED"
+        mitigation: "When ETCD 3PP would be released with new Go version, DCED would uplift to that latest ETCD 3PP version. Then vulnerability will be removed when new etcd version is available."
+        tools: "xray"
+        description: "The go command may execute arbitrary code at build time when using cgo. This may occur when running \"go get\" on a malicious module, or when running any other command which builds untrusted code. This is can by triggered by linker flags, specified via a \"#cgo LDFLAGS\" directive. Flags containing embedded spaces are mishandled, allowing disallowed flags to be smuggled through the LDFLAGS sanitization by including them in the argument of another flag. This only affects usage of the gccgo compiler."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/metrics-exporter/github.com/golang/go, /usr/bin/stdout-redirect/github.com/golang/go]"
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go, /opt/redirect/stdout-redirect/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go, /opt/redirect/stdout-redirect/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "9.8"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-29405"
+      "CVE-2023-2603":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "missing"
+        category: "NA"
+        rationale_for_category: "The vulnerable package libcap comes from CBOS and not directly used in DCED. DCED or it's BRAgent is not affected by this vulnerability. Hence this Vulnerability is not applicable for DCED.  "
+        mitigation: "To fix this, DCED will update to new LCM of CBOS version once it is available."
+        tools: "xray"
+        description: "A vulnerability was found in libcap. This issue occurs in the _libcap_strdup() function and can lead to an integer overflow if the input string is close to 4GiB."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/libcap2:0:2.63-150400.1.7]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "4.4"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-2603"
+      "CVE-2023-29402":
+        TR:
+        reporter: "ztissan"
+        severity: "critical"
+        impact: "missing"
+        category: "NA"
+        rationale_for_category: "DCED does not use particular go lang it comes along with 3PP ETCD, hence, this vulnerability is not applicable to  DCED."
+        mitigation: "When ETCD 3PP would be released with new Go version, DCED would uplift to that latest ETCD 3PP version. Then vulnerability will be removed when new etcd version is available."
+        tools: "xray"
+        description: "The go command may generate unexpected code at build time when using cgo. This may result in unexpected behavior when running a go program which uses cgo. This may occur when running an untrusted module which contains directories with newline characters in their names. Modules which are retrieved using the go command, i.e. via \"go get\", are not affected (modules retrieved using GOPATH-mode, i.e. GO111MODULE=off, may be affected)."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go, /opt/redirect/stdout-redirect/github.com/golang/go, /usr/local/bin/etcd/github.com/golang/go]"
+          - "[/metrics-exporter/github.com/golang/go, /usr/bin/stdout-redirect/github.com/golang/go]"
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go, /opt/redirect/stdout-redirect/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "9.8"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-29402"
+      "CVE-2023-2953":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):missing"
+        category: "NA"
+        rationale_for_category: " DCED is not affected by this vulnerability as there is no openldap or ber_memalloc_x() function in DCED. Hence this vulnerability is not applicable for DCED."
+        mitigation: "DCED would uplift to new version of CBOS when the fix is available"
+        tools: "trivy"
+        description: "A vulnerability was found in openldap. This security flaw causes a null pointer dereference in ber_memalloc_x() function."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000802"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "package: libldap-2_4-2"
+          - "package: libldap-data"
+        images:
+          - "sles:5.16.0-12"
+        cvss_v3_base_score:
+          - "nvd: , redhat: , ghsa: "
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-2953"
+      "CVE-2022-41716":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This vulnerability is restricted to only Windows Operating System.CED service containers use SUSE Linux OS, hence DCED is not affected by this vulnerability."
+        mitigation: "No mitigation is required as this issue is not applicable to DCED"
+        tools: "xray"
+        description: "Due to unsanitized NUL values, attackers may be able to maliciously set environment variables on Windows. In syscall.StartProcess and os/exec.Cmd, invalid environment variable values containing NUL values are not properly checked for. A malicious environment variable value can exploit this behavior to set a value for a different environment variable. For example, the environment variable string \"A=B\\x00C=D\" sets the variables \"A=B\" and \"C=D\"."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-41716"
+      "CVE-2022-3219":
+        TR:
+        reporter: "ztissan"
+        severity: "low"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The Vulnerable package comes from CBO and is not directly used in DCED. Hence, this vulnerability is NA for DCED. To fix this, we will update to new CBOS version once it is available."
+        tools: "xray"
+        description: "GnuPG can be made to spin on a relatively small input by (for example) crafting a public key with thousands of signatures attached, compressed down to just a few KB."
+        packages_and_paths:
+          - "[/gpg2:0:2.2.27-150300.3.5.1]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "6.2"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-3219"
+      "CVE-2013-4235":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The impacted function is not used in DCED, hence DCED is not vulnerable towards this CVE. The Vulnerable package comes from CBO. To fix this, we will update to new CBOS version once it is available."
+        tools: "xray"
+        description: "shadow: TOCTOU (time-of-check time-of-use) race condition when copying and removing directory trees"
+        packages_and_paths:
+          - "[/login_defs:0:4.8.1-150400.10.6.1]"
+          - "[/login_defs:0:4.8.1-150400.10.6.1, /shadow:0:4.8.1-150400.10.6.1]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "6.7"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2013-4235"
+      "CVE-2023-2283":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The vulnerable package libssh comes from CBOS and not directly used in DCED. DCED or it's BRAgent is not affected by this vulnerability. Hence this Vulnerability is not applicable for DCED. To fix this, DCED will update to new CBOS version once it is available."
+        tools: "xray"
+        description: "A vulnerability was found in libssh, where the authentication check of the connecting client can be bypassed in the`pki_verify_data_signature` function in memory allocation problems. This issue may happen if there is insufficient memory or the memory usage is limited. The problem is caused by the return value `rc,` which is initialized to SSH_ERROR and later rewritten to save the return value of the function call `pki_key_check_hash_compatible.` The value of the variable is not changed between this point and the cryptographic verification. Therefore any error between them calls `goto error` returning SSH_OK."
+        packages_and_paths:
+          - "[/libssh-config:0:0.9.6-150400.1.5, /libssh4:0:0.9.6-150400.1.5]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "4.8"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-2283"
+      "CVE-2023-2976":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "missing"
+        category: "NA"
+        rationale_for_category: "missing"
+        mitigation: "DCED is not affected by this vulnerability as the code path of guava FileBackedOutputStream is not used in DCED and it's BrAgent. Hence, this vulnerability is not applicable for DCED. To fix this DCED will uplift to the latest GRPC where the dependency has been managed to eliminate the affected version"
+        tools: "anchore, xray"
+        description: "Use of Java's default temporary directory for file creation in `FileBackedOutputStream` in Google Guava versions 1.0 to 31.1 on Unix systems and Android Ice Cream Sandwich allows other users and apps on the machine with access to the default Java temporary directory to be able to access the files created by the class.Even though the security vulnerability is fixed in version 32.0.0, we recommend using version 32.0.1 as version 32.0.0 breaks some functionality under Windows."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          expiry_date_explanation: "missing"
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/guava-31.1-android.jar]"
+          - "package: guava-31.1-android, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/guava-31.1-android.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-2976"
+      "CVE-2022-3509":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "The  class \"MessageReflection.java\" which exists in the version of the com.google.protobuf:protobuf-java is vulnerable, but Bro-Agent-Api or BRAgent of DCED doesnt use that particular affected class. Hence, This vulnerability is not applicable for DCED."
+        mitigation: "DCED BRAgent would need upversion to latest GRPC version."
+        tools: "anchore, xray"
+        description: "A parsing issue similar to CVE-2022-3171, but with textformat in protobuf-java core and lite versions prior to 3.21.7, 3.20.3, 3.19.6 and 3.16.3 can lead to a denial of service attack. Inputs containing multiple instances of non-repeated embedded messages with repeated or unknown fields causes objects to be converted back-n-forth between mutable and immutable forms, resulting in potentially long garbage collection pauses. We recommend updating to the versions mentioned above."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2022-000569"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "package: protobuf-java-3.12.0, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/protobuf-java-3.12.0.jar"
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/protobuf-java-3.12.0.jar]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-3509"
+      "CVE-2022-30636":
+        TR:
+        reporter: "ztissan"
+        severity: "unknown"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The vulnerable package comes to DCED from stdout redirect which use go-lang. Stout re-direct doesn't use the vulnerable Get() function in acme/autocert/cache Hence, this vulnerability is not applicable to DCED, When stdout would be released with fixed version golang 3PP package, DCED would uplift to that latest ETCD 3PP version.Then vulnerability is removed."
+        tools: "xray"
+        description: "missing"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/golang.org/x/crypto, /usr/local/bin/etcdctl/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcd/golang.org/x/crypto, /usr/local/bin/etcdctl/golang.org/x/crypto, /usr/local/bin/etcdctl/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "3.7"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-30636"
+      "CVE-2023-2602":
+        TR:
+        reporter: "ztissan"
+        severity: "low"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The vulnerable package libcap comes from CBOS and not directly used in DCED. DCED or it's BRAgent is not affected by this vulnerability. Hence this Vulnerability is not applicable for DCED. To fix this, DCED will update to new LCM of CBOS version once it is available."
+        tools: "xray"
+        description: "A vulnerability was found in the pthread_create() function in libcap. This issue may allow a malicious actor to use cause __real_pthread_create() to return an error, which can exhaust the process memory."
+        packages_and_paths:
+          - "[/libcap2:0:2.63-150400.1.7]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "3.3"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-2602"
+      "CVE-2023-24534":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This vulnerability comes from DCED 2PP stdout-redirect, Since DCED doesnt use any HTTP and MIME header this vulnerability is Not Applicable ."
+        mitigation: "The vulnerability becomes remediated when the LCM Stdout-redirect uplifts to the fixed version."
+        tools: "xray"
+        description: "HTTP and MIME header parsing can allocate large amounts of memory, even when parsing small inputs, potentially leading to a denial of service. Certain unusual patterns of input data can cause the common function used to parse HTTP and MIME headers to allocate substantially more memory than required to hold the parsed headers. An attacker can exploit this behavior to cause an HTTP server to allocate large amounts of memory from a small request, potentially leading to memory exhaustion and a denial of service. With fix, header parsing now correctly allocates only the memory required to hold parsed headers."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-24534"
+      "CVE-2022-24823":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "DCED does not call Faccessat() function in syscall/syscall_linux.go, hence not impacted by the vulnerability. This vulnerability is not applicable for DCED. No Mitigation required as this vulnerability is not applicable for DCED."
+        tools: "anchore, xray"
+        description: "Netty is an open-source, asynchronous event-driven network application framework. The package `io.netty:netty-codec-http` prior to version 4.1.77.Final contains an insufficient fix for CVE-2021-21290. When Netty's multipart decoders are used local information disclosure can occur via the local system temporary directory if temporary storing uploads on the disk is enabled. This only impacts applications running on Java version 6 and lower. Additionally, this vulnerability impacts code running on Unix-like systems, and very old versions of Mac OSX and Windows as they all share the system temporary directory between all users. Version 4.1.77.Final contains a patch for this vulnerability. As a workaround, specify one's own `java.io.tmpdir` when starting the JVM or use DefaultHttpDataFactory.setBaseDir(...) to set the directory to something that is only readable by the current user."
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/netty-codec-http-4.1.59.Final.jar]"
+          - "package: netty-codec-http-4.1.59.Final, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/netty-codec-http-4.1.59.Final.jar"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-24823"
+      "CVE-2022-41724":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This CVE targets DCED via the Hooklauncher container . DCED is not affected with this vulnerability ."
+        mitigation: "This vulnerbility is not applicable to DCED . The finding becomes remediated when the Go language standard used in the build phase is uplifted to the fixed version (that is, Go v1.19.6 and v1.20.1, or newer version)."
+        tools: "xray"
+        description: "Large handshake records may cause panics in crypto/tls. Both clients and servers may send large TLS handshake records which cause servers and clients, respectively, to panic when attempting to construct responses. This affects all TLS 1.3 clients, TLS 1.2 clients which explicitly enable session resumption (by setting Config.ClientSessionCache to a non-nil value), and TLS 1.3 servers which request client certificates (by setting Config.ClientAuth >= RequestClientCert)."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go, /usr/local/bin/etcd/github.com/golang/go]"
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-41724"
+      "CVE-2023-20883":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):missing"
+        category: "NA"
+        rationale_for_category: "DCED has no explicitly defined reverse proxy and there is no defined a cache manager. Hence, DCED is not affected by this vulnerability."
+        mitigation: "To fix this, DCED will update to higher Spring boot version which would contain fix for this vulnerability."
+        tools: "xray"
+        description: "In Spring Boot versions 3.0.0 - 3.0.6, 2.7.0 - 2.7.11, 2.6.0 - 2.6.14, 2.5.0 - 2.5.14 and older unsupported versions, there is potential for a denial-of-service (DoS) attack if Spring MVC is used together with a reverse proxy cache."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000802"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/spring-boot-autoconfigure-2.7.3.jar]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-20883"
+      "CVE-2023-32181":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The vulnerable package libeconf comes from CBOS and not directly used in DCED. DCED or it's BRAgent is not affected by this vulnerability. Hence this Vulnerability is not applicable for DCED. To fix this, DCED will update to new LCM of CBOS version once it is available."
+        tools: "xray"
+        description: "A Buffer Copy without Checking Size of Input ('Classic Buffer Overflow') vulnerability in openSUSE libeconf allows for DoS via malformed configuration filesThis issue affects libeconf: before 0.5.2."
+        packages_and_paths:
+          - "[/libeconf0:0:0.4.6+git20220427.3016f4e-150400.3.3.1]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-32181"
+      "CVE-2022-45154":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "This Vulnerability is from BRAgent used in DCED. All the yaml information that BRO parses always comes from a trusted source that is KubeAPI and BRO doesn't read yaml directly. So, this vulnerability is Not Applicable to DCED. This CVE will be removed when kubernetes.client would uplift to 16.0.1."
+        tools: "xray"
+        description: "A Cleartext Storage of Sensitive Information vulnerability in suppportutils of SUSE Linux Enterprise Server 12, SUSE Linux Enterprise Server 15, SUSE Linux Enterprise Server 15 SP3 allows attackers that get access to the support logs to gain knowledge of the stored credentials This issue affects: SUSE Linux Enterprise Server 12 supportutils version 3.0.10-95.51.1CWE-312: Cleartext Storage of Sensitive Information and prior versions. SUSE Linux Enterprise Server 15 supportutils version 3.1.21-150000.5.44.1 and prior versions. SUSE Linux Enterprise Server 15 SP3 supportutils version 3.1.21-150300.7.35.15.1 and prior versions."
+        packages_and_paths:
+          - "[/supportutils:0:3.1.21-150300.7.35.18.1]"
+        images:
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "4.3"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-45154"
+      "CVE-2023-2004":
+        TR:
+        reporter: "ztissan"
+        severity: "unknown"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The Vulnerable function tt_hvadvance_adjust() and the folder src/truetype/ttgxvar.c. are not there in DCED. Hence, this vulnerability is NA for DCED. No mitigation required as DCED doesn't have tt_hvadvance_adjust() function. This issue is not applicable for DCED."
+        tools: "xray"
+        description: "** REJECT ** DO NOT USE THIS CANDIDATE NUMBER. ConsultIDs: none. Reason: This candidate was withdrawn by its CNA. Further investigation showed that it was not a security issue. Notes: none."
+        packages_and_paths:
+          - "[/libfreetype6:0:2.10.4-150000.4.12.1]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "4.4"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-2004"
+      "CVE-2022-41725":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "This CVE targets DCED via the Hooklauncher container . DCED is not affected with this vulnerability ."
+        mitigation: "This vulnerbility is not applicable to DCED . The finding becomes remediated when the Go language standard used in the build phase is uplifted to the fixed version (that is, Go v1.19.6 and v1.20.1, or newer version)."
+        tools: "xray"
+        description: "A denial of service is possible from excessive resource consumption in net/http and mime/multipart. Multipart form parsing with mime/multipart.Reader.ReadForm can consume largely unlimited amounts of memory and disk files. This also affects form parsing in the net/http package with the Request methods FormFile, FormValue, ParseMultipartForm, and PostFormValue. ReadForm takes a maxMemory parameter, and is documented as storing \"up to maxMemory bytes +10MB (reserved for non-file parts) in memory\". File parts which cannot be stored in memory are stored on disk in temporary files. The unconfigurable 10MB reserved for non-file parts is excessively large and can potentially open a denial of service vector on its own. However, ReadForm did not properly account for all memory consumed by a parsed form, such as map entry overhead, part names, and MIME headers, permitting a maliciously crafted form to consume well over 10MB. In addition, ReadForm contained no limit on the number of disk files created, permitting a relatively small request body to create a large number of disk temporary files. With fix, ReadForm now properly accounts for various forms of memory overhead, and should now stay within its documented limit of 10MB + maxMemory bytes of memory consumption. Users should still be aware that this limit is high and may still be hazardous. In addition, ReadForm now creates at most one on-disk temporary file, combining multiple form parts into a single temporary file. The mime/multipart.File interface type's documentation states, \"If stored on disk, the File's underlying concrete type will be an *os.File.\". This is no longer the case when a form contains more than one file part, due to this coalescing of parts into a single file. The previous behavior of using distinct files for each form part may be reenabled with the environment variable GODEBUG=multipartfiles=distinct. Users should be aware that multipart.ReadForm and the http.Request methods that call it do not limit the amount of disk consumed by temporary files. Callers can limit the size of form data with http.MaxBytesReader."
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2023-000711"
+          planned_fix: "v8.2.0"
+          expiry_date_explanation: "Not Applicable"
+        packages_and_paths:
+          - "[/usr/local/bin/etcdctl/github.com/golang/go, /bragent/health/httpprobe_main/github.com/golang/go]"
+          - "[/usr/local/bin/etcd/github.com/golang/go, /usr/local/bin/etcdctl/github.com/golang/go, /usr/local/bin/health/httpprobe_main/github.com/golang/go]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "7.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2022-41725"
+      "CVE-2023-22652":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The vulnerable package libeconf comes from CBOS and not directly used in DCED. DCED or it's BRAgent is not affected by this vulnerability. Hence this Vulnerability is not applicable for DCED. To fix this, DCED will update to new LCM of CBOS version once it is available."
+        tools: "xray"
+        description: "A Buffer Copy without Checking Size of Input ('Classic Buffer Overflow') vulnerability in openSUSE libeconf leads to DoS via malformed config files.This issue affects libeconf: before 0.5.2."
+        packages_and_paths:
+          - "[/libeconf0:0:0.4.6+git20220427.3016f4e-150400.3.3.1]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "5.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-22652"
+      "CVE-2023-34462":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "The affected component SniHandler comes from netty-handler in our codebase. DCED and it's BRAgent do not use  netty directly. Hence, this vulnerability is not applicable to DCED. DCED will uplift to netty-handler version 4.1.94 to remove the vulnerability."
+        tools: "anchore, xray"
+        description: "Netty is an asynchronous event-driven network application framework for rapid development of maintainable high performance protocol servers & clients. The `SniHandler` can allocate up to 16MB of heap for each channel during the TLS handshake. When the handler or the channel does not have an idle timeout, it can be used to make a TCP server using the `SniHandler` to allocate 16MB of heap. The `SniHandler` class is a handler that waits for the TLS handshake to configure a `SslHandler` according to the indicated server name by the `ClientHello` record. For this matter it allocates a `ByteBuf` using the value defined in the `ClientHello` record. Normally the value of the packet should be smaller than the handshake packet but there are not checks done here and the way the code is written, it is possible to craft a packet that makes the `SslClientHelloHandler`. This vulnerability has been fixed in version 4.1.94.Final."
+        packages_and_paths:
+          - "package: netty-handler-4.1.59.Final, path: /bragent/bragent-0.0.1-SNAPSHOT.jar:BOOT-INF/lib/netty-handler-4.1.59.Final.jar"
+          - "[/bragent/bragent-0.0.1-SNAPSHOT.jar/BOOT-INF/lib/netty-handler-4.1.59.Final.jar]"
+        images:
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "6.5"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-34462"
+      "CVE-2023-36191":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "DCED is not affected by this vulnerability as the vulnerable package sqlite3 is not there in DCED. Hence, this vulnerability is not applicable for DCED. DCED would uplift to new version of CBOS where the fix is available. "
+        tools: "xray"
+        description: "sqlite3 v3.40.1 was discovered to contain a segmentation violation at /sqlite3_aflpp/shell.c."
+        packages_and_paths:
+          - "[/libsqlite3-0:0:3.39.3-150000.3.20.1]"
+        images:
+          - "eric-data-distributed-coordinator-ed:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-hooklauncher:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-metrics-exporter:8.1.0-19"
+          - "eric-data-distributed-coordinator-ed-bragent:8.1.0-19"
+        cvss_v3_base_score:
+          - "4"
+        additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-2023-36191"
+      "zap-200-40025":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "No mitigation required as DCED doesnt use any proxy server. This issue is not applicable for DCED."
+        tools: "zap"
+        description: "1 proxy server(s) were detected or fingerprinted. This information helps a potential attacker to determine  - A list of targets for an attack against the application. - Potential vulnerabilities on the proxy servers that service the application. - The presence or absence of any proxy-based components that might cause attacks against the application to be detected, prevented, or mitigated. "
+        endpoints:
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/metrics
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/robots.txt
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/sitemap.xml
+        additional_details_links:
+            - "https://cwe.mitre.org/data/definitions/200.html"
+      "zap-525-10015":
+        TR:
+        reporter: "ztissan"
+        severity: "informational"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "No mitigation required as the cache-control header is not applicable to DCED. This issue is Not applicable for DCED."
+        tools: "zap"
+        description: "The cache-control header has not been set properly or is missing, allowing the browser and proxies to cache content. For static assets like css, js, or image files this might be intended, however, the resources should be reviewed to ensure that no sensitive content will be cached."
+        endpoints:
+          - https://eric-data-distributed-coordinator-ed:2379/metrics
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/metrics
+        additional_details_links:
+            - "https://cwe.mitre.org/data/definitions/525.html"
+      "zap-264-10098":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "In DCED, we ensure that sensitive data is not available in an unauthenticated manner, hence no mitigation is required. This issue is not applicable for DCED"
+        tools: "zap"
+        description: "Web browser data loading may be possible, due to a Cross Origin Resource Sharing (CORS) misconfiguration on the web server"
+        endpoints:
+          - https://eric-data-distributed-coordinator-ed:2379/metrics
+          - https://eric-data-distributed-coordinator-ed:2379/sitemap.xml
+          - https://eric-data-distributed-coordinator-ed:2379/robots.txt
+          - https://eric-data-distributed-coordinator-ed:2379/
+        additional_details_links:
+            - "https://cwe.mitre.org/data/definitions/264.html"
+      "zap-319-10035":
+        TR:
+        reporter: "ztissan"
+        severity: "low"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "DCED uses TLS protocol for communication which enforces Strict-Transport-Security, hence this issue is not applicable to DCED."
+        tools: "zap"
+        description: "HTTP Strict Transport Security (HSTS) is a web security policy mechanism whereby a web server declares that complying user agents (such as a web browser) are to interact with it using only secure HTTPS connections (i.e. HTTP layered over TLS/SSL). HSTS is an IETF standards track protocol and is specified in RFC 6797."
+        endpoints:
+          - https://eric-data-distributed-coordinator-ed:2379/metrics
+          - https://eric-data-distributed-coordinator-ed:2379/sitemap.xml
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/metrics
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/robots.txt
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/sitemap.xml
+          - https://eric-data-distributed-coordinator-ed:2379/robots.txt
+          - https://eric-data-distributed-coordinator-ed:2379/
+        additional_details_links:
+            - "https://cwe.mitre.org/data/definitions/319.html"
+      "zap-524-10049":
+        TR:
+        reporter: "ztissan"
+        severity: "informational"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "No mitigation required as DCED doesnt use any proxy server. This issue is not applicable for DCED."
+        tools: "zap"
+        description: "The response contents are storable by caching components such as proxy servers, and may be retrieved directly from the cache, rather than from the origin server by the caching servers, in response to similar requests from other users.  If the response data is sensitive, personal or user-specific, this may result in sensitive information being leaked. In some cases, this may even result in a user gaining complete control of the session of another user, depending on the configuration of the caching components in use in their environment. This is primarily an issue where \"shared\" caching servers such as \"proxy\" caches are configured on the local network. This configuration is typically found in corporate or educational environments, for instance."
+        endpoints:
+          - https://eric-data-distributed-coordinator-ed:2379/metrics
+          - https://eric-data-distributed-coordinator-ed:2379/sitemap.xml
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/metrics
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/robots.txt
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/
+          - https://eric-data-distributed-coordinator-ed:2379/robots.txt
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/sitemap.xml
+          - https://eric-data-distributed-coordinator-ed:2379/
+        additional_details_links:
+            - "https://cwe.mitre.org/data/definitions/524.html"
+      "zap-noncwe-10104":
+        TR:
+        reporter: "ztissan"
+        severity: "informational"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "No mitigation required as DCED's metrics endpoint does not use any fuzzed User Agent, DCED is not vulnerable to this issue. This is an informational violation."
+        tools: "zap"
+        description: "Check for differences in response based on fuzzed User Agent (eg. mobile sites, access as a Search Engine Crawler). Compares the response statuscode and the hashcode of the response body with the original response."
+        endpoints:
+          - https://eric-data-distributed-coordinator-ed:2379/metrics
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/metrics
+      "zap-693-10021":
+        TR:
+        reporter: "ztissan"
+        severity: "low"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "No mitigation required as the Anti-MIME-Sniffing header X-Content-Type-Options are not present in DCED service. Hence DCED is not vulnerable towards this issue."
+        tools: "zap"
+        description: "The Anti-MIME-Sniffing header X-Content-Type-Options was not set to 'nosniff'. This allows older versions of Internet Explorer and Chrome to perform MIME-sniffing on the response body, potentially causing the response body to be interpreted and displayed as a content type other than the declared content type. Current (early 2014) and legacy versions of Firefox will use the declared content type (if one is set), rather than performing MIME-sniffing."
+        endpoints:
+          - https://eric-data-distributed-coordinator-ed:2379/metrics
+          - https://eric-data-distributed-coordinator-ed-0.eric-data-distributed-coordinator-ed-peer.dced-security.svc.cluster.local:9087/metrics
+        additional_details_links:
+            - "https://cwe.mitre.org/data/definitions/693.html"
+      "zap-942-40040":
+        TR:
+        reporter: "ztissan"
+        severity: "medium"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "DCED doesn't have CORS misconfiguration or AJAX quiries, hence this is not applicable for DCED. No mitigation is required. "
+        tools: "zap"
+        description: "This CORS misconfiguration could allow an attacker to perform AJAX queries to the vulnerable website from a malicious page loaded by the victim's user agent.In order to perform authenticated AJAX queries, the server must specify the header \"Access-Control-Allow-Credentials: true\" and the \"Access-Control-Allow-Origin\" header must be set to null or the malicious page's domain. Even if this misconfiguration doesn't allow authenticated AJAX requests, unauthenticated sensitive content can still be accessed (e.g intranet websites).A malicious page can belong to a malicious website but also a trusted website with flaws (e.g XSS, support of HTTP without TLS allowing code injection through MITM, etc)."
+        endpoints:
+          - https://eric-data-distributed-coordinator-ed:2379/metrics
+          - https://eric-data-distributed-coordinator-ed:2379/sitemap.xml
+          - https://eric-data-distributed-coordinator-ed:2379
+          - https://eric-data-distributed-coordinator-ed:2379/robots.txt
+          - https://eric-data-distributed-coordinator-ed:2379/
+        additional_details_links:
+            - "https://cwe.mitre.org/data/definitions/942.html"
+      "DeprecatedAPIUsed-PodDisruptionBudget":
+        TR:
+        reporter: "ztissan"
+        severity: "low"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "In DCED, we have set apiVersion (to policy/v1 or policy/v1beta) by checking cluster capabilities in poddisruptionbudget.yaml file from our source code."
+        tools: "kubeaudit"
+        description: "policy/v1beta1 PodDisruptionBudget is deprecated in v1.21+, unavailable in v1.25+, introduced in v1.5+; use policy/v1 PodDisruptionBudget"
+        resources:
+          - "PodDisruptionBudget/eric-data-distributed-coordinator-ed"
+        containers:
+      "SeccompAny":
+        TR:
+        reporter: "ztissan"
+        severity: "low"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "We have Well defined Seccomp policies in DCED which provide greater protection from unknown threats. Hence, this vulnerability is not applicable for DCED."
+        tools: "kubesec"
+        description: "Seccomp profiles set minimum privilege and secure against unknown threats"
+        object:
+          - "StatefulSet/eric-data-distributed-coordinator-ed.default"
+      "ApparmorAny":
+        TR:
+        reporter: "ztissan"
+        severity: "high"
+        impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):missing"
+        category: "PEE_NA"
+        rationale_for_category: "Note! This issue was already in category PEE_NA in previous release eric-data-distributed-coordinator-ed 8.0.0 and should have been addressed by now!-----(From eric-data-distributed-coordinator-ed 8.0.0):Note! This issue was already in category PEE_NA in previous release eric-data-distributed-coordinator-ed 7.0.0 and should have been addressed by now!-----(From eric-data-distributed-coordinator-ed 7.0.0):Note! This issue was already in category PEE_NA in previous release eric-data-distributed-coordinator-ed 6.2.0 and should have been addressed by now!-----(From eric-data-distributed-coordinator-ed 6.2.0):Note! This issue was already in category PEE_NA in previous release eric-data-distributed-coordinator-ed 6.1.0 and should have been addressed by now!-----(From eric-data-distributed-coordinator-ed 6.1.0):Note! This issue was already in category PEE_NA in previous release eric-data-distributed-coordinator-ed 6.0.0 and should have been addressed by now!-----(From eric-data-distributed-coordinator-ed 6.0.0):Note! This issue was already in category PEE_NA in previous release eric-data-distributed-coordinator-ed 5.1.0 and should have been addressed by now!-----(From eric-data-distributed-coordinator-ed 5.1.0):Note! This issue was already in category PEE_NA in previous release eric-data-distributed-coordinator-ed 5.0.0 and should have been addressed by now!-----(From eric-data-distributed-coordinator-ed 5.0.0):Note! This issue was already in category PEE_NA in previous release eric-data-distributed-coordinator-ed 4.8.0 and should have been addressed by now!-----(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):missing"
+        mitigation: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):We have Well defined AppArmor policies in DCED which provide greater protection from unknown threats. Hence, this vulnerability is not applicable for DCED. No mitigation required as we have Well defined AppArmor policies in DCED"
+        tools: "kubesec"
+        description: "Well defined AppArmor policies may provide greater protection from unknown threats. WARNING: NOT PRODUCTION READY"
+        sce:
+          sce-id: "SCED-2023-000949"
+          status: "approved"
+          expires: "2023-08-08"
+          original-sce-id: "SCED-2022-000569"
+          planned_fix: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):missing"
+          expiry_date_explanation: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):missing"
+        object:
+          - "StatefulSet/eric-data-distributed-coordinator-ed.default"
+      "RunAsUser":
+        TR:
+        reporter: "ztissan"
+        severity: "low"
+        impact: "missing"
+        category: "NEN"
+        rationale_for_category: "missing"
+        mitigation: "We have Well defined runAsUser policies in DCED which provide greater protection from unknown threats. Hence, this vulnerability is not applicable for DCED."
+        tools: "kubesec"
+        description: "Run as a high-UID user to avoid conflicts with the host's user table"
+        object:
+          - "StatefulSet/eric-data-distributed-coordinator-ed.default"
+      open_ports:
+          "2380/tcp":
+            TR:
+            reporter: "ztissan"
+            severity: "unknown"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "The vulnerability is not applicable because the port is intended to be open for peer communication in DCED."
+            tools: "nmap"
+            description: "reason: syn-ack, service name: http, product: Golang net/http server, extrainfo: Go-IPFS json-rpc or InfluxDB API"
+            endpoint:
+              - "ipv4 nmap_report/eric-data-distributed-coordinator-ed"
+            ip_version:
+              - "ipv4"
+          "9086/tcp":
+            TR:
+            reporter: "ztissan"
+            severity: "unknown"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "The vulnerability is not applicable because the port is intended to be open for DCED for health check of metrics exporter sidecar."
+            tools: "nmap"
+            description: "reason: syn-ack, service name: http, product: Golang net/http server, extrainfo: Go-IPFS json-rpc or InfluxDB API"
+            endpoint:
+              - "ipv4 nmap_report/eric-data-distributed-coordinator-ed"
+            ip_version:
+              - "ipv4"
+          "2379/tcp":
+            TR:
+            reporter: "ztissan"
+            severity: "unknown"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "The vulnerability is not applicable because the port is intended to be open for client communication with DCED server."
+            tools: "nmap"
+            description: "reason: syn-ack, service name: etcd-client,"
+            endpoint:
+              - "ipv4 nmap_report/eric-data-distributed-coordinator-ed"
+            ip_version:
+              - "ipv4"
+          "9000/tcp":
+            TR:
+            reporter: "ztissan"
+            severity: "unknown"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "The vulnerability is not applicable because the port is intended to be open for being used by http prob in DCED."
+            tools: "nmap"
+            description: "reason: syn-ack, service name: http, product: Golang net/http server, extrainfo: Go-IPFS json-rpc or InfluxDB API"
+            endpoint:
+              - "ipv4 nmap_report/eric-data-distributed-coordinator-ed"
+              - "ipv4 nmap_report/eric-data-distributed-coordinator-ed-agent"
+            ip_version:
+              - "ipv4"
+          "9087/tcp":
+            TR:
+            reporter: "ztissan"
+            severity: "unknown"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "The vulnerability is not applicable because the port is intended to be open for DCED for Metrics exporter sidecar container."
+            tools: "nmap"
+            description: "reason: syn-ack, service name: classic,"
+            endpoint:
+              - "ipv4 nmap_report/eric-data-distributed-coordinator-ed"
+            ip_version:
+              - "ipv4"
+      tenable_sc_plugin_id:
+          "11219":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin determines which TCP ports are open, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "This plugin is a SYN 'half-open' port scanner.  It shall be reasonably quick even against a firewalled target. Note that SYN scans are less intrusive than TCP (full connect) scans against broken services, but they might cause problems for less robust firewalls and also leave unclosed connections on the remote target, if the network is loaded."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/11219"
+            family:
+              - "Port scanners"
+            port:
+              - "2379"
+              - "9000"
+              - "2380"
+            synopsis:
+              - "It is possible to determine which TCP ports are open."
+          "159544":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin Checks for an SSL certificate with no Common Name, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "The remote system is providing an SSL/TLS certificate without a subject common name field. While this is not required in all cases, it is recommended to ensure broad compatibility."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/159544"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "Checks for an SSL certificate with no Common Name"
+          "56984":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as This plugin detects which SSL and TLS versions are supported, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "This plugin detects which SSL and TLS versions are supported by the remote service for encrypting communications."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/56984"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "The remote service encrypts communications."
+          "10863":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin displays the SSL certificate, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "This plugin connects to every SSL-related port and attempts to extract and dump the X.509 certificate."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/10863"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "This plugin displays the SSL certificate."
+          "156899":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin says the remote host advertises discouraged SSL/TLS ciphers, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "The remote host has open SSL/TLS ports which advertise discouraged cipher suites. It is recommended to only enable support for the following cipher suites:TLSv1.3:  - 0x13,0x01 TLS_AES_128_GCM_SHA256  - 0x13,0x02 TLS_AES_256_GCM_SHA384  - 0x13,0x03 TLS_CHACHA20_POLY1305_SHA256TLSv1.2:  - 0xC0,0x2B ECDHE-ECDSA-AES128-GCM-SHA256  - 0xC0,0x2F ECDHE-RSA-AES128-GCM-SHA256  - 0xC0,0x2C ECDHE-ECDSA-AES256-GCM-SHA384  - 0xC0,0x30 ECDHE-RSA-AES256-GCM-SHA384  - 0xCC,0xA9 ECDHE-ECDSA-CHACHA20-POLY1305  - 0xCC,0xA8 ECDHE-RSA-CHACHA20-POLY1305  - 0x00,0x9E DHE-RSA-AES128-GCM-SHA256  - 0x00,0x9F DHE-RSA-AES256-GCM-SHA384This is the recommended configuration for the vast majority of services, as it is highly secure and compatible with nearly every client released in the last five (or more) years."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/156899"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "The remote host advertises discouraged SSL/TLS ciphers."
+          "10180":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED, This is because it pings the remote host and displays all live and dead hosts by using ARP, ICMP, TCP, UDP ping. Hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "Nessus was able to determine if the remote host is alive using one or more of the following ping types :  - An ARP ping, provided the host is on the local subnet     and Nessus is running over Ethernet.  - An ICMP ping.  - A TCP ping, in which the plugin sends to the remote host     a packet with the flag SYN, and the host will reply with     a RST or a SYN/ACK.  - A UDP ping (e.g., DNS, RPC, and NTP)."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/10180"
+            family:
+              - "Port scanners"
+            port:
+              - "0"
+            synopsis:
+              - "It was possible to identify the status of the remote host (alive or dead)."
+          "21643":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin detects which SSL ciphers are supported for encrypting communications., hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "This plugin detects which SSL ciphers are supported by the remote service for encrypting communications."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/21643"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "The remote service encrypts communications using SSL."
+          "12264":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED, this is because this plugin obtains the traceroute to the remote host by sending packets with the 'Record Route' option set. hence, no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "It is possible to obtain the traceroute to the remote host by sending packets with the 'Record Route' option set.  It is a complement to traceroute."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/12264"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "Record route"
+          "25220":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin says TCP/IP Timestamps are Supported, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "The remote host implements TCP timestamps, as defined by RFC1323.  A side effect of this feature is that the uptime of the remote host can sometimes be computed."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/25220"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "The remote service implements TCP timestamps."
+          "12053":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED, this is because the remote check attempts to resolve an IP address through a reverse DNS lookup. , hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "Nessus was able to resolve the fully qualified domain name (FQDN) of the remote host."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/12053"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "It was possible to resolve the name of the remote host."
+          "51192":
+            TR:
+            reporter: "ztissan"
+            severity: "medium"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "It is Not Applicable, because etcd certs are used in the startup for pod 0, until sip-tls is up and provide certs(this is just for pod0 and for short time till deployment comes up)."
+            tools: "nessus"
+            description: "The server's X.509 certificate cannot be trusted. This situation can occur in three different ways, in which the chain of trust can be broken, as stated below :  - First, the top of the certificate chain sent by the     server might not be descended from a known public     certificate authority. This can occur either when the     top of the chain is an unrecognized, self-signed     certificate, or when intermediate certificates are     missing that would connect the top of the certificate     chain to a known public certificate authority.  - Second, the certificate chain may contain a certificate     that is not valid at the time of the scan. This can     occur either when the scan occurs before one of the     certificate's 'notBefore' dates, or after one of the     certificate's 'notAfter' dates.  - Third, the certificate chain may contain a signature     that either didn't match the certificate's information     or could not be verified. Bad signatures can be fixed by     getting the certificate with the bad signature to be     re-signed by its issuer. Signatures that could not be     verified are the result of the certificate's issuer     using a signing algorithm that Nessus either does not     support or does not recognize.If the remote host is a public host in production, any break in the chain makes it more difficult for users to verify the authenticity and identity of the web server. This could make it easier to carry out man-in-the-middle attacks against the remote host."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/51192"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "The SSL certificate for this service cannot be trusted."
+          "45410":
+            TR:
+            reporter: "ztissan"
+            severity: "high"
+            impact: "(From eric-data-distributed-coordinator-ed 8.0.0):(From eric-data-distributed-coordinator-ed 7.0.0):(From eric-data-distributed-coordinator-ed 6.2.0):(From eric-data-distributed-coordinator-ed 6.1.0):(From eric-data-distributed-coordinator-ed 6.0.0):(From eric-data-distributed-coordinator-ed 5.1.0):(From eric-data-distributed-coordinator-ed 5.0.0):(From eric-data-distributed-coordinator-ed 4.8.0):(From eric-data-distributed-coordinator-ed 4.7.0):(From eric-data-distributed-coordinator-ed 4.6.0):(From eric-data-distributed-coordinator-ed 4.5.0):missing"
+            category: "PEE_FP"
+            rationale_for_category: "Confirmed False positive by ADP Security. This is because Tenable.sc connects to PODs directly instead of passing through k8s services."
+            mitigation: "Confirmed False positive by ADP Security. This is because Tenable.sc connects to PODs directly instead of passing through k8s services."
+            tools: "nessus"
+            description: "The service running on the remote host presents an SSL certificate for which the 'commonName' (CN) attribute does not match the hostname on which the service listens."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/45410"
+            sce:
+              sce-id: "SCED-2023-000949"
+              status: "approved"
+              expires: "2023-08-08"
+              original-sce-id: "SCED-2022-000387"
+              planned_fix: "v8.2.0"
+              expiry_date_explanation: "Not Applicable"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "The 'commonName' (CN) attribute in the SSL certificate does not match the hostname."
+          "24260":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin gives some information about the remote HTTP protocol, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "This test gives some information about the remote HTTP protocol - the version used, whether HTTP Keep-Alive and HTTP pipelining are enabled, etc... This test is informational only and does not denote any security problem."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/24260"
+            family:
+              - "Web Servers"
+            port:
+              - "9000"
+              - "2380"
+            synopsis:
+              - "Some information about the remote HTTP configuration can be extracted."
+          "43111":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin determines which HTTP methods are allowed on CGI directories., hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "By calling the OPTIONS method, it is possible to determine which HTTP methods are allowed on each directory.The following HTTP methods are considered insecure:  PUT, DELETE, CONNECT, TRACE, HEADMany frameworks and languages treat 'HEAD' as a 'GET' request, albeit one without any body in the response. If a security constraint was set on 'GET' requests such that only 'authenticatedUsers' could access GET requests for a particular servlet or resource, it would be bypassed for the 'HEAD' version. This allowed unauthorized blind submission of any privileged GET request.As this list may be incomplete, the plugin also tests - if 'Thorough tests' are enabled or 'Enable web applications tests' is set to 'yes' in the scan policy - various known HTTP methods on each directory and considers them as unsupported if it receives a response code of 400, 403, 405, or 501.Note that the plugin output is only informational and does not necessarily indicate the presence of any security vulnerabilities."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/43111"
+            family:
+              - "Web Servers"
+            port:
+              - "9000"
+              - "2380"
+            synopsis:
+              - "This plugin determines which HTTP methods are allowed on various CGI directories."
+          "19506":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED, this is because it displays for each tested host, information about the scan. Hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "This plugin displays, for each tested host, information about the scan itself :  - The version of the plugin set.  - The type of scanner (Nessus or Nessus Home).  - The version of the Nessus Engine.  - The port scanner(s) used.  - The port range scanned.  - The ping round trip time   - Whether credentialed or third-party patch management     checks are possible.  - Whether the display of superseded patches is enabled  - The date of the scan.  - The duration of the scan.  - The number of hosts scanned in parallel.  - The number of checks done in parallel."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/19506"
+            family:
+              - "Settings"
+            port:
+              - "0"
+            synopsis:
+              - "This plugin displays information about the Nessus scan."
+          "54615":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin helps to determine the remote system type based on the remote operating system, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "Based on the remote operating system, it is possible to determine what the remote system type is (eg: a printer, router, general-purpose computer, etc)."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/54615"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "It is possible to guess the remote device type."
+          "57041":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin says the remote service supports the use of SSL Perfect Forward Secrecy ciphers, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "The remote host supports the use of SSL ciphers that offer Perfect Forward Secrecy (PFS) encryption.  These cipher suites ensure that recorded SSL traffic cannot be broken at a future date if the server's private key is compromised."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/57041"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "The remote service supports the use of SSL Perfect Forward Secrecy ciphers, which maintain confidentiality even if the key is stolen."
+          "14788":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED, this is because it detects the protocols understood by the remote IP stack. Hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "This plugin detects the protocols understood by the remote IP stack."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/14788"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "This plugin detects the protocols understood by the remote IP stack."
+          "45590":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin reports CPE (Common Platform Enumeration) matches for various hardware and software products found on a host, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "By using information obtained from a Nessus scan, this plugin reports CPE (Common Platform Enumeration) matches for various hardware and software products found on a host. Note that if an official CPE is not available for the product, this plugin computes the best possible CPE based on the information available from the scan."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/45590"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "It was possible to enumerate CPE names that matched on the remote system."
+          "57582":
+            TR:
+            reporter: "ztissan"
+            severity: "medium"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "It is Not Applicable, because etcd certs are used in the startup for pod 0, until sip-tls is up and provide certs(this is just for pod0 and for short time till deployment comes up)."
+            tools: "nessus"
+            description: "The X.509 certificate chain for this service is not signed by a recognized certificate authority.  If the remote host is a public host in production, this nullifies the use of SSL as anyone could establish a man-in-the-middle attack against the remote host. Note that this plugin does not check for certificate chains that end in a certificate that is not self-signed, but is signed by an unrecognized certificate authority."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/57582"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "The SSL certificate chain for this service ends in an unrecognized self-signed certificate."
+          "11919":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "Not applicable for DCED as Nessus was able to identify the remote web server type by sending several valid and invalid HTTP requests. hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "Nessus was able to identify the remote web server type by sending several valid and invalid HTTP requests. In some cases, its version can also be approximated, as well as some options."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/11919"
+            family:
+              - "Web Servers"
+            port:
+              - "9000"
+              - "2380"
+            synopsis:
+              - "HMAP fingerprints the remote HTTP server."
+          "84502":
+            TR:
+            reporter: "ztissan"
+            severity: "medium"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "Not Applicable because HSTS means only allow HTTPS. (add hsts_header to the server). HTST not supported for ETCD."
+            tools: "nessus"
+            description: "The remote HTTPS server is not enforcing HTTP Strict Transport Security (HSTS). HSTS is an optional response header that can be configured on the server to instruct the browser to only communicate via HTTPS. The lack of HSTS allows downgrade attacks, SSL-stripping man-in-the-middle attacks, and weakens cookie-hijacking protections."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/84502"
+            family:
+              - "Web Servers"
+            port:
+              - "2380"
+            synopsis:
+              - "The remote web server is not enforcing HSTS."
+          "10287":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED, this is because traceroute Information returns the results of a traceroute from the scanner conducting the scan to host being scanned, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "Makes a traceroute to the remote host."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/10287"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "It was possible to obtain traceroute information."
+          "70544":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin says the remote service supports the use of SSL Cipher Block Chaining ciphers, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "The remote host supports the use of SSL ciphers that operate in Cipher Block Chaining (CBC) mode.  These cipher suites offer additional security over Electronic Codebook (ECB) mode, but have the potential to leak information if used improperly."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/70544"
+            family:
+              - "General"
+            port:
+              - "2380"
+            synopsis:
+              - "The remote service supports the use of SSL Cipher Block Chaining ciphers, which combine previous blocks with subsequent ones."
+          "CVE-1999-0524":
+            TR:
+            reporter: "ztissan"
+            severity: "low"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "missing"
+            tools: "nessus"
+            description: "ICMP information such as (1) netmask and (2) timestamp is allowed from arbitrary hosts."
+            additional_details_link: "https://nvd.nist.gov/vuln/detail/CVE-1999-0524"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "It is possible to determine the exact time set on the remote host."
+          "166602":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin is related to report Fully Qualified Domain Name (FQDN) for the remote host, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "Report Fully Qualified Domain Name (FQDN) for the remote host."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/166602"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "Report Fully Qualified Domain Name (FQDN) for the remote host."
+          "112154":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED as this plugin displays the list of launched plugins in a semicolon delimited list, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "This plugin displays the list of launched plugins in a semicolon delimited list."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/112154"
+            family:
+              - "Settings"
+            port:
+              - "0"
+            synopsis:
+              - "This plugin displays information about the launched plugins."
+          "22964":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "Not applicable for DCED. Nessus identifies the remote service from the error message it sends, when it receives an HTTP request., hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "Nessus was able to identify the remote service by its banner or by looking at the error message it sends when it receives an HTTP request."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/22964"
+            family:
+              - "Service detection"
+            port:
+              - "9000"
+              - "2380"
+            synopsis:
+              - "The remote service could be identified."
+          "11936":
+            TR:
+            reporter: "ztissan"
+            severity: "informational"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This Plugin is not applicable for DCED, through this plugin it is possible to guess the name of the remote operating system in use and also the version of the operating system, hence no mitigation required. This is an informational violation."
+            tools: "nessus"
+            description: "Using a combination of remote probes (e.g., TCP/IP, SMB, HTTP, NTP, SNMP, etc.), it is possible to guess the name of the remote operating system in use. It is also possible sometimes to guess the version of the operating system."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/11936"
+            family:
+              - "General"
+            port:
+              - "0"
+            synopsis:
+              - "It is possible to guess the remote operating system."
+          "136318":
+            TR:
+            reporter: "ztissan"
+            severity: "medium"
+            impact: "missing"
+            category: "NEN"
+            rationale_for_category: "missing"
+            mitigation: "This is not applicable. TLS 1.3 supports backward compatibility to TLS 1.2."
+            tools: "nessus"
+            description: "The remote service accepts connections encrypted using TLS 1.2."
+            additional_details_link: "https://www.tenable.com/plugins/nessus/136318"
+            family:
+              - "Service detection"
+            port:
+              - "2380"
+            synopsis:
+              - "The remote service encrypts traffic using a version of TLS."

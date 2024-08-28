@@ -1,0 +1,125 @@
+[{
+  "Impact_on_Users_Deprecation": [
+    "No User impact",
+    "No APIs were deprecated in this version"
+  ],
+  "Exemptions": [
+
+    "DR Exemptions:",
+    "Exemption request for DCED of DR-D1123-113: (Security Context) https://eteamproject.internal.ericsson.com/browse/ADPREFARCH-2161",
+
+    "Exemptions exist for the following vulnerabilities (see SCED-2024-000781):",
+    "Plugin Id: 45410 : The 'commonName' (CN) attribute in the SSL certificate does not match the hostname.",
+    "CVE-2023-45288: An attacker may cause an HTTP/2 endpoint to read arbitrary amounts of header data by sending an excessive number of CONTINUATION frames. Maintaining HPACK state requires parsing and processing all HEADERS and CONTINUATION frames on a connection",
+    "CVE-2024-24788: NotrinosERP v0.7 was discovered to contain a SQL injection vulnerability via the OrderNumber parameter at /NotrinosERP/sales/customer_delivery.php.",
+    "CVE-2024-33600: Null pointer crashes after notfound response If the Name Service Cache Daemon's (nscd) cache fails to add a not-found netgroup response to the cache, the client request can result in a null pointer dereference"
+    ],
+  "New_and_Updated_2PP_3PP":[
+    {
+      "Name": "Common Base OS SLES Micro Image",
+      "Product_Number": "CXU 101 1463/6",
+      "Old_version": "6.14.0",
+      "New_version": "6.15.0",
+      "Comments": "2PP"
+    },
+    {
+      "Name": "Smart Helm Hook Image",
+      "Product_id": "CXU 101 1909",
+      "Old_version": "2.17.0",
+      "New_version": "2.19.0",
+      "Comments": "2PP"
+    },
+    {
+      "Name": "Metrics Exporter",
+      "Product_Number": "CXA 301 003/1",
+      "Old_version": "1.52.0",
+      "New_version": "1.54.0",
+      "Comments": "2PP"
+    },
+    {
+      "Name": "Stdout-Redirect",
+      "Product_id": "CXA 301 76/1",
+      "Old_version": "1.36.0",
+      "New_version": "1.37.0",
+      "Comments": "2PP"
+    },
+    {
+      "Name": "Log Shipper Sidecar Image",
+      "Product_id": "CXU 101 1191",
+      "Old_version": "19.1.0",
+      "New_version": "19.3.0",
+      "Comments": "2PP"
+    }
+  ],
+  "Repository_helm_link": [
+    {
+      "Title": "Distributed Coordinator ED HELM",
+      "Folder_Link": "https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-released-helm/eric-data-distributed-coordinator-ed",
+      "Chart_Name": "eric-data-distributed-coordinator-ed"
+    }
+  ],
+  "Upgrade_Information": [
+    "Upgrade from Distributed Coordinator ED 10.10.0 (R11A) to 11.0.0 (R1A) is supported."
+  ],
+    "Marketplace":
+  {
+    "service_url": "https://adp.ericsson.se/marketplace/distributed-coordinator-ed"
+  },
+    "PRA_Checklist":[
+      {
+          "document_number": "15311-FCP1322463",
+          "revision": "A"
+      }
+    ],
+    "Release_criteria_unfulfillments": [
+    ],
+    "API": [
+    ],
+     "SW_Library": [
+        {
+            "Name": "Distributed Coordinator ED 11.0.0+14",
+            "Product_Number": "APR 201 59/2",
+            "Oldest_Compatible_Version": "1.0.0",
+            "Changes": "No SW library change implemented in this release"
+        }
+     ],
+     "CPI": [
+       {
+         "Distributed Coordinator ED CPI":"https://calstore.internal.ericsson.com/elex?LI=EN/LZN7950007*&FB=0_1_0_0&ST=DTITLE&PA=Managing+Distributed+Coordinator+ED"
+       }
+     ],
+     "Product_Description": ["The Distributed Coordinator ED Service is a distributed key value store that provides a reliable way to store data across a cluster of machines. It gracefully handles leader elections during network partitions and will tolerate machine failure, including the leader. Distributed Coordinator ED is written in Go and uses the Raft consensus algorithm to manage a highly-available replicated log."],
+     "Support_link": {
+         "title": "ADP Support",
+         "url": "https://eteamproject.internal.ericsson.com/projects/GSSUPP/summary"
+     },
+     "Reusable_Images": [
+      {
+          "Name": "Common Base OS SLES Micro Image",
+          "Product_Number": "CXU 101 1463/6",
+          "Changes": "Update to 6.15.0"
+      },
+      {
+        "Name": "Stdout Redirect",
+        "Product_Number": "CXA 301 76/1",
+        "Changes": "Update to 1.37.0"
+      }
+   ],
+   "Unsupported_Upgrade_Rollback_Path": [
+       {
+         "Oldest_version_which_supports_upgrade": "1.0.0",
+         "Oldest_version_which_supports_rollback": "1.0.0"
+      }
+   ],
+   "Reason_For_Major_Version_Update":[
+   ],
+   "Restrictions_Limitations":[
+   ],
+   "Stakeholder_Verification":[
+   ],
+   "Support":[
+   ],
+   "References":[
+   ],
+   "Kubernetes_Versions":{}
+  }]

@@ -1,0 +1,152 @@
+modelVersion: "1.0"
+flavor: "ADP-1.3"
+service:
+  # name of the generic service:
+  name: "Distributed Coordinator ED"
+  # email that will be notified about the flow status:
+  notification_email: "pdlpteamra@pdl.internal.ericsson.com"
+  # Trade Compliance
+  # !!!!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # Please check the trade compliance value applicable to your
+  # product(s) before re-using this value!
+  ECCN:
+    EU: NA
+    US: EAR99
+    AEC: '0'
+  # !!!!!!!!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  # Release responsible
+  release_responsible: BDGS
+  # Design responsible
+  design_responsible: BDGS
+  # Document responsible for each uploaded 190 10 document
+  document_responsible: BDGS
+  # Subject responsible for each uploaded 190 10 document
+  subject_responsible: BDGS
+  # Design Country
+  design_country: IE
+  # details of SWGW specific parameters
+  swgw:
+    box:
+      # Name of Product Line:
+      product_line_name: "Common Assets"
+      # expiry date
+      expiry_date: "6 months"
+    ticket:
+      # list of target groups associated to SWGW ticket
+      target_groups:
+        - 200086
+  # Details of the APR product structure:
+  apr_product:
+    # Note: all cxc_products automatically are added to APR product structure
+    # APR Product Number
+    number: "APR 201 59/2"
+    # Information Structure
+    information_structure:
+      1095-:
+        # Export Control
+        2400-APR 201 59/2:
+          step_strategy: highest revision letter
+        # PRI
+        109 21-APR 201 59/2-2:
+          step_strategy: highest ordinal number
+        # Trademark Information sdif
+        1/006 51-APR 201 59/2:
+          step_strategy: highest revision letter
+        # Risk Assessment doc
+        1/006 64-APR 201 59/2:
+          step_strategy: highest revision letter
+        # Software Vendor List excel
+        1/240 50-APR 201 59/2-2:
+          step_strategy: highest revision letter
+        # Export Control excel
+        # 2400-APR 201 59/2:
+        #   step_strategy: highest revision letter
+        # Application Developers Guide
+        1/198 17-APR 201 59/2:
+          step_strategy: highest revision letter
+        # VA Scan doc
+        1/1597-APR 201 59/2:
+          step_strategy: highest revision letter
+        # Secure Coding report
+        1/0360-APR 201 59/2:
+          step_strategy: highest revision letter
+        # Change record doc
+        240 07-APR 201 59/2:
+          step_strategy: highest revision letter
+      152 01-:
+        # Test Report
+        152 83-APR 201 59/2-11:
+          step_strategy: highest ordinal number
+        # Test Specification
+        1/152 41-APR 201 59/2:
+          step_strategy: highest revision letter
+        # User Guide
+        1/1553-APR 201 59/2:
+          step_strategy: highest revision letter
+  # Details of the CAV product structure:
+  cav_product:
+    # CAV Product Number
+    number: "CAV 000 000/0"
+    # file format (Default is TAR_GZIPV1) optionally can be defined for cav_product, cxc_products and cxs_product
+    artifact_file_format: TAR
+    # Information Structure
+    information_structure:
+      1095-:
+        # Note: 190 10-CAV 000 000/0: Source Code is added automatically
+        # Export Control
+        2400-APR 201 59/2:
+          step_strategy: highest revision letter
+  # Details of zero or more CXC product structures
+  cxc_products:
+      # Note: 190 10-CXC 201 XXXX/N: Package is added automatically
+      # Single word describing the CXC product, must be uniq per list item
+    - label: "Helm_Chart"
+      # specific CXC product number
+      number: "CXC 201 2039/2"
+      # Information Structure
+      information_structure:
+        1095-:
+          # Export Control
+          2400-APR 201 59/2:
+            step_strategy: highest revision letter
+      # Single word describing the CXC product, must be uniq per list item
+    - label: "Docker_Image_Distributed_Coordinator_ED"
+      # specific CAF product number
+      number: "CXC 201 2038/2"
+      # Information Structure
+      information_structure:
+        1095-:
+          # Export Control
+          2400-APR 201 59/2:
+            step_strategy: highest revision letter
+      product_structure:
+         - number: APR 901 0622/3
+           label: "Common_Base_OS_3"
+         - number: CTC 101 4237
+           label: "Core_OS_ETCD_3_3_11"
+     # Single word describing the CXC product, must be uniq per list item
+    - label: "Backup_Restore_Agent_IMAGE"
+      # specific CAF product number
+      number: "CXC 174 2753/2"
+      # Information Structure
+      information_structure:
+        1095-:
+          # Export Control
+          2400-APR 201 59/2:
+            step_strategy: highest revision letter
+      # Single word describing the CXC product, must be uniq per list item
+      product_structure:
+         - number: APR 901 0622/3
+           label: "Common_Base_OS_3_agent"
+         - number: CTC 101 4237
+           label: "Core_OS_ETCD_3_3_11_agent"
+         - number: CTC 101 6193
+           label: "Spring_Boot"
+         - number: 1/CTC 101 6191
+           label: "Apache_log4j"
+         - number: 5/CTC 101 6194
+           label: "FasterXML_Jackson_Databind"
+         - number: 1/CTC 101 2838
+           label: "Spring_Framework"
+         - number: 1/CTC 101 2842
+           label: "Apache_Commons_Lang3"

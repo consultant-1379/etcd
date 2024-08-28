@@ -1,0 +1,53 @@
+#Precedence order:
+#  log.streamingMethod > global.log.streamingMethod
+global:
+  security:
+    tls:
+      enabled: true
+  logShipper:
+    deployment:
+      type: "sidecar"
+      model: "static"
+
+eric-log-transformer:
+  metrics:
+    enabled: false
+  config:
+    adpJson:
+      transformation:
+        enabled: true
+
+eric-data-search-engine:
+  replicaCount:
+    data: 1
+    master: 1
+  metrics:
+    enabled: false
+  autoSetRequiredWorkerNodeSysctl: true
+
+eric-data-coordinator-zk:
+  replicaCount: 1
+  metrics:
+    enabled: false
+
+eric-data-distributed-coordinator-ed:
+  pods:
+    dced:
+      replicaCount: 3
+  brAgent:
+    enabled: true
+  log:
+    streamingMethod: indirect
+
+eric-sec-key-management:
+  deployClusterRoleBinding: false
+
+eric-ctrl-bro:
+  service:
+    endpoints:
+      restActions:
+        tls:
+          verifyClientCertificate: optional
+      broToAgent:
+        tls:
+          verifyClientCertificate: required

@@ -1,0 +1,454 @@
+modelVersion: 2.0
+
+docker-images:
+  - k8-test: armdocker.rnd.ericsson.se/proj-dgbase-cicd-drop/bob-py3kubehelmbuilder:2.0.1-latest
+  - adp-release-auto: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bob-adp-release-auto:latest
+  - trivy-inline-scan: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/trivy-inline-scan:latest
+  - grype-scan: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/va-image-scanning-grype:latest
+  - va-scan-kubeaudit: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/va-scan-kubeaudit:latest
+  - va-scan-kubesec: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/va-scan-kubesec:latest
+  - ciscat-scanner: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/va-image-scan-ciscat-assessor:latest
+  - zap-test: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-py3kubehelmbuilder:latest
+
+import:
+  common: common-properties.yaml
+properties:
+  - helm-chart-repo: arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm
+  - service-name: eric-data-distributed-coordinator-ed
+  - k8-namespace: dced-security
+  - image-cbo: armdocker.rnd.ericsson.se/proj-ldc/common_base_os_release/sles:${env.CBO_VERSION}
+  - image-dced: armdocker.rnd.ericsson.se/proj-adp-eric-data-distributed-coordinator-ed-drop/eric-data-distributed-coordinator-ed:${env.DCED_VERSION}
+  - image-agent: armdocker.rnd.ericsson.se/proj-adp-eric-data-distributed-coordinator-ed-drop/eric-data-distributed-coordinator-ed-bragent:${env.DCED_VERSION}
+  - image-metrics-exporter: armdocker.rnd.ericsson.se/proj-adp-eric-data-distributed-coordinator-ed-drop/eric-data-distributed-coordinator-ed-metrics-exporter:${env.DCED_VERSION}
+  - image-log-shipper: armdocker.rnd.ericsson.se/proj-adp-log-released/eric-log-shipper:${common.log-version}
+  - image-smart-helm-hooklauncher: ${common.hooklauncher-image-full-path}:${common.SHH-version}
+  - trivy-inline-scan: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/trivy-inline-scan:latest
+  - grype-scan: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/va-image-scanning-grype:latest
+  - bragent-image-name: eric-data-distributed-coordinator-ed-bragent
+  - log-shipper-image-name: eric-data-distributed-coordinator-ed-log-shipper
+  - metrics-exporter-image-name: eric-data-distributed-coordinator-ed-metrics-exporter
+  - smart-helm-hooklauncher-image-name: eric-lcm-smart-helm-hooks-hooklauncher
+  - SHH-version: ${common.SHH-version}
+  - tenable-sc-report: https://arm.sero.gic.ericsson.se/artifactory/proj-eric-data-distributed-coordinator-ed-va-generic-local/${env.DCED_VERSION}/eric-data-distributed-coordinator-ed-${env.DCED_VERSION}
+  - pm-server-client-secret: eric-pm-server-client-cert
+  - pm-server-client-cert-file: tls.crt
+  - pm-server-client-privatekey-file: tls.key
+  - pm-server-client-pkcs12-file: .bob/pm-server-client-cert.p12 #This should match the one specified in zap configuration file.
+  - pm-server-client-pkcs12-password: secret
+  - ciscat-test-target-image-name: cis-cat-pro-assessor-test-target-image
+  - ciscat-benchmark: CIS_SUSE_Linux_Enterprise_15_Benchmark_v1.1.1-xccdf.xml 'Level 2 - Server'
+  - dced-image: armdocker.rnd.ericsson.se/proj-adp-eric-data-distributed-coordinator-ed-drop/eric-data-distributed-coordinator-ed
+  # Common Base OS (CBO) related properties
+  - cbo_version: ${common.CBO_VERSION}
+  - cbo-repo: https://arm.sero.gic.ericsson.se/artifactory/proj-ldc-repo-rpm-local/common_base_os
+  - cbo-sles-repo: ${cbo-repo}/sles
+  - cbo-devenv-repo: https://arm.sero.gic.ericsson.se/artifactory/proj-ldc-repo-rpm-local/adp-dev/adp-build-env/
+  - cbo-image: armdocker.rnd.ericsson.se/proj-ldc/common_base_os_release/sles
+
+env:
+  - PWD
+  - KUBECONFIG
+  - CI_USER (default=eadphub)
+  - API_TOKEN
+  - SELI_API_TOKEN
+  - KAAS_HOSTNAME (default=todd060.rnd.gic.ericsson.se)
+  - CBO_VERSION
+  - DCED_VERSION
+  - RELEASE (default=false)
+  - XRAY_REPORT_REPO (default=proj-adp-eric-data-distributed-coordinator-ed-drop-docker-global)
+  - hooklauncher-image-full-path
+  - IMAGE_REPOPATH_INTERNAL (default=proj-adp-eric-data-distributed-coordinator-ed-drop)
+  - DEFENSICS_HOME
+  - HOST_CIS_CAT_WS
+  - UPLOAD_SCAN_RESULTS (default=false)
+  - VHUB_API_TOKEN
+
+var:
+  - version
+  - trim-version
+
+rules:
+  init:
+    - task: version
+      docker-image: adp-release-auto
+      cmd: version-handler generate
+           --is-release ${env.RELEASE}
+           --output version
+           --git-repo-path .
+
+  deploy-to-k8s:
+    - task: deploy-charts-on-k8s
+      docker-image: k8-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd:
+        - python testframework/bootstrap.py
+            --kubernetes-admin-conf="${env.KUBECONFIG}"
+            --kubernetes-namespace="${k8-namespace}"
+            --chart-archive="/tmp/${service-name}-${var.version}".tgz
+            --helm-repo="${helm-chart-repo}"
+            --baseline_chart_version="${var.version}"
+            --baseline_deployment_type="deployment"
+            --baseline_chart_name="dczk_dced_mbkf"
+            --copy-all-pod-logs=True
+            --test-params unused1=1
+            --conf-file test/config.py
+            --conf-class-name TestNoseNmap
+            --armuser="${env.CI_USER}"
+            --armpswd="${env.API_TOKEN}"
+            --fail-first=True
+            --teardown false
+            -s nose_nmap.py
+
+  #Perform Defensics/Fuzz scan
+  defensics:
+    - task: run-defensics
+      docker-image: k8-test
+      docker-envs:
+        - "KUBECONFIG=${env.KUBECONFIG}"
+        - "DEFENSICS_HOME=/tmp/defensics/home"
+      docker-mounts:
+        - "${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "${env.DEFENSICS_HOME}:/tmp/defensics/home"
+        - "${env.PWD}:${env.PWD}"
+      cmd:
+        - test.py --helm-v3 --kubernetes-admin-conf=${env.KUBECONFIG}
+          --helm-user=${env.CI_USER}
+          --arm-api-token=${env.API_TOKEN}
+          --kubernetes-namespace=${k8-namespace}
+          --defensics-test
+          --defensics-test-internal-host
+          --defensics-test-suite="http-server"
+          --defensics-test-plan-dir="ci_config/fuzz"
+          --defensics-test-report-dir="defensics/reports"
+          --defensics-suite-properties="uri http://eric-data-distributed-coordinator-ed:2379"
+
+  #Perform Ciscat scan
+  cis-cat-scan:
+    # To be able to test image with CIS-CAT Assessor, we need to build a special
+    # image. Special image consists of the image we would like to test and some
+    # additional packages (util-linux, iproute2) which make possible the image
+    # to be tested.
+    - task: trim-version
+      cmd: echo '${env.DCED_VERSION}' | tr -d '[:space:]' > .bob/var.trim-version
+    - task: set-permission
+      cmd: chmod 755 ./ci_config/cis_cat/docker/build.sh
+    - task: build-target-image-for-ciscat-scan
+      cmd: docker run --rm --privileged --workdir ${env.PWD}
+        --env HOST_CIS_CAT_WS=${env.PWD}
+        --volume ${env.PWD}:${env.PWD}
+        --volume /var/run/docker.sock:/var/run/docker.sock
+        --env DCED_IMAGE=${dced-image}
+        --env DCED_CISCAT_IMAGE=${ciscat-test-target-image-name}-dced
+        --env DCED_CISCAT_VERSION=${var.trim-version}
+        --env CBO_REPO=${cbo-sles-repo}
+        --env CBO_DEVENV_REPO=${cbo-devenv-repo}
+        --env CBO_VERSION=${cbo_version}
+        --env CBO_HARDENING_REPO=https://arm.sero.gic.ericsson.se/artifactory/proj-ldc-repo-rpm-local/common_base_os/hardening
+        --env CBO_HARDENING_ARCHIVE="common-base-os-hardening-cxa301047-${cbo_version}.tar.gz"
+        ${cbo-image}:${cbo_version}
+        ./ci_config/cis_cat/docker/build.sh
+    - task: execute-cis-cat-scanner-dced
+      docker-image: ciscat-scanner
+      docker-in-docker: socket
+      docker-envs:
+        - HOST_CIS_CAT_WS=${env.PWD}
+      cmd: cis-cat-assessor-scan
+        --target-image ${ciscat-test-target-image-name}-dced:${var.trim-version}
+        --source-image ${image-dced}
+        --benchmark ${ciscat-benchmark}
+        --report-dir ../ciscat-report/dced/
+        --report-name-prefix cis-cat-report
+        --applicability-spec ci_config/cis_cat/applicability_spec_common_base_os_micro.json
+        --debug
+    - task: execute-cis-cat-scanner-dced-agent
+      docker-image: ciscat-scanner
+      docker-in-docker: socket
+      docker-envs:
+        - HOST_CIS_CAT_WS=${env.PWD}
+      cmd: cis-cat-assessor-scan
+        --target-image ${ciscat-test-target-image-name}-dced:${var.trim-version}
+        --source-image ${image-agent}
+        --benchmark ${ciscat-benchmark}
+        --report-dir ../ciscat-report/bragent
+        --report-name-prefix cis-cat-report
+        --applicability-spec ci_config/cis_cat/applicability_spec_common_base_os_micro.json
+        --debug
+    - task: execute-cis-cat-scanner-metrics-exporter
+      docker-image: ciscat-scanner
+      docker-in-docker: socket
+      docker-envs:
+        - HOST_CIS_CAT_WS=${env.PWD}
+      cmd: cis-cat-assessor-scan
+        --target-image ${ciscat-test-target-image-name}-dced:${var.trim-version}
+        --source-image ${image-metrics-exporter}
+        --benchmark ${ciscat-benchmark}
+        --report-dir ../ciscat-report/metrics-exporter
+        --report-name-prefix cis-cat-report
+        --applicability-spec ci_config/cis_cat/applicability_spec_common_base_os_micro.json
+        --debug
+    - task: execute-cis-cat-scanner-smart-helm-hooklauncher
+      docker-image: ciscat-scanner
+      docker-in-docker: socket
+      docker-envs:
+        - HOST_CIS_CAT_WS=${env.PWD}
+      cmd: cis-cat-assessor-scan
+        --target-image ${ciscat-test-target-image-name}-dced:${var.trim-version}
+        --source-image ${image-smart-helm-hooklauncher}
+        --benchmark ${ciscat-benchmark}
+        --report-dir ../ciscat-report/smart-helm-hooklauncher
+        --report-name-prefix cis-cat-report
+        --applicability-spec ci_config/cis_cat/applicability_spec_common_base_os_micro.json
+        --debug
+    - task: execute-cis-cat-scanner-logshipper
+      docker-image: ciscat-scanner
+      docker-in-docker: socket
+      docker-envs:
+        - HOST_CIS_CAT_WS=${env.PWD}
+      cmd: cis-cat-assessor-scan
+        --target-image ${ciscat-test-target-image-name}-dced:${var.trim-version}
+        --source-image ${image-log-shipper}
+        --benchmark ${ciscat-benchmark}
+        --report-dir ../ciscat-report/log-shipper
+        --report-name-prefix cis-cat-report
+        --applicability-spec ci_config/cis_cat/applicability_spec_common_base_os_micro.json
+        --debug
+
+  #Perform Nmap Port scan
+  nmap-port-scan:
+    - task: nmap-port-scan-tcp
+      docker-image: k8-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd:
+        test.py --kubernetes-admin-conf="${env.KUBECONFIG}"
+            --helm-user="${env.CI_USER}"
+            --arm-api-token="${env.API_TOKEN}"
+            --kubernetes-namespace="${k8-namespace}"
+            --nmap-config-file=nmap/nmap_config.yaml
+            --nmap-test
+
+  #Perform Trivy scan
+  trivy-inline-scan:
+    - task: fetch-image
+      cmd:
+      - docker pull ${image-dced}
+      - docker pull ${image-agent}
+      - docker pull ${image-metrics-exporter}
+      - docker pull ${image-smart-helm-hooklauncher}
+      - docker pull ${image-log-shipper}
+      - mkdir -p trivy-reports
+    - task: trivy-inline-scan-json-report-dced
+      docker-image: trivy-inline-scan
+      docker-in-docker: socket
+      cmd: --format json --output trivy-reports/dced.trivy.report.json ${image-dced}
+    - task: trivy-inline-scan-json-report-bragent
+      docker-image: trivy-inline-scan
+      docker-in-docker: socket
+      cmd: --format json --output trivy-reports/bragent.trivy.report.json ${image-agent}
+    - task: trivy-inline-scan-json-report-ME
+      docker-image: trivy-inline-scan
+      docker-in-docker: socket
+      cmd: --format json --output trivy-reports/metrics-exporter.trivy.report.json ${image-metrics-exporter}
+    - task: trivy-inline-scan-json-report-HK
+      docker-image: trivy-inline-scan
+      docker-in-docker: socket
+      cmd: --format json --output trivy-reports/smart-helm-hooklauncher.trivy.report.json ${image-smart-helm-hooklauncher}
+    - task: trivy-inline-scan-json-report-logshipper
+      docker-image: trivy-inline-scan
+      docker-in-docker: socket
+      cmd: --format json --output trivy-reports/log-shipper.trivy.report.json ${image-log-shipper}
+
+  #Perform Grype scan
+  grype-scan:
+    - task: fetch-image
+      cmd:
+      - docker pull ${image-dced}
+      - docker pull ${image-agent}
+      - docker pull ${image-metrics-exporter}
+      - docker pull ${image-smart-helm-hooklauncher}
+      - docker pull ${image-log-shipper}
+    - task: grype-scan
+      docker-image: grype-scan
+      docker-in-docker: socket
+      cmd: grype_scan
+        --image ${image-dced}
+        --image ${image-agent}
+        --image ${image-metrics-exporter}
+        --image ${image-smart-helm-hooklauncher}
+        --image ${image-log-shipper}
+        --report-dir grype-reports
+
+  #Perform Xray scan
+  get-dced-raw-xray-report-json:
+    - task: update-scanpath-eric-dced
+      cmd:
+        - mkdir -p xray-reports
+    - task: get-raw-xray-report-bob-dced
+      docker-image: adp-release-auto
+      cmd:
+        - fetch-xray --user ${env.CI_USER} --apikey ${env.API_TOKEN}
+            --config ./ci_config/va_report.config
+            --set DCED_VERSION=${env.DCED_VERSION}
+            --set XRAY_REPORT_REPO=${env.XRAY_REPORT_REPO}
+            --set IMAGE_REPOPATH_INTERNAL=${env.IMAGE_REPOPATH_INTERNAL}
+            --set service-name=${service-name}
+            --set bragent-image-name=${bragent-image-name}
+            --set metrics-exporter-image-name=${metrics-exporter-image-name}
+            --set SHH-XRAY-REPO=${common.hooklauncher-xray-path}
+            --set SHH-version=${common.SHH-version}
+            --set logshipper-xray-path=${common.logshipper-xray-path}
+            --set logshipper-image-name=${common.logshipper-image-name}
+            --set log-version=${common.log-version}
+            --set smart-helm-hooklauncher-image-name=${smart-helm-hooklauncher-image-name}
+            --output xray-reports/xray-report.json
+            --raw-output xray-reports/raw-xray-report.json
+
+  #Perform Tenable/Nessus scan
+  fetch-tenable-report:
+    - task: create-report-dir
+      cmd: mkdir -p tenablesc-reports/
+    - task: fetch-tenable-sc-csv
+      cmd: "curl -u '${env.CI_USER}:${env.API_TOKEN}'
+      ${tenable-sc-report}.csv
+      -o tenablesc-reports/tenablesc-report.csv"
+    - task: fetch-tenable-sc-pdf
+      cmd: "curl -u '${env.CI_USER}:${env.API_TOKEN}'
+      ${tenable-sc-report}.pdf
+      -o tenablesc-reports/tenablesc-report.pdf"
+
+# Run ZAP: to check for active threats
+  system-test-with-vulnerability-check:
+    - task: extract-cert
+      docker-image: zap-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: bash -c '
+             for f in "${pm-server-client-cert-file}" "${pm-server-client-privatekey-file}";
+             do
+               esc=$(echo $f | sed "s/\./\\\./");
+               kubectl get secret ${pm-server-client-secret} -o jsonpath="{['\''.data.$esc'\'']}" -n ${k8-namespace} | base64 --decode > .bob/$f;
+             done'
+    - task: pkcs12
+      cmd: openssl pkcs12 -export -out ${pm-server-client-pkcs12-file} -in .bob/${pm-server-client-cert-file} -inkey .bob/${pm-server-client-privatekey-file} -name zap -passout pass:${pm-server-client-pkcs12-password}
+    - task: system-test-with-vulnerability-check
+      docker-image: zap-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd: /test.py --kubernetes-admin-conf=${env.KUBECONFIG}
+           --helm-user=${env.CI_USER}
+           --arm-api-token=${env.API_TOKEN}
+           --kubernetes-namespace=${k8-namespace}
+           --zap-config-file=zap/zap_config.yaml
+           --only-zap-test
+           --skip-upgrade-test
+           --kube-exec-timeout=3600
+
+  #Perform Cleanup process
+  cleanup-deployments:
+    - task: remove_k8s_resources
+      docker-image: k8-test
+      docker-flags:
+        - "--env KUBECONFIG=${env.KUBECONFIG}"
+        - "--volume ${env.KUBECONFIG}:${env.KUBECONFIG}:ro"
+        - "--volume ${env.PWD}:${env.PWD}"
+      cmd:
+        - python testframework/bootstrap.py
+            --kubernetes-admin-conf="${env.KUBECONFIG}"
+            --kubernetes-namespace="${k8-namespace}"
+            --chart-archive="/tmp/${service-name}-${var.version}".tgz
+            --helm-repo="${helm-chart-repo}"
+            --baseline_chart_version="${var.version}"
+            --baseline_deployment_type="deployment"
+            --baseline_chart_name="dczk_dced_mbkf"
+            --copy-all-pod-logs=True
+            --test-params unused1=1
+            --armuser="${env.CI_USER}"
+            --armpswd="${env.API_TOKEN}"
+            --fail-first=True
+            --teardown false
+            -s nose_cleanup.py
+  cleanup-grype-trivy-images:
+    - task: clean-images
+      cmd:
+      - "docker image rm -f ${grype-scan}"
+      - "docker image rm -f ${trivy-inline-scan}"
+      - "docker image rm -f ${image-cbo}"
+      - "docker image rm -f ${image-dced}"
+      - "docker image rm -f ${image-agent}"
+      - "docker image rm -f ${image-log-shipper}"
+
+  # fetch vulnerabililty report VA 2.0 using Vulnerability_Report.config file (pending)
+  generate-VA-report-V2:
+    - task: create_va_report_path
+      cmd:
+        - mkdir -p va_report
+    - task: generate-VA-report-V2
+      docker-image: adp-release-auto
+      docker-flags:
+        - "--env VHUB_API_TOKEN"
+      cmd: va-report
+        --config ci_config/va_report.config
+        --set DCED_VERSION=${env.DCED_VERSION}
+        --set XRAY_REPORT_REPO=${env.XRAY_REPORT_REPO}
+        --set IMAGE_REPOPATH_INTERNAL=${env.IMAGE_REPOPATH_INTERNAL}
+        --set service-name=${service-name}
+        --set bragent-image-name=${bragent-image-name}
+        --set logshipper-xray-path=${common.logshipper-xray-path}
+        --set logshipper-image-name=${common.logshipper-image-name}
+        --set log-version=${common.log-version}
+        --set SHH-XRAY-REPO=${common.hooklauncher-xray-path}
+        --set SHH-version=${common.SHH-version}
+        --set smart-helm-hooklauncher-image-name=${smart-helm-hooklauncher-image-name}
+        --md --debug
+        --xray-report xray-reports/xray-report.json
+        --output va_report/va_report_2.0_DCED_${env.DCED_VERSION}.md
+        --set version=${env.DCED_VERSION}
+        --zap-reports zap-reports
+        --kubesec-reports kube-sec-reports/eric-data-distributed-coordinator-ed/templates/statefulSet.json
+        --kubeaudit-reports kube-audit/
+        --defensics-report defensics/reports/
+        --nmap-reports nmap_reports/nmap_report
+        --ciscat-reports ciscat-report/dced
+        --anchore-reports grype-reports/
+        --trivy-reports trivy-reports/
+        --tenable-sc tenablesc-reports/
+        --raw-xray-report xray-reports/raw-xray-report.json
+        --upload-scan-results=${env.UPLOAD_SCAN_RESULTS}
+
+  #Perform Kubeaudit Scanning
+  kube-audit:
+    - task: mk-report-dir
+      cmd:
+        - mkdir -p kube-audit
+        - sed -i 's|VERSION|${env.DCED_VERSION}|' ${env.PWD}/ci_config/kubeaudit_config.yaml
+    - task: kube-audit
+      docker-image: va-scan-kubeaudit
+      docker-flags:
+        - "--workdir /opt/va-scan-kubeaudit/"
+        - "-v ${env.PWD}/ci_config:/opt/va-scan-kubeaudit/conf"
+        - "-v ${env.PWD}/kube-audit/:/tmp/reports"
+        - "-v ${env.PWD}/.bob/helm_src:/tmp/src"
+      cmd: " "
+
+  #Perform Kubesec Scanning
+  kube-sec:
+    - task: mk-report-dir
+      cmd:
+        - mkdir -p kube-sec-reports
+        - sed -i 's|VERSION|${env.DCED_VERSION}|' ${env.PWD}/ci_config/kubesec_config.yaml
+    - task: kube-sec
+      docker-image: va-scan-kubesec
+      docker-flags:
+        - "--workdir /opt/va-scan-kubesec/"
+        - "-v ${env.PWD}/ci_config:/opt/va-scan-kubesec/conf"
+        - "-v ${env.PWD}/kube-sec-reports:/tmp/reports"
+      cmd: " "

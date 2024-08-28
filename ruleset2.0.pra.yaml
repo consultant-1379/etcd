@@ -1,0 +1,710 @@
+modelVersion: 2.0
+
+import:
+  common: common-properties.yaml
+
+docker-images:
+  - adp-release-auto: armdocker.rnd.ericsson.se/sandbox/adp-staging/adp-cicd/bob-adp-release-auto:latest
+  - bob-adp-checker: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/bob-adp-checker:latest
+  - admission-control: armdocker.rnd.ericsson.se/proj-adp-cicd-drop/adp-security-admission-control:latest
+  - k8-test: armdocker.rnd.ericsson.se/proj-dgbase-cicd-drop/bob-py3kubehelmbuilder:2.0.1-latest
+
+properties:
+  # Properties for Docker images
+  - image-repo-name-drop: proj-adp-eric-data-distributed-coordinator-ed-drop
+  - image-repo-name-internal: proj-adp-eric-data-distributed-coordinator-ed-internal
+  - image-repo-fullpath-drop: ${common.image-registry}/${image-repo-name-drop}/${common.image-name}
+  - image-repo-drop: ${common.image-registry}/${image-repo-name-drop}
+  - aca-container-name-hooklauncher: adp-smart-helm-hooks
+
+  # Properties for Helm charts
+  - helm-chart-repo-name-released: proj-adp-eric-data-dc-ed-released-helm
+  - helm-chart-repo-name-drop: proj-adp-eric-data-dc-ed-drop-helm
+  - helm-chart-repo-released: ${common.helm-chart-repo-server}/${helm-chart-repo-name-released}
+  - helm-chart-repo-drop: ${common.helm-chart-repo-server}/${helm-chart-repo-name-drop}
+  - helm-chart-repo-gs-all: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-all-helm/
+  - helm-chart-repo-gs-released: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-gs-released-helm/
+  - released-artifacts-repo: https://arm.sero.gic.ericsson.se/artifactory/proj-adp-eric-data-dc-ed-generic-local
+  - arm-doc-released: ${common.helm-chart-repo-server}/proj-adp-eric-data-dc-ed-docs-released-generic-local/
+  - dev-arm-perf-repo: ${common.helm-chart-repo-server}/proj-adp-eric-data-dc-ed-docs-dev-generic-local/perf-snapshots/
+  # Other properties
+  - k8s-namespace: cicd-ed
+  - docker-params: "--workdir ${env.PWD}/src"
+  - docker-images-released-folder: 'build/released-images'
+  - helm-chart-released-folder: 'build/released-charts'
+  - jira-component-name: "Distributed Coordinator ED"
+  - dpraf-report-file: "dpraf_report.json"
+  - dpraf-flow-prefix: 'DISTRIBUTED_COORDINATOR_ED_FLOW_'
+  - helm-product-number: "CXC 201 2039/1"
+  - image-product-number: "CXC 201 2038/1"
+  - image-file-product-number: "CXC2012038_1"
+  - git-clone-url: "https://eadphub@gerrit-gamma.gic.ericsson.se/a/AIA/microservices/etcd"
+  - metrics-exporter-product-number: "CXU 101 0988/1"
+  - metrics-exporter-file-product-number: "CXU1010988_1"
+  - metrics-exporter-product-num: "CXU1010988"
+  - pri-documents-file: 'build/documents.yaml'
+  - pri-input-file: 'build/pri_input.json'
+  - apr-product-number: 'APR20159'
+  - source-product-number: "CAV101067"
+  - helm-file-product-number: "CXC2012039"
+  - etcd-image-file-product-number: "CXC2012038"
+  - bragent-image-file-product-number: "CXC1742753"
+  - metrics-exporter-image-file-product-number: "CXU1010988"
+  - hooklauncher-image-prod-num: "CXU 101 1909"
+  - service-ports-file: ${common.helm-chart-name}_service_ports.json
+  - service-ports-file-path: ./doc/${common.helm-chart-name}_service_ports.json
+  - service-ports-file-arm-location: ${arm-doc-released}/documents/${var.version-prefix}/
+
+  # Properties for CPI uploading
+  - license-agreement-file-path: ./doc/${license-agreement-file-name}
+  - license-agreement-file-name: license.agreement.json
+  - cpi-input-repo: https://arm.rnd.ki.sw.ericsson.se/artifactory/proj-adp-cpi-input-released-generic-local
+  - cpi-folder-name: eric-data-distributed-coordinator-ed
+  - structured-data-file: ${env.PWD}/${common.structured-output-dir}/${common.helm-chart-name}-structured-data.json
+  - structured-data-file-location: ${arm-doc-released}documents/${var.version-prefix}/${common.helm-chart-name}-structured-data.json
+  - pm-metrics-file: eric-data-distributed-coordinator-ed_pm_metrics.json
+  - gitca-repo-name: "adp-distributed-coordinator-ed"
+  - aca-container-name: adp-distributed-coordinator-ed
+  - interface-file: ${common.helm-chart-name}_interfaces.zip
+  - aca-container-name-logshipper: adp-log-shipper
+env:
+  - PWD
+  - HOME (default=/home)
+  - DOCKER_USERNAME
+  - DOCKER_PWD (default=Docker)
+  - RELEASE_CANDIDATE
+  - KUBECONFIG
+  - HELM_USER (default=eadphub)
+  - ARTIFACTS_REPO_API_TOKEN
+  - KAAS_HOSTNAME (default=todd060.rnd.gic.ericsson.se)
+  - GIT_COMMIT (default=HEAD)
+  - GERRIT_USERNAME
+  - GERRIT_PASSWORD
+  - JIRA_TOKEN
+  - ERIDOC_USERNAME (default=eadpusers)
+  - ERIDOC_PASSWORD
+  - ERIDOC_UPLOAD
+  - DPRAF_USERNAME
+  - DPRAF_API_TOKEN
+  - DRY_RUN (default=false)
+  - EVMS_USERNAME (default=eadphub)
+  - EVMS_PASSWORD
+  - API_TOKEN
+  - SELI_API_TOKEN
+  - MARKETPLACE_TOKEN
+  - RND_KI_API_TOKEN
+  - METRICS_EXPORTER_VERSION
+  - MUNIN_TOKEN
+  - DEBUG (default=false)
+  - MUNIN_RELEASE_CANDIDATE
+  - GERRIT_PATCHSET_REVISION (default=HEAD)
+  - ACA_USERNAME
+  - ACA_PASSWORD
+  - HELM_REPO_USER (default=eadphub)
+  - API_TOKEN (default='')
+  - NETRC (default=${env.HOME}/.netrc)
+
+var:
+  - released-version
+  - mimer-released-version
+  - version-prefix: VERSION_PREFIX
+  - semver
+  - mimer-released-version-without-build-number
+  - sha256-Helm_Chart
+  - sha256-Docker_Image_DCED
+  - sha256-Docker_Image_BRAgent
+  - sha256-Docker_Image_MetricsExporter
+  - pri_params
+  - commithash
+  - helm-chart-sha256
+  - docker-image-etcd-sha256
+  - docker-image-bragent-sha256
+  - docker-image-metricsexporter-sha256
+
+rules:
+  # Make sure repo is clean
+  clean:
+    - task: rm
+      cmd:
+        - rm -rf .bob/
+        - rm -rf build/
+        - rm -f artifact.properties
+  # generate MUNIN release version without build number
+  munin-version:
+    - task: generate-released-version-without-build-number
+      cmd:
+        - echo ${env.MUNIN_RELEASE_CANDIDATE} | cut -d '-' -f 1 > .bob/var.mimer-released-version-without-build-number
+        - echo ${env.MUNIN_RELEASE_CANDIDATE} | sed s/-/+/ > .bob/var.mimer-released-version
+  # Generates the released version based on environment variable RELEASE_CANDIDATE
+  # Generates adp artifacts properties
+  init:
+    - task: generate-released-version
+      cmd:
+        - echo ${env.RELEASE_CANDIDATE} | sed s/-/+/ > .bob/var.released-version
+        - cat .bob/var.released-version | cut -d '+' -f 1 > .bob/var.semver
+  # Generate documents
+  generate-doc-zip-package:
+    - task: generate-svl-replacement-md
+      docker-image: adp-release-auto
+      cmd: 'doc-handler generate-svl-replacement --product-number ${apr-product-number}
+                                                 --product-version ${var.semver}
+                                                 --output ./build/doc-svl-replacement
+                                                 --format html
+                                                 --zip'
+    - task: generate-doc-zip
+      docker-image: adp-release-auto
+      cmd: 'doc-handler generate --config doc/marketplace_config.yaml
+                                 --output ./build/doc-marketplace
+                                 --format html
+                                 --zip'
+
+  # Upload zip package documents to ARM
+  marketplace-upload:
+    - task: upload-doc-to-arm
+      docker-image: adp-release-auto
+      cmd: marketplace upload --arm-api-token ${env.API_TOKEN}
+           --arm-url ${arm-doc-released}
+            --config doc/marketplace_upload_config.yaml
+           --version ${var.version-prefix}
+  # ADP checker: Marketplace Document Checker
+  # Checks if mandatory documents are published in Marketplace
+  # can be referred from Documentation Design Rules and Guidelines
+  marketplace-check-documents:
+    - task: check-documents
+      docker-image: adp-release-auto
+      cmd: marketplace check-documents
+        --arm-api-token ${env.API_TOKEN}
+        --released-doc-repo ${arm-doc-released}
+        --version ${var.semver}
+        --mimer
+        --skip-dr=DR-D470211-251
+        --skip-dr=DR-D470211-220
+        --skip-dr=DR-D470211-280
+        --skip-dr=DR-D470211-290
+        --report-format html
+  # The rule stores the release artifacts on a generic repository where needed for DP-RAF release flow
+  # It pulls release candidate image, saves it in a tar.gz format and pushes it to released-artifacts-repo
+  store-release-artifacts:
+    - task: image-pull-artifacts
+      cmd:
+        - docker pull ${image-repo-drop}/${common.image-name}:${env.RELEASE_CANDIDATE}
+        - docker pull ${image-repo-drop}/${common.bragent-image-name}:${env.RELEASE_CANDIDATE}
+        - docker pull ${image-repo-drop}/${common.metrics-exporter-image-name}:${env.METRICS_EXPORTER_VERSION}
+    - task: save-images
+      cmd:
+        - mkdir -p ${docker-images-released-folder}
+        - "docker save ${image-repo-drop}/${common.image-name}:${env.RELEASE_CANDIDATE} | zip ${docker-images-released-folder}/${common.image-name}-${env.RELEASE_CANDIDATE}-${image-file-product-number}.zip -"
+        - "docker save ${image-repo-drop}/${common.bragent-image-name}:${env.RELEASE_CANDIDATE} | zip ${docker-images-released-folder}/${common.bragent-image-name}-${env.RELEASE_CANDIDATE}-${bragent-image-file-product-number}.zip -"
+        - "docker save ${image-repo-drop}/${common.metrics-exporter-image-name}:${env.METRICS_EXPORTER_VERSION} | zip ${docker-images-released-folder}/${common.metrics-exporter-image-name}-${env.METRICS_EXPORTER_VERSION}-${metrics-exporter-file-product-number}.zip -"
+    - task: upload-images
+      docker-image: adp-release-auto
+      cmd:
+        - upload_file.sh -f "${docker-images-released-folder}/${common.image-name}-${env.RELEASE_CANDIDATE}-${image-file-product-number}.zip" -r "${released-artifacts-repo}/${common.helm-chart-name}/images" -t "${env.API_TOKEN}"
+        - upload_file.sh -f "${docker-images-released-folder}/${common.bragent-image-name}-${env.RELEASE_CANDIDATE}-${bragent-image-file-product-number}.zip" -r "${released-artifacts-repo}/${common.helm-chart-name}/images" -t "${env.API_TOKEN}"
+        - upload_file.sh -f "${docker-images-released-folder}/${common.metrics-exporter-image-name}-${env.METRICS_EXPORTER_VERSION}-${metrics-exporter-file-product-number}.zip" -r "${released-artifacts-repo}/${common.helm-chart-name}/images" -t "${env.API_TOKEN}"
+    - task: generate-release-chart
+      docker-image: adp-release-auto
+      cmd:
+        - mkdir -p ${helm-chart-released-folder}
+        - generate_release_helm_package
+          -r ${helm-chart-repo-drop}
+          -n ${common.helm-chart-name}
+          -v ${env.RELEASE_CANDIDATE}
+          -o ${helm-chart-released-folder}
+          -x ${var.released-version}
+    - task: upload-release-chart
+      docker-image: adp-release-auto
+      cmd: upload_file.sh
+        -f "${helm-chart-released-folder}/${common.helm-chart-name}-${var.released-version}.tgz"
+        -r "${released-artifacts-repo}/${common.helm-chart-name}/charts"
+        -t "${env.API_TOKEN}"
+  # The rule generates DP-RAF configuration files to upload on https://dp-raf.internal.ericsson.com/
+  # It is meant to be executed manually and not as part of CI/CD job
+  generate-dpraf-configurations:
+    - task: output-dir
+      cmd: mkdir -p build
+    - task: generate-config-files
+      docker-image: adp-release-auto
+      cmd: dpraf_generate_configurations.py
+        -o ${common.dpraf-output-dir}
+        -f ${common.dpraf-config-file}
+        -p helm_repository="${released-artifacts-repo}/${common.helm-chart-name}/charts"
+        -p helm_product_number="${helm-product-number}"
+        -p helm_file_name="${common.helm-chart-name}-${var.released-version}.tgz"
+        -p image_repository="${released-artifacts-repo}/${common.helm-chart-name}/images"
+        -p image_product_number="${image-product-number}"
+        -p image_file_name="${common.image-name}-${env.RELEASE_CANDIDATE}-${image-file-product-number}.zip"
+  # The rule triggers and monitors the execution of a DPRAF flow step 1 to release the product structure in PRIM.
+  # The rule verifies that the correct configurations are uploaded in DPRAF
+  validate-dpraf-configuration:
+    - task: verify-configuration
+      docker-image: adp-release-auto
+      cmd: dpraf_verify_configurations.py
+        -f ${common.dpraf-config-file}
+        -k ${env.DPRAF_API_TOKEN}
+        -p helm_repository="${released-artifacts-repo}/${common.helm-chart-name}/charts"
+        -p helm_product_number="${helm-product-number}"
+        -p helm_file_name="${common.helm-chart-name}-${var.released-version}.tgz"
+        -p image_repository="${released-artifacts-repo}/${common.helm-chart-name}/images"
+        -p image_product_number="${image-product-number}"
+        -p image_file_name="${common.image-name}-${env.RELEASE_CANDIDATE}-${image-file-product-number}.zip" >> .bob/validate-dpraf-configurations-report.log 2>&1
+  prim-release-step1:
+    - task: run-virtual-flow-step1
+      docker-image: adp-release-auto
+      cmd: dpraf_activate_virtual_flow_template.py
+        --step 1
+        --output-dir ${common.dpraf-output-dir}
+        --flow-prefix ${dpraf-flow-prefix}
+        --version ${env.RELEASE_CANDIDATE}
+        --config-file ${common.dpraf-config-file}
+        --user ${env.DPRAF_USERNAME}
+        --api-key ${env.DPRAF_API_TOKEN}
+        --monitoring
+        --param helm_repository="${released-artifacts-repo}/${common.helm-chart-name}/charts"
+        --param helm_product_number="${helm-product-number}"
+        --param helm_file_name="${common.helm-chart-name}-${var.released-version}.tgz"
+        --param image_repository="${released-artifacts-repo}/${common.helm-chart-name}/images"
+        --param image_product_number="${image-product-number}"
+        --param image_file_name="${common.image-name}-${env.RELEASE_CANDIDATE}-${image-file-product-number}.zip" >> .bob/generate-prim-release-step1-report.log 2>&1
+        --param metricsexporter_image_repository="${image-repository}"
+        --param metricsexporter_image_product_number="${metrics-exporter-product-number}"
+        --param metricsexporter_image_file_name="${metrics-exporter-image-name}-${env.METRICS_EXPORTER_VERSION}-${metrics-exporter-file-product-number}.zip" >> .bob/generate-dpraf-configurations-report-metricsexporter.log 2>&1
+
+  # Generate PRI document
+  generate-pri:
+    - task: output-dir
+      cmd: mkdir -p build
+    - task: generate-pri-inputs
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env ERIDOC_USERNAME="${env.ERIDOC_USERNAME}"
+        - --env ERIDOC_PASSWORD="${env.ERIDOC_PASSWORD}"
+      cmd:
+        - munin-doc search
+          -c doc/product_structure.yaml
+          -docs build/documents.yaml
+          -pi build/pri_input.json
+          -v ${var.semver}
+          --latest-approved
+    - task: generate-pri
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env PRODUCT_RELEASE_NUMBER="${var.released-version}"
+        - --env GERRIT_USERNAME="${env.ERIDOC_USERNAME}"
+        - --env GERRIT_PASSWORD="${env.ERIDOC_PASSWORD}"
+        - --env JIRA_TOKEN='${env.JIRA_TOKEN}'
+        - --env ERIDOC_USERNAME="${env.ERIDOC_USERNAME}"
+        - --env ERIDOC_PASSWORD="${env.ERIDOC_PASSWORD}"
+        - --env ERIDOC_CONFIG="${common.eridoc-config}"
+        - --env JIRA_COMPONENT_LONG_NAME="${common.jira-component-name}"
+        - --env GERRIT_URL="${common.gerrit-url}"
+        - --env DPRAF_REPORT_JSON="${pri-input-file}"
+        - --env DOCUMENTS_YAML="${pri-documents-file}"
+        - --env PRI_MANUAL_JSON="${common.pri-manual-input}"
+        - --env TO_CHANGE="${env.GERRIT_PATCHSET_REVISION}"
+        - --env PRI_TEMPLATE_VERSION="1.13"
+        - --env FROM_CHANGE="40e4fa07bfaddd4ca4c5f0b1a4ec00b86a27ebec"
+      cmd: pri.py
+        ${var.pri_params}
+        --checksum helm_chart="${var.sha256-Helm_Chart}"
+        --checksum docker_image_DCED="${var.sha256-Docker_Image_DCED}"
+        --checksum docker_image_BRAgent="${var.sha256-Docker_Image_BRAgent}"
+        --checksum docker_image_MetricsExporter="${var.sha256-Docker_Image_MetricsExporter}"
+        --eridoc-set semver=${var.semver}
+        --template-version=1.13
+        --generate-release-mail
+        --mimer
+
+  # Update documents.yaml with Approved version of PRI document
+  update-documents-yaml:
+    - task: delete-documents-yaml
+      cmd: rm -rf build/documents.yaml
+    - task: update-documents-yaml
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env ERIDOC_USERNAME="${env.ERIDOC_USERNAME}"
+        - --env ERIDOC_PASSWORD="${env.ERIDOC_PASSWORD}"
+      cmd:
+        - munin-doc search
+          -c doc/product_structure.yaml
+          -docs build/documents.yaml
+          -pi build/pri_input.json
+          -v ${var.semver}
+          --latest-approved
+
+  # The rule triggers and monitors the execution of a DPRAF flow step 2 to release the product structure in PRIM.
+  prim-release-step2:
+    - task: run-virtual-flow-step2
+      docker-image: adp-release-auto
+      cmd: dpraf_activate_virtual_flow_template.py
+        --step 2
+        --output-dir ${common.dpraf-output-dir}
+        --flow-prefix ${dpraf-flow-prefix}
+        --version ${env.RELEASE_CANDIDATE}
+        --config-file ${common.dpraf-config-file}
+        --user ${env.DPRAF_USERNAME}
+        --api-key ${env.DPRAF_API_TOKEN}
+        --monitoring
+        --param helm_repository="${released-artifacts-repo}/${common.helm-chart-name}/charts"
+        --param helm_product_number="${helm-product-number}"
+        --param helm_file_name="${common.helm-chart-name}-${var.released-version}.tgz"
+        --param image_repository="${released-artifacts-repo}/${common.helm-chart-name}/images"
+        --param image_product_number="${image-product-number}"
+        --param image_file_name="${common.image-name}-${env.RELEASE_CANDIDATE}-${image-file-product-number}.zip" >> .bob/generate-prim-release-step2-report.log 2>&1
+        --param metricsexporter_image_repository="${image-repository}"
+        --param metricsexporter_image_product_number="${metrics-exporter-product-number}"
+        --param metricsexporter_image_file_name="${common.metrics-exporter-image-name}-${env.METRICS_EXPORTER_VERSION}-${metrics-exporter-file-product-number}.zip" >> .bob/generate-dpraf-configurations-report-metricsexporter.log 2>&1
+
+
+  # The rule creates a CSV file from the dependencies.yaml file and uploads it to EVMS
+  evms-registration:
+    - task: evms-registration
+      docker-image: adp-release-auto
+      cmd: dependencies register --evms
+                                 --evms-user ${env.EVMS_USERNAME}
+                                 --evms-password ${env.EVMS_PASSWORD}
+                                 --evms-product-name "${common.evms-product-name}"
+                                 --evms-product-version ${var.version-prefix}
+                                 --evms-server ${common.evms-server-url}
+                                 -d ./doc/dependencies.yaml
+                                 -d ./doc/2pp_dependencies.yaml
+                                 --debug
+  # EVMS registration check, checks that product release is successfully registered
+  evms-checker:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/evms-check
+    - task: evms-checker
+      docker-image: adp-release-auto
+      cmd: check-evms registration
+        --evms-user ${env.EVMS_USERNAME}
+        --evms-password ${env.EVMS_PASSWORD}
+        --product-name "${common.evms-product-name}"
+        --product-version ${var.semver}
+        --check-cbos
+        --report-format html
+        --output-directory ./build/evms-check
+        --debug
+  # The rule uploads the helm chart with PRA release version (e.g. 1.0.0+3) generated
+  # to the official helm repository helm-chart-released-repo
+  helm-publish-release:
+    - task: git-tag
+      cmd:
+        - git tag -f -a "v${var.released-version}" -m "PRA Release ${var.released-version}"
+        - git push -f origin "v${var.released-version}"
+    - task: release-helm-package
+      docker-image: adp-release-auto
+      cmd: upload_helm_package
+        -f "${helm-chart-released-folder}/${common.helm-chart-name}-${var.released-version}.tgz"
+        -r ${helm-chart-repo-released}
+        -u ${env.HELM_USER}
+        -t ${env.API_TOKEN}
+        -i ${helm-chart-repo-gs-released}
+        --properties product_metadata=${structured-data-file-location}
+  increment-version-prefix:
+    - task: git-push-version-prefix-increment
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env GERRIT_USERNAME
+        - --env GERRIT_PASSWORD
+      cmd: version-handler increment
+           --step-version-prefix "MINOR"
+           --git-repo-url ${git-clone-url}
+           --branch master
+           --dry-run ${env.DRY_RUN}
+  # Approve documents in eridoc
+  eridoc:
+    - task: approve
+      docker-image: adp-release-auto
+      docker-flags:
+        - --env ERIDOC_USERNAME=${env.ERIDOC_USERNAME}
+        - --env ERIDOC_PASSWORD=${env.ERIDOC_PASSWORD}
+      cmd: eridoc approve --config ./doc/eridoc.approve.config.yaml --debug --no-validate-certificates --set semver=${var.semver} >> .bob/eridoc-approve-report.log 2>&1
+    - task: approve-pri
+      docker-image: adp-release-auto
+      docker-flags:
+          - --env ERIDOC_USERNAME=${env.ERIDOC_USERNAME}
+          - --env ERIDOC_PASSWORD=${env.ERIDOC_PASSWORD}
+      cmd: eridoc approve --config ./doc/eridoc.pri.approve.config.yaml --debug --no-validate-certificates --set semver=${var.semver} >> .bob/eridoc-pri-approve-report.log 2>&1
+
+  #Mimer/Munin Release Stages
+  # Fetch checksums of images and helm charts
+  fetch-artifact-checksums:
+    # Get artifact hashs
+    - task: init
+      docker-image: adp-release-auto
+      cmd:
+        - arm get-checksum --url https://arm.sero.gic.ericsson.se/artifactory/proj-adp-eric-data-dc-ed-released-helm/eric-data-distributed-coordinator-ed/eric-data-distributed-coordinator-ed-${var.mimer-released-version}.tgz --sha256 --apikey ${env.API_TOKEN} --output .bob/var.helm-chart-sha256
+        - cat .bob/var.helm-chart-sha256
+        - arm get-checksum --url https://arm.seli.gic.ericsson.se/artifactory/docker-default/proj-adp-eric-data-distributed-coordinator-ed-drop/${common.image-name}/${env.MUNIN_RELEASE_CANDIDATE}/manifest.json --sha256 --apikey ${env.SELI_API_TOKEN} --output .bob/var.docker-image-etcd-sha256
+        - cat .bob/var.docker-image-etcd-sha256
+        - arm get-checksum --url https://arm.seli.gic.ericsson.se/artifactory/docker-default/proj-adp-eric-data-distributed-coordinator-ed-drop/${common.bragent-image-name}/${env.MUNIN_RELEASE_CANDIDATE}/manifest.json --sha256 --apikey ${env.SELI_API_TOKEN} --output .bob/var.docker-image-bragent-sha256
+        - cat .bob/var.docker-image-bragent-sha256
+        - arm get-checksum --url https://arm.seli.gic.ericsson.se/artifactory/docker-default/proj-adp-eric-data-distributed-coordinator-ed-drop/${common.metrics-exporter-image-name}/${env.MUNIN_RELEASE_CANDIDATE}/manifest.json --sha256 --apikey ${env.SELI_API_TOKEN} --output .bob/var.docker-image-metricsexporter-sha256
+        - cat .bob/var.docker-image-metricsexporter-sha256
+    - task: get-commit-hash
+      docker-image: adp-release-auto
+      cmd:
+        - git rev-list -1 v${env.MUNIN_RELEASE_CANDIDATE} > .bob/var.commithash
+        - cat .bob/var.commithash
+
+  # Set artifact URLs in PLMS via GitCA
+  munin-connect-ca-artifact:
+    - task: archive-commit
+      docker-image: adp-release-auto
+      cmd: gitca register-plm
+        --commithash ${var.commithash}
+        --product-number ${source-product-number}
+        --version ${var.mimer-released-version-without-build-number}
+        --name ${gitca-repo-name}
+        --username ${env.GERRIT_USERNAME}
+        --password ${env.GERRIT_PASSWORD}
+
+  # Set artifact URLs in PLMS via ACA (Artifactory Certified Archive)
+  upload-and-register-artifacts-in-aca:
+    - task: upload-archive
+      docker-image: adp-release-auto
+      docker-in-docker: socket
+      cmd: aca upload-archive
+        --dry-run ${env.DRY_RUN}
+        --debug
+        --chart-path ${helm-chart-released-folder}/${common.helm-chart-name}-${var.released-version}.tgz
+        --replace ${image-repo-name-drop}=${aca-container-name}
+        --replace ${image-repo-name-internal}=${aca-container-name}
+        --helm-container ${aca-container-name}
+        --username ${env.ACA_USERNAME}
+        --password ${env.ACA_PASSWORD}
+        --2pp-images hooklauncher
+        --2pp-images logshipper
+        --replace ${common.logshipper-image-repo-path}=${aca-container-name-logshipper}
+
+  # Release products in PLMS
+  munin-release-version:
+    - task: release-versions
+      docker-image: adp-release-auto
+      cmd:
+        - munin release-versions
+          -t ${env.MUNIN_TOKEN}
+          -c doc/product_structure.yaml
+          -v ${var.semver}
+          --wait-prim-target 1800
+
+  # PLM (Product Lifecycle Management) Checker
+  # Output file: plm_check_report.html
+  plm-checker:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/plm-check
+    - task: plm-check
+      docker-image: bob-adp-checker
+      docker-flags:
+        - "--env PLMS_USERNAME=${env.GERRIT_USERNAME}"
+        - "--env PLMS_PASSWORD=${env.GERRIT_PASSWORD}"
+        - "--env MUNIN_TOKEN=${env.MUNIN_TOKEN}"
+      cmd: plm-dr-check
+        --product-number "${apr-product-number}"
+        --version "${var.mimer-released-version-without-build-number}"
+        --munin-apitoken ${env.MUNIN_TOKEN}
+        --output-directory ./build/plm-check
+        --report-format html
+        --dry-run ${env.DRY_RUN}
+
+  # Generate artifacts used as input for ADP Staging pipeline
+  generate-input-for-adp-staging:
+    - task: adp-artifacts-properties
+      docker-image: adp-release-auto
+      cmd: generate-adp-artifacts
+        --chart-name ${common.helm-chart-name}
+        --chart-version ${var.released-version}
+        --chart-repo ${helm-chart-repo-gs-all}
+        --image-name ${common.image-name}
+        --image-version ${env.RELEASE_CANDIDATE}
+        --image-repo ${image-repo-drop}
+  upload-license-agreement-fragment:
+  - task: upload-license-agreement-json
+    docker-image: adp-release-auto
+    cmd: curl
+         -H 'X-JFrog-Art-Api:${env.RND_KI_API_TOKEN}'
+         -T "${license-agreement-file-path}"
+         "${cpi-input-repo}/${cpi-folder-name}/${var.version-prefix}/${license-agreement-file-name}"
+  # Structured data
+  structured-data-generate:
+    - task: create-report-dir
+      cmd: mkdir -p ${common.structured-output-dir}
+    - task: structured-data-generate
+      docker-image: adp-release-auto
+      cmd: structure-data generate
+        --service-name ${common.helm-chart-name}
+        --apr-product ${apr-product-number}
+        --foss-license-agreement "${cpi-input-repo}/${cpi-folder-name}/${var.version-prefix}/${license-agreement-file-name}"
+        --pm-metrics "${arm-doc-released}/documents/${var.version-prefix}/${pm-metrics-file}"
+        --security-attributes "${arm-doc-released}/documents/${var.version-prefix}/eric-data-distributed-coordinator-ed_security_attributes.json"
+        --service_ports "${arm-doc-released}/documents/${var.version-prefix}/${service-ports-file}"
+        --characteristic-report "${arm-doc-released}documents/${var.semver}/characteristics-report.json"
+        --interfaces "${arm-doc-released}/documents/${var.version-prefix}/${interface-file}"
+        --output ${common.structured-output-dir}
+
+  structured-data-validate:
+    - task: structured-data-validate
+      docker-image: adp-release-auto
+      cmd: structure-data validate
+        --file ${structured-data-file}
+
+  structured-data-upload:
+    - task: structured-data-upload
+      docker-image: adp-release-auto
+      cmd: structure-data upload
+        --file ${structured-data-file}
+        --url ${arm-doc-released}documents/${var.version-prefix}/
+        --token ${env.API_TOKEN}
+  #upload PMMetrics.json file
+  upload-pm-metrics:
+    - task: upload-pm-metrics-json
+      docker-image: adp-release-auto
+      cmd: upload_file.sh
+            -f "doc/${pm-metrics-file}"
+            -r "${arm-doc-released}/documents/${var.version-prefix}/"
+            -t "${env.API_TOKEN}"
+
+  #validate and upload service ports JSON to ARM
+  handle-service-ports-docs:
+    - task: validate-and-upload-service-ports-file
+      docker-image: adp-release-auto
+      cmd:
+        - service-ports validate
+          --service-ports-file ${service-ports-file-path}
+          --arm-upload
+          --arm-api-token ${env.API_TOKEN}
+          --arm-upload-url ${service-ports-file-arm-location}
+
+  characteristics:
+    - task: pull
+      docker-image: adp-release-auto
+      cmd: curl
+          -vvv
+          -H "X-JFrog-Art-Api:${env.API_TOKEN}"
+          "${dev-arm-perf-repo}/${env.RELEASE_CANDIDATE}/characteristics-report.json"
+          -o characteristics-report.json
+    - task: publish-to-arm
+      docker-image: adp-release-auto
+      cmd: curl
+          -vvv
+          -H "X-JFrog-Art-Api:${env.API_TOKEN}"
+          -T characteristics-report.json
+            ${arm-doc-released}documents/${var.semver}/characteristics-report.json
+    - task: generate-other-formats
+      docker-image: adp-release-auto
+      cmd: characteristics-report generate
+          -f characteristics-report.json
+          -url ${arm-doc-released}documents/${var.semver}
+          --arm-api-token "${env.API_TOKEN}"
+  # Fragment Checker
+  fragment-dr-check:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/fragment_dr_check
+    - task: netrc-file
+      cmd: echo -e "machine arm.sero.gic.ericsson.se\naccount ${env.API_TOKEN}" > ${env.NETRC}
+    - task: fragment-check
+      docker-image: bob-adp-checker
+      docker-mounts:
+        - "${env.NETRC}:${env.NETRC}"
+      cmd: artifact-dr-check
+        --structure-data-file-url ${structured-data-file-location}
+        --netrc ${env.NETRC}
+        --report-format html
+        --output-dir ./build/fragment_dr_check
+        --pm-metrics --characteristic-report
+        --service-name ${common.helm-chart-name}
+        --version ${var.semver}
+    - task: remove-netrc
+      cmd: rm -f ${env.NETRC}
+  # Validate schema of interfaces.json file
+  validate-interface-fragment:
+    - task: validate-interface-fragment
+      docker-image: adp-release-auto
+      cmd: interfaces-structure-data validate
+        --file ${env.PWD}/Helm/${common.helm-chart-name}/models/interfaces.json ${env.PWD}/Helm/${common.helm-chart-name}/models/eric-log-shipper-sidecar_interfaces.json
+
+  # Create eric-data-distributed-coordinator-ed_interfaces.zip file
+  zip-interfaces-modules:
+    - task: zip-interface-modules
+      cmd: sh -c
+        'cd "${env.PWD}/Helm/${common.helm-chart-name}/models/" && zip -r "${env.PWD}/doc/${interface-file}" . '
+
+  # Upload eric-data-distributed-coordinator-ed_interfaces.zip file
+  upload-interface-fragment:
+    - task: upload-interface-fragment
+      docker-image: adp-release-auto
+      cmd: upload_file.sh
+        -f doc/${interface-file}
+        -r ${arm-doc-released}/documents/${var.version-prefix}/
+        -t ${env.API_TOKEN}
+
+  # Upload security-attribute-fragment
+  upload-security-attribute-fragment:
+    - task: upload-interface-fragment
+      docker-image: adp-release-auto
+      cmd: upload_file.sh
+        -f "${common.security-attribute-file-location}"
+        -r ${arm-doc-released}/documents/${var.version-prefix}/
+        -t ${env.API_TOKEN}
+
+  generate-security-attributes:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/security-attributes
+    - task: generate-security-attributes
+      docker-image: adp-release-auto
+      docker-envs:
+        - GERRIT_USERNAME
+        - GERRIT_PASSWORD
+      cmd: security-attributes generate
+        --service-name ${common.helm-chart-name}
+        --service-version ${var.semver}
+        --output ${common.security-attribute-file-location}
+
+  validate-complete-security-attributes-json:
+    - task: validate-complete-security-attributes-json
+      docker-image: adp-release-auto
+      docker-envs:
+        - GERRIT_USERNAME
+        - GERRIT_PASSWORD
+      cmd: security-attributes validate
+        --fragment ${common.security-attribute-file-location}
+        --type complete
+        --security-repo ${env.PWD}
+
+  #Generate ADP Service Helm Chart template
+  generate-helm-template:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/security-attributes/helm_template
+    - task: generate-helm-template
+      docker-image: k8-test
+      cmd: helm template ${helm-chart-released-folder}/${common.helm-chart-name}-${var.released-version}.tgz
+        --output-dir ${env.PWD}/build/security-attributes/helm_template/${common.helm-chart-name}
+
+  #Generate Test Admission Control manifests and test against ADP Service Helm Chart template
+  generate-and-test-security-attributes-json:
+    - task: create-output-directory
+      cmd: mkdir -p ./build/security-attributes/admission-control
+    - task: generate-and-test-security-attributes-json
+      docker-image: admission-control
+      cmd:
+        #Generate Test Admission Control manifests
+        - admission-control gatekeeper generate-manifests
+          --fragment ${common.security-attribute-file-location}
+          --output ${env.PWD}/build/security-attributes/admission-control
+
+        #Test ADP Service Helm Chart template against generated policy manifests
+        - admission-control gatekeeper test-chart
+          --chart-filepath=${env.PWD}/build/security-attributes/helm_template/${common.helm-chart-name}
+          --manifests-filepath=${env.PWD}/build/security-attributes/admission-control
+
+   # automatic download interface-fragment file
+  download-logshipper-interface:
+    - task: download-logshipper-sidecar-interface-fragment
+      docker-image: adp-release-auto
+      docker-envs:
+        - SELI_API_TOKEN="${env.SELI_API_TOKEN}"
+      cmd:
+       - curl -4 -H "X-JFrog-Art-Api:${env.SELI_API_TOKEN}" "https://arm.seli.gic.ericsson.se/artifactory/proj-adp-log-docs-released-generic-local/eric-log-shipper/documents/${common.logshipper-version}/eric-log-shipper-sidecar_interfaces.zip" --output-dir ${env.PWD}/Helm/${common.helm-chart-name}/models/ -O
+       - unzip -o ${env.PWD}/Helm/${common.helm-chart-name}/models/eric-log-shipper-sidecar_interfaces.zip -d ${env.PWD}/Helm/${common.helm-chart-name}/models/
+       - sed -i "s,<log-producer-chart-name>,eric-data-distributed-coordinator-ed,g" ${env.PWD}/Helm/${common.helm-chart-name}/models/eric-log-shipper-sidecar_interfaces.json
+       - rm -rf ${env.PWD}/Helm/${common.helm-chart-name}/models/eric-log-shipper-sidecar_interfaces.zip

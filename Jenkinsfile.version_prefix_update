@@ -1,0 +1,29 @@
+pipeline {
+    agent {
+        node {
+            label params.SLAVE
+        }
+    }
+    stages{
+        stage('Update VERSION_PREFIX') {
+            steps{
+                    checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'eadphub-psw', url: 'ssh://gerrit-gamma.gic.ericsson.se:29418/AIA/microservices/etcd']]])
+                    sh "sed -i 's/11.*/${params.VERSION_PREFIX}/g' VERSION_PREFIX"
+                    sh "sed -i 's/\\(PRODUCT_RELEASE_NUMBER=\\).*/\\1${params.VAR_VERSION_STRING}/g' ruleset2.0.yaml"
+                    sh 'git status'
+                    sh 'git stage -A'
+                    sh """git commit -m '[${params.JIRA}] DCED: Update VERSION_PREFIX to ${params.VERSION_PREFIX}' -m 'JIRA Link: https://eteamproject.internal.ericsson.com/browse/${params.JIRA}'"""
+                    sh 'gitdir=$(git rev-parse --git-dir); scp -p -P 29418 lciadm100@gerrit-gamma.gic.ericsson.se:hooks/commit-msg ${gitdir}/hooks/'
+                    sh 'git commit --amend --no-edit'
+                    sh 'git push origin HEAD:refs/for/master'
+            }
+        }
+        stage('Cleanup Workspace') {
+            steps {
+                script {
+                    sh "rm -rf defensicstar.tgz"
+                }
+            }
+        }
+    }
+}
